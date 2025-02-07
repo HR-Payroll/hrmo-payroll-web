@@ -34,16 +34,22 @@ const sidebarItems = [
       {
         icon: <MdOutlineTableView />,
         label: "Report",
-        href: "/empReports",
+        href: "/reports",
       },
       {
         icon: <MdOutlinePayment />,
         label: "Payroll",
         href: "#",
         children: [
-          { label: "Compensation Rate", href: "/payroll/compRate" },
-          { label: "Mandatory Deductions", href: "/payroll/mandDeduc" },
-          { label: "Loans and Other Deductions", href: "/payroll/loanDeduc" },
+          { label: "Compensation Rate", href: "/payroll/compensation-rate" },
+          {
+            label: "Mandatory Deductions",
+            href: "/payroll/mandatory-deduction",
+          },
+          {
+            label: "Loans and Other Deductions",
+            href: "/payroll/loan-deduction",
+          },
           { label: "Summary", href: "/payroll/summary" },
         ],
       },
@@ -87,7 +93,7 @@ const Sidebar = () => {
                 <div
                   className={`flex items-center justify-between lg:justify-start gap-4 p-2 cursor-pointer rounded-md transition-all ${
                     pathname.includes("/payroll")
-                      ? "active:bg-blue-100 border-r-[10px] border-blue-500"
+                      ? "bg-blue-100"
                       : "hover:bg-blue-100"
                   }`}
                   onClick={() => toggleMenu(item.label)}
@@ -107,7 +113,7 @@ const Sidebar = () => {
                   href={item.href}
                   className={`flex items-center justify-center lg:justify-start gap-4 p-2 cursor-pointer rounded-md transition-all ${
                     pathname === item.href
-                      ? "border-r-[10px] border-blue-500"
+                      ? "bg-blue-100 border-r-[10px] border-blue-500"
                       : "hover:bg-blue-100"
                   }`}
                 >
@@ -125,7 +131,7 @@ const Sidebar = () => {
                       key={subItem.label}
                       className={`flex items-center justify-center lg:justify-start gap-4 p-2 text-sm text-gray-600 rounded-md transition-all ${
                         pathname === subItem.href
-                          ? "border-r-[10px] border-blue-500"
+                          ? "bg-blue-100 border-r-[10px] border-blue-500"
                           : "hover:bg-blue-100"
                       }`}
                     >

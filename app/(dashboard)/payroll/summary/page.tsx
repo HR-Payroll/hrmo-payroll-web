@@ -1,7 +1,7 @@
 import React from "react";
 
 const summary = () => {
-  return <div>summary</div>;
+  return <div className="w-screen h-screen">summary</div>;
 };
 
 export default summary;

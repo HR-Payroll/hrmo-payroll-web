@@ -1,19 +1,24 @@
 @import "tailwindcss";
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+.react-calendar {
+  width: 100% !important;
+  border: none !important;
+  font-family: "Inter", sans-serif !important;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+.react-calendar__navigation {
+  margin-bottom: 0px !important;
 }
 
-body {
-  background-color: gray-50
+.react-calendar__tile {
+  padding: 7px !important;
+}
+
+.react-calendar__navigation__label__labelText {
+  font-weight: 700 !important;
+}
+
+.react-calendar__tile--active {
+  background-color: #dbeafe !important;
+  color: #0000ff !important;
 }

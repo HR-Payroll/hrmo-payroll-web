@@ -26,23 +26,23 @@ const data = [
   { name: "Dec", reg: 300, cas: 100, j_o: 250 },
 ];
 
-const EmployeeStatsChart: React.FC = () => {
+const EmployeeStatsChart = () => {
   return (
     <div className="rounded-md bg-white border-2 border-[#ECEEF6] p-4 text-xs text-[#333333]">
-      <div className="flex flex-row justify-between">
-        <h1 className="text-xl font-semibold">Employee Statistics</h1>
+      <div>
+        <h1 className="text-lg font-medium">Employee Statistics</h1>
       </div>
-      <div className="mt-4 -ml-8">
-        <ResponsiveContainer width="100%" height={300}>
+      <div className="mt-2 -ml-8">
+        <ResponsiveContainer width="100%" height={320}>
           <BarChart data={data}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="reg" fill="#86efac" />
-            <Bar dataKey="cas" fill="#93c5fd" />
-            <Bar dataKey="j_o" fill="#fca5a5" />
+            <Bar dataKey="reg" fill="#3b82f6" />
+            <Bar dataKey="cas" fill="#60a5fa" />
+            <Bar dataKey="j_o" fill="#93c5fd" />
           </BarChart>
         </ResponsiveContainer>
       </div>
