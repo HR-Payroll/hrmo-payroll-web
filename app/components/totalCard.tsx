@@ -1,4 +1,3 @@
-"use client";
 import React, { JSX } from "react";
 
 const TotalCard = ({
@@ -19,7 +18,7 @@ const TotalCard = ({
       </div>
       <div className="flex flex-row justify-between items-center">
         <h1 className="text-2xl font-medium">{value}</h1>
-        <span className="p-2 rounded-full bg-blue-100 text-xl text-[#0000ff]">
+        <span className="p-2 rounded-full bg-blue-100 text-xl text-blue-500">
           {icon}
         </span>
       </div>

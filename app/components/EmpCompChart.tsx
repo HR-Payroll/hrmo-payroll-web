@@ -80,7 +80,7 @@ const EmployeeCompositionChart = () => {
   return (
     <div className="rounded-md bg-white border-2 border-[#ECEEF6] p-4 text-xs text-[#333333]">
       <div>
-        <h1 className="text-lg font-medium">Employee Composition</h1>
+        <h1 className="text-base font-medium">Employee Composition</h1>
       </div>
       <div>
         <ResponsiveContainer width="100%" height={200}>

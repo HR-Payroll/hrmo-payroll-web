@@ -30,7 +30,7 @@ const EmployeeStatsChart = () => {
   return (
     <div className="rounded-md bg-white border-2 border-[#ECEEF6] p-4 text-xs text-[#333333]">
       <div>
-        <h1 className="text-lg font-medium">Employee Statistics</h1>
+        <h1 className="text-base font-medium">Employee Statistics</h1>
       </div>
       <div className="mt-2 -ml-8">
         <ResponsiveContainer width="100%" height={320}>
