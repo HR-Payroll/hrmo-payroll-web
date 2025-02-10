@@ -1,0 +1,108 @@
+// TEMPORARY DATA
+
+export const departmentData = [
+  {
+    id: 1,
+    departmentId: "001",
+    deptName: "Accounting Office",
+    category: "Job Order",
+    totalEmp: "5",
+    dateCreated: "10/2/2025",
+  },
+  {
+    id: 2,
+    departmentId: "002",
+    deptName: "Assessor's Office",
+    category: "Job Order",
+    totalEmp: "10",
+    dateCreated: "10/2/2025",
+  },
+  {
+    id: 3,
+    departmentId: "003",
+    deptName: "Consultant's Office",
+    category: "Job Order",
+    totalEmp: "15",
+    dateCreated: "10/2/2025",
+  },
+  {
+    id: 4,
+    departmentId: "004",
+    deptName: "Contractual 20%",
+    category: "Job Order",
+    totalEmp: "20",
+    dateCreated: "10/2/2025",
+  },
+  {
+    id: 5,
+    departmentId: "005",
+    deptName: "Department of Agriculture",
+    category: "Job Order",
+    totalEmp: "25",
+    dateCreated: "10/2/2025",
+  },
+  {
+    id: 6,
+    departmentId: "006",
+    deptName: "DSWD (MSWD)",
+    category: "Job Order",
+    totalEmp: "30",
+    dateCreated: "10/2/2025",
+  },
+  {
+    id: 7,
+    departmentId: "007",
+    deptName: "Dumpsite (MENRO)",
+    category: "Job Order",
+    totalEmp: "35",
+    dateCreated: "10/2/2025",
+  },
+  {
+    id: 8,
+    departmentId: "008",
+    deptName: "Engineering Office 1",
+    category: "Job Order",
+    totalEmp: "40",
+    dateCreated: "10/2/2025",
+  },
+  {
+    id: 9,
+    departmentId: "009",
+    deptName: "Engineering Office 2",
+    category: "Job Order",
+    totalEmp: "45",
+    dateCreated: "10/2/2025",
+  },
+  {
+    id: 10,
+    departmentId: "010",
+    deptName: "Engineering Office 3",
+    category: "Job Order",
+    totalEmp: "50",
+    dateCreated: "10/2/2025",
+  },
+];
+
+export const employeeData = [
+  {
+    id: 1,
+    employeeId: "2025010001",
+    name: "CAILING, CHRISTY",
+    department: "Accounting Office",
+    category: "Job Order",
+  },
+  {
+    id: 2,
+    employeeId: "2025010001",
+    name: "CABELTO, MICHELLE ANN",
+    department: "Accounting Office",
+    category: "Job Order",
+  },
+  {
+    id: 3,
+    employeeId: "2025010001",
+    name: "VALCURZA, MA. THERESA",
+    department: "Accounting Office",
+    category: "Job Order",
+  },
+];
