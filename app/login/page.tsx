@@ -4,7 +4,7 @@ import Image from "next/image";
 const LoginPage = () => {
   return (
     <div className="w-screen h-screen flex flex-col justify-center items-center font-sans">
-      <form className="w-sm h-fit flex flex-col items-start gap-3 rounded-md bg-gray-50 p-10 drop-shadow-[0_0_250px_rgba(0,0,255,0.80)]  border-2 border-indigo-50">
+      <form className="w-sm h-fit flex flex-col items-start gap-3 rounded-md bg-gray-50 p-10 drop-shadow-[0_0_250px_rgba(59,130,246,0.80)]  border-2 border-indigo-50">
         <h1 className="text-2xl font-semibold text-neutral-800">
           Administrator Log In
         </h1>
