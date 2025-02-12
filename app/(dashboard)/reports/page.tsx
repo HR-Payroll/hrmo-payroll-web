@@ -3,22 +3,22 @@ import React from "react";
 import TableSearch from "@/app/components/TableSearch";
 import UploadButton from "@/app/components/UploadButton";
 import DownloadButton from "@/app/components/DownloadButton";
-import FormModal from "@/app/components/FormModal";
 import Table from "@/app/components/Table";
 import Pagination from "@/app/components/Pagination";
 import { reportData } from "@/app/lib/data";
-import { MdOutlineRemoveRedEye } from "react-icons/md";
+import { MdOutlineVisibility } from "react-icons/md";
+import Link from "next/link";
 
 const columns = [
   {
     header: "ID Number",
     accessor: "employeeId",
-    className: "font-semibold p-2",
+    className: "hidden sm:table-cell font-semibold p-2",
   },
   {
     header: "Employee Name",
     accessor: "name",
-    className: "hidden sm:table-cell font-semibold p-2",
+    className: "font-semibold p-2",
   },
   {
     header: "Department",
@@ -33,12 +33,12 @@ const columns = [
   {
     header: "Number of Days",
     accessor: "numDays",
-    className: "hidden sm:table-cell font-semibold p-2",
+    className: "hidden md:table-cell font-semibold p-2",
   },
   {
     header: "Minutes Late",
     accessor: "minsLate",
-    className: "hidden sm:table-cell font-semibold p-2",
+    className: "hidden md:table-cell font-semibold p-2",
   },
   { header: "Actions", accessor: "actions", className: "font-semibold p-2" },
 ];
@@ -49,19 +49,21 @@ const Reports = () => {
       key={item.id}
       className="border-t border-[#ECEEF6] even:bg-slate-50 hover:bg-slate-100 active:bg-slate-200 text-xs text-[#333333]"
     >
-      <td className="p-1">{item.employeeId}</td>
-      <td className="hidden sm:table-cell p-1">{item.name}</td>
+      <td className="hidden sm:table-cell p-1">{item.employeeId}</td>
+      <td className="p-1">{item.name}</td>
       <td className="hidden sm:table-cell p-1">{item.department}</td>
       <td className="hidden sm:table-cell text-[#008000] p-1">
         {item.category}
       </td>
-      <td className="hidden sm:table-cell p-1">{item.numDays}</td>
-      <td className="hidden sm:table-cell p-1">{item.minsLate}</td>
+      <td className="hidden md:table-cell p-1">{item.numDays}</td>
+      <td className="hidden md:table-cell p-1">{item.minsLate}</td>
       <td className="p-1">
         <div className="flex items-center justify-center gap-2 text-base">
-          <div className="flex items-center justify-center rounded-full bg-[#ECEEF6] hover:bg-slate-300 active:bg-slate-400 active:text-white text-[#333333] p-1">
-            <MdOutlineRemoveRedEye />
-          </div>
+          <Link href={`/reports/${item.id}`}>
+            <button className="flex items-center justify-center rounded-full bg-[#ECEEF6] hover:bg-slate-300 active:bg-slate-400 active:text-white text-[#333333] text-base p-1 cursor-pointer">
+              <MdOutlineVisibility />
+            </button>
+          </Link>
         </div>
       </td>
     </tr>
@@ -75,10 +77,10 @@ const Reports = () => {
           <TableSearch />
         </div>
         <div className="flex flex-row items-center gap-4">
-          <div>
+          <div className="cursor-pointer">
             <UploadButton />
           </div>
-          <div>
+          <div className="cursor-pointer">
             <DownloadButton />
           </div>
         </div>

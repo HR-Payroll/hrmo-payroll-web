@@ -10,6 +10,7 @@ import {
   MdOutlinePayment,
   MdOutlineKeyboardArrowUp,
   MdOutlineKeyboardArrowDown,
+  MdOutlineHorizontalRule,
 } from "react-icons/md";
 
 const sidebarItems = [
@@ -41,7 +42,10 @@ const sidebarItems = [
         label: "Payroll",
         href: "#",
         children: [
-          { label: "Compensation Rate", href: "/payroll/compensation-rate" },
+          {
+            label: "Compensation Rate",
+            href: "/payroll/compensation-rate",
+          },
           {
             label: "Mandatory Deductions",
             href: "/payroll/mandatory-deduction",
@@ -50,7 +54,10 @@ const sidebarItems = [
             label: "Loans and Other Deductions",
             href: "/payroll/loan-deduction",
           },
-          { label: "Summary", href: "/payroll/summary" },
+          {
+            label: "Summary",
+            href: "/payroll/summary",
+          },
         ],
       },
     ],
@@ -137,6 +144,9 @@ const Sidebar = () => {
                           : "hover:bg-blue-100"
                       }`}
                     >
+                      <span className="text-base text-[#333333]">
+                        <MdOutlineHorizontalRule />
+                      </span>
                       <span className="hidden lg:block">{subItem.label}</span>
                     </Link>
                   ))}

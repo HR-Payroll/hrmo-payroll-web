@@ -27,19 +27,21 @@ const schema = z.object({
       message: "*Required",
     }
   ),
-  gsisgs: z.string().min(8, { message: "*Required" }),
-  ec: z.string().min(8, { message: "*Required" }),
-  gsisps: z.string().min(8, { message: "*Required" }),
-  phic: z.string().min(8, { message: "*Required" }),
-  hdmfgs: z.string().min(8, { message: "*Required" }),
-  hdmfps: z.string().min(8, { message: "*Required" }),
-  wtax: z.string().min(8, { message: "*Required" }),
-  sss: z.string().min(8, { message: "*Required" }),
+  mplhdmf: z.string().min(8, { message: "*Required" }),
+  gfal: z.string().min(8, { message: "*Required" }),
+  landbank: z.string().min(8, { message: "*Required" }),
+  cb: z.string().min(8, { message: "*Required" }),
+  eml: z.string().min(8, { message: "*Required" }),
+  mplgsis: z.string().min(8, { message: "*Required" }),
+  tagum: z.string().min(8, { message: "*Required" }),
+  ucpb: z.string().min(8, { message: "*Required" }),
+  mpllite: z.string().min(8, { message: "*Required" }),
+  sb: z.string().min(8, { message: "*Required" }),
 });
 
 type Inputs = z.infer<typeof schema>;
 
-const MandDeductionForm = ({
+const LoanDeductionForm = ({
   type,
   data,
 }: {
@@ -65,8 +67,8 @@ const MandDeductionForm = ({
     >
       <h1 className="text-center text-sm font-semibold">
         {type === "create"
-          ? "Add Mandatory Deductions"
-          : "Edit Mandatory Deductions"}
+          ? "Add Loan and Other Deductions"
+          : "Edit Loan and Other Deductions"}
       </h1>
       <div className="overflow-y-scroll flex flex-col gap-4 p-4">
         <div className="flex flex-col text-xs gap-2 text-[#333333]">
@@ -123,60 +125,74 @@ const MandDeductionForm = ({
           )}
         </div>
         <InputField
-          label="GSIS (GS)"
-          name="gsisgs"
-          defaultValue={data?.gsisgs}
+          label="MPL-HDMF"
+          name="mplhdmf"
+          defaultValue={data?.mplhdmf}
           register={register}
-          error={errors?.gsisgs}
+          error={errors?.mplhdmf}
         />
         <InputField
-          label="EC"
-          name="ec"
-          defaultValue={data?.ec}
+          label="GFAL"
+          name="gfal"
+          defaultValue={data?.gfal}
           register={register}
-          error={errors?.ec}
+          error={errors?.gfal}
         />
         <InputField
-          label="GSIS (PS)"
-          name="gsisps"
-          defaultValue={data?.gsisps}
+          label="Landbank"
+          name="landbank"
+          defaultValue={data?.landbank}
           register={register}
-          error={errors?.gsisps}
+          error={errors?.landbank}
         />
         <InputField
-          label="PHIC"
-          name="phic"
-          defaultValue={data?.phic}
+          label="CB"
+          name="cb"
+          defaultValue={data?.cb}
           register={register}
-          error={errors?.phic}
+          error={errors?.cb}
         />
         <InputField
-          label="HDMF (GS)"
-          name="hdmfgs"
-          defaultValue={data?.hdmfgs}
+          label="EML"
+          name="eml"
+          defaultValue={data?.eml}
           register={register}
-          error={errors?.hdmfgs}
+          error={errors?.eml}
         />
         <InputField
-          label="HDMF (PS)"
-          name="hdmfps"
-          defaultValue={data?.hdmfps}
+          label="MPL-GSIS"
+          name="mplgsis"
+          defaultValue={data?.mplgsis}
           register={register}
-          error={errors?.hdmfps}
+          error={errors?.mplgsis}
         />
         <InputField
-          label="WTax"
-          name="wtax"
-          defaultValue={data?.wtax}
+          label="Tagum Bank"
+          name="tagum"
+          defaultValue={data?.tagum}
           register={register}
-          error={errors?.wtax}
+          error={errors?.tagum}
         />
         <InputField
-          label="SSS"
-          name="sss"
-          defaultValue={data?.sss}
+          label="UCPB"
+          name="ucpb"
+          defaultValue={data?.ucpb}
           register={register}
-          error={errors?.sss}
+          error={errors?.ucpb}
+        />
+        <InputField
+          label="MPL-LITE"
+          name="mpllite"
+          defaultValue={data?.mpllite}
+          register={register}
+          error={errors?.mpllite}
+        />
+        <InputField
+          label="SB"
+          name="sb"
+          defaultValue={data?.sb}
+          register={register}
+          error={errors?.sb}
         />
         <button className="w-full rounded-md bg-blue-200 hover:bg-blue-300 active:bg-blue-400 active:text-white text-[#0000ff] text-xs mt-2 p-2 cursor-pointer">
           {type === "create" ? "Create" : "Update"}
@@ -186,4 +202,4 @@ const MandDeductionForm = ({
   );
 };
 
-export default MandDeductionForm;
+export default LoanDeductionForm;

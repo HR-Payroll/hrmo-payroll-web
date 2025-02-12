@@ -45,7 +45,7 @@ const Departments = () => {
       <td className="hidden sm:table-cell p-1">{item.dateCreated}</td>
       <td className="p-1">
         <div className="flex items-center justify-center gap-2 text-base">
-          <div className="flex items-center justify-center rounded-full bg-[#ECEEF6] hover:bg-slate-300 active:bg-slate-400 active:text-white text-[#333333] p-1">
+          <div className="flex items-center justify-center rounded-full bg-[#ECEEF6] hover:bg-slate-300 active:bg-slate-400 active:text-white text-[#333333] p-1 cursor-pointer">
             <FormModal
               table="department"
               type="update"
@@ -57,7 +57,7 @@ const Departments = () => {
               }}
             />
           </div>
-          <div className="flex items-center justify-center rounded-full bg-[#ECEEF6] hover:bg-slate-300 active:bg-slate-400 active:text-white text-[#333333] p-1">
+          <div className="flex items-center justify-center rounded-full bg-[#ECEEF6] hover:bg-slate-300 active:bg-slate-400 active:text-white text-[#333333] p-1 cursor-pointer">
             <FormModal
               table="department"
               type="delete"
@@ -78,10 +78,10 @@ const Departments = () => {
           <TableSearch />
         </div>
         <div className="flex flex-row items-center gap-4">
-          <div>
+          <div className="cursor-pointer">
             <UploadButton />
           </div>
-          <div>
+          <div className="cursor-pointer">
             <FormModal
               table="department"
               type="create"

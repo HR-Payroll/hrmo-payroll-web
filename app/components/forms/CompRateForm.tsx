@@ -35,7 +35,7 @@ const schema = z.object({
 
 type Inputs = z.infer<typeof schema>;
 
-const EmployeeForm = ({
+const CompensationRateForm = ({
   type,
   data,
 }: {
@@ -60,7 +60,9 @@ const EmployeeForm = ({
       onSubmit={onSubmit}
     >
       <h1 className="text-center text-sm font-semibold">
-        {type === "create" ? "Add Compensation Rate" : "Edit Compensation Rate"}
+        {type === "create"
+          ? "Add Employee Compensation Rate"
+          : "Edit Employee Compensation Rate"}
       </h1>
       <div className="flex flex-col text-xs gap-2 text-[#333333]">
         <label className="text-left">Category</label>
@@ -141,11 +143,11 @@ const EmployeeForm = ({
           </p>
         )}
       </div>
-      <button className="w-full rounded-md bg-blue-200 hover:bg-blue-300 active:bg-blue-400 active:text-white text-[#0000ff] text-xs mt-2 p-2">
+      <button className="w-full rounded-md bg-blue-200 hover:bg-blue-300 active:bg-blue-400 active:text-white text-[#0000ff] text-xs mt-2 p-2 cursor-pointer">
         {type === "create" ? "Create" : "Update"}
       </button>
     </form>
   );
 };
 
-export default EmployeeForm;
+export default CompensationRateForm;

@@ -70,7 +70,7 @@ const DepartmentForm = ({
           </p>
         )}
       </div>
-      <button className="w-full rounded-md bg-blue-200 hover:bg-blue-300 active:bg-blue-400 active:text-white text-[#0000ff] text-xs mt-2 p-2">
+      <button className="w-full rounded-md bg-blue-200 hover:bg-blue-300 active:bg-blue-400 active:text-white text-[#0000ff] text-xs mt-2 p-2 cursor-pointer">
         {type === "create" ? "Create" : "Update"}
       </button>
     </form>

@@ -11,12 +11,12 @@ const columns = [
   {
     header: "ID Number",
     accessor: "employeeId",
-    className: "font-semibold p-2",
+    className: "hidden sm:table-cell font-semibold p-2",
   },
   {
     header: "Employee Name",
     accessor: "name",
-    className: "hidden sm:table-cell font-semibold p-2",
+    className: "font-semibold p-2",
   },
   {
     header: "Department",
@@ -37,15 +37,15 @@ const Employees = () => {
       key={item.id}
       className="border-t border-[#ECEEF6] even:bg-slate-50 hover:bg-slate-100 active:bg-slate-200 text-xs text-[#333333]"
     >
-      <td className="p-1">{item.employeeId}</td>
-      <td className="hidden sm:table-cell p-1">{item.name}</td>
+      <td className="hidden sm:table-cell p-1">{item.employeeId}</td>
+      <td className="p-1">{item.name}</td>
       <td className="hidden sm:table-cell p-1">{item.department}</td>
       <td className="hidden sm:table-cell text-[#008000] p-1">
         {item.category}
       </td>
       <td className="p-1">
         <div className="flex items-center justify-center gap-2 text-base">
-          <div className="flex items-center justify-center rounded-full bg-[#ECEEF6] hover:bg-slate-300 active:bg-slate-400 active:text-white text-[#333333] p-1">
+          <div className="flex items-center justify-center rounded-full bg-[#ECEEF6] hover:bg-slate-300 active:bg-slate-400 active:text-white text-[#333333] p-1 cursor-pointer">
             <FormModal
               table="employee"
               type="update"
@@ -59,7 +59,7 @@ const Employees = () => {
               }}
             />
           </div>
-          <div className="flex items-center justify-center rounded-full bg-[#ECEEF6] hover:bg-slate-300 active:bg-slate-400 active:text-white text-[#333333] p-1">
+          <div className="flex items-center justify-center rounded-full bg-[#ECEEF6] hover:bg-slate-300 active:bg-slate-400 active:text-white text-[#333333] p-1 cursor-pointer">
             <FormModal
               table="employee"
               type="delete"
@@ -80,10 +80,10 @@ const Employees = () => {
           <TableSearch />
         </div>
         <div className="flex flex-row items-center gap-4">
-          <div>
+          <div className="cursor-pointer">
             <UploadButton />
           </div>
-          <div>
+          <div className="cursor-pointer">
             <FormModal table="employee" type="create" title="Add Employee" />
           </div>
         </div>

@@ -11,7 +11,7 @@ const columns = [
   {
     header: "Employee Name",
     accessor: "name",
-    className: "hidden sm:table-cell font-semibold p-2",
+    className: "font-semibold p-2",
   },
   {
     header: "Department",
@@ -41,22 +41,22 @@ const columns = [
   {
     header: "HDMF (GS)",
     accessor: "hdmf-gs",
-    className: "hidden sm:table-cell font-semibold p-2",
+    className: "hidden md:table-cell font-semibold p-2",
   },
   {
     header: "HDMF (PS)",
     accessor: "hdmf-ps",
-    className: "hidden sm:table-cell font-semibold p-2",
+    className: "hidden md:table-cell font-semibold p-2",
   },
   {
     header: "WTax",
     accessor: "wtax",
-    className: "hidden sm:table-cell font-semibold p-2",
+    className: "hidden md:table-cell font-semibold p-2",
   },
   {
     header: "SSS",
     accessor: "sss",
-    className: "hidden sm:table-cell font-semibold p-2",
+    className: "hidden md:table-cell font-semibold p-2",
   },
   { header: "Actions", accessor: "actions", className: "font-semibold p-2" },
 ];
@@ -67,19 +67,19 @@ const MandatoryDeductions = () => {
       key={item.id}
       className="border-t border-[#ECEEF6] even:bg-slate-50 hover:bg-slate-100 active:bg-slate-200 text-xs text-[#333333]"
     >
-      <td className="hidden sm:table-cell p-1">{item.name}</td>
+      <td className="p-1">{item.name}</td>
       <td className="hidden sm:table-cell p-1">{item.department}</td>
       <td className="hidden sm:table-cell p-1">{item.gsisgs}</td>
       <td className="hidden sm:table-cell p-1">{item.ec}</td>
       <td className="hidden sm:table-cell p-1">{item.gsisps}</td>
       <td className="hidden sm:table-cell p-1">{item.phic}</td>
-      <td className="hidden sm:table-cell p-1">{item.hdmfgs}</td>
-      <td className="hidden sm:table-cell p-1">{item.gsisps}</td>
-      <td className="hidden sm:table-cell p-1">{item.wtax}</td>
-      <td className="hidden sm:table-cell p-1">{item.sss}</td>
+      <td className="hidden md:table-cell p-1">{item.hdmfgs}</td>
+      <td className="hidden md:table-cell p-1">{item.gsisps}</td>
+      <td className="hidden md:table-cell p-1">{item.wtax}</td>
+      <td className="hidden md:table-cell p-1">{item.sss}</td>
       <td className="p-1">
         <div className="flex items-center justify-center gap-2 text-base">
-          <div className="flex items-center justify-center rounded-full bg-[#ECEEF6] hover:bg-slate-300 active:bg-slate-400 active:text-white text-[#333333] p-1">
+          <div className="flex items-center justify-center rounded-full bg-[#ECEEF6] hover:bg-slate-300 active:bg-slate-400 active:text-white text-[#333333] p-1 cursor-pointer">
             <FormModal
               table="deduction"
               type="update"
@@ -100,7 +100,7 @@ const MandatoryDeductions = () => {
               }}
             />
           </div>
-          <div className="flex items-center justify-center rounded-full bg-[#ECEEF6] hover:bg-slate-300 active:bg-slate-400 active:text-white text-[#333333] p-1">
+          <div className="flex items-center justify-center rounded-full bg-[#ECEEF6] hover:bg-slate-300 active:bg-slate-400 active:text-white text-[#333333] p-1 cursor-pointer">
             <FormModal
               table="deduction"
               type="delete"
@@ -121,15 +121,11 @@ const MandatoryDeductions = () => {
           <TableSearch />
         </div>
         <div className="flex flex-row items-center gap-4">
-          <div>
+          <div className="cursor-pointer">
             <UploadButton />
           </div>
-          <div>
-            <FormModal
-              table="deduction"
-              type="create"
-              title="Add Mandatory Deductions"
-            />
+          <div className="cursor-pointer">
+            <FormModal table="deduction" type="create" title="Add Deductions" />
           </div>
         </div>
       </div>

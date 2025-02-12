@@ -5,7 +5,7 @@ import UploadButton from "@/app/components/UploadButton";
 import DownloadButton from "@/app/components/DownloadButton";
 import Table from "@/app/components/Table";
 import Pagination from "@/app/components/Pagination";
-import { indivReportData } from "@/app/lib/data";
+import { indivSummaryData } from "@/app/lib/data";
 
 const columns = [
   {
@@ -19,28 +19,23 @@ const columns = [
     className: "font-semibold p-2",
   },
   {
-    header: "Time In (Morning)",
-    accessor: "timeinam",
+    header: "Gross Salary",
+    accessor: "salary",
     className: "hidden sm:table-cell font-semibold p-2",
   },
   {
-    header: "Time Out (Morning)",
-    accessor: "timeoutam",
-    className: "hidden md:table-cell font-semibold p-2",
+    header: "Late Deduction",
+    accessor: "deductions",
+    className: "hidden sm:table-cell font-semibold p-2",
   },
   {
-    header: "Time In (Afternoon)",
-    accessor: "timeinpm",
-    className: "hidden md:table-cell font-semibold p-2",
-  },
-  {
-    header: "Time Out (Afternoon)",
-    accessor: "timeoutpm",
+    header: "Total Earnings",
+    accessor: "earnings",
     className: "hidden sm:table-cell font-semibold p-2",
   },
 ];
 
-const SingleReportPage = () => {
+const SingleSummaryPage = () => {
   const renderRow = (item: any) => (
     <tr
       key={item.id}
@@ -48,10 +43,9 @@ const SingleReportPage = () => {
     >
       <td className="p-2">{item.date}</td>
       <td className="p-2">{item.name}</td>
-      <td className="hidden sm:table-cell p-2">{item.timeinam}</td>
-      <td className="hidden md:table-cell p-2">{item.timeoutam}</td>
-      <td className="hidden md:table-cell p-2">{item.timeinpm}</td>
-      <td className="hidden sm:table-cell p-2">{item.timeoutpm}</td>
+      <td className="hidden sm:table-cell p-2">{item.salary}</td>
+      <td className="hidden sm:table-cell p-2">{item.deductions}</td>
+      <td className="hidden sm:table-cell p-2">{item.earnings}</td>
     </tr>
   );
 
@@ -73,7 +67,11 @@ const SingleReportPage = () => {
       </div>
 
       {/* Table */}
-      <Table columns={columns} data={indivReportData} rowRenderer={renderRow} />
+      <Table
+        columns={columns}
+        data={indivSummaryData}
+        rowRenderer={renderRow}
+      />
 
       {/* Pagination */}
       <Pagination />
@@ -81,4 +79,4 @@ const SingleReportPage = () => {
   );
 };
 
-export default SingleReportPage;
+export default SingleSummaryPage;
