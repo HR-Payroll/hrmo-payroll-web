@@ -23,7 +23,7 @@ export default function DashboardLayout({
         </Link>
         <Sidebar />
       </div>
-      <div className="w-[80%] md:w-[90%] lg:w-[76%] xl:w-[80%] bg-[#F8FAFB] overflow-scroll">
+      <div className="w-[80%] md:w-[90%] lg:w-[76%] xl:w-[80%] bg-[#F8FAFB] overflow-y-scroll">
         <Navbar />
         {children}
       </div>

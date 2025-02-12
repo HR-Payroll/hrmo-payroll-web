@@ -2,6 +2,8 @@
 import React, { JSX, useState } from "react";
 import DepartmentForm from "@/app/components/forms/DepartmentForm";
 import EmployeeForm from "@/app/components/forms/EmployeeForm";
+import CompRateForm from "./forms/CompRateForm";
+import MandDeducForm from "./forms/MandDeducForm";
 import {
   MdModeEditOutline,
   MdDeleteOutline,
@@ -26,6 +28,8 @@ const forms: {
 } = {
   department: (type, data) => <DepartmentForm type={type} data={data} />,
   employee: (type, data) => <EmployeeForm type={type} data={data} />,
+  rate: (type, data) => <CompRateForm type={type} data={data} />,
+  deduction: (type, data) => <MandDeducForm type={type} data={data} />,
 };
 
 const FormModal = ({
@@ -35,7 +39,7 @@ const FormModal = ({
   data,
   id,
 }: {
-  table: "department" | "employee";
+  table: "department" | "employee" | "rate" | "deduction";
   type: "create" | "update" | "delete";
   title: string;
   data?: any;

@@ -6,13 +6,6 @@ import { z } from "zod";
 import InputField from "../InputField";
 
 const schema = z.object({
-  idnum: z.string().min(8, { message: "*Required" }),
-  empname: z
-    .string()
-    .min(3, { message: "Employee name must be at least 3 characters long!" })
-    .max(100, {
-      message: "Employee name must be at most 20 characters long!",
-    }),
   category: z.enum(["Regular", "Casual", "Job Order"], {
     message: "*Required",
   }),
@@ -28,6 +21,16 @@ const schema = z.object({
       message: "*Required",
     }
   ),
+  employee: z.enum(
+    ["CAILING, CHRISTY", "CABELTO, MICHELLE ANN", "VALCURZA, MA. THERESA"],
+    {
+      message: "*Required",
+    }
+  ),
+  rate: z.string().min(8, { message: "*Required" }),
+  type: z.enum(["Daily", "Weekly", "Bi-weekly", "Monthly", "Contractual"], {
+    message: "*Required",
+  }),
 });
 
 type Inputs = z.infer<typeof schema>;
@@ -57,22 +60,8 @@ const EmployeeForm = ({
       onSubmit={onSubmit}
     >
       <h1 className="text-center text-sm font-semibold">
-        {type === "create" ? "Add Employee" : "Edit Employee"}
+        {type === "create" ? "Add Compensation Rate" : "Edit Compensation Rate"}
       </h1>
-      <InputField
-        label="ID Number"
-        name="idnum"
-        defaultValue={data?.idnum}
-        register={register}
-        error={errors?.idnum}
-      />
-      <InputField
-        label="Employee Name"
-        name="empname"
-        defaultValue={data?.empname}
-        register={register}
-        error={errors?.empname}
-      />
       <div className="flex flex-col text-xs gap-2 text-[#333333]">
         <label className="text-left">Category</label>
         <select
@@ -106,6 +95,49 @@ const EmployeeForm = ({
         {errors.deptname?.message && (
           <p className="text-[#ff0000] text-[10px]">
             {errors.deptname.message.toString()}
+          </p>
+        )}
+      </div>
+      <div className="flex flex-col text-xs gap-2 text-[#333333]">
+        <label className="text-left">Employee</label>
+        <select
+          className="w-full bg-transparent rounded-md ring-2 ring-[#ECEEF6] focus:outline-2 focus:outline-blue-200 p-2"
+          {...register("employee")}
+          defaultValue={data?.employee}
+        >
+          <option value="CAILING, CHRISTY">CAILING, CHRISTY</option>
+          <option value="CABELTO, MICHELLE ANN">CABELTO, MICHELLE ANN</option>
+          <option value="VALCURZA, MA. THERESA">VALCURZA, MA. THERESA</option>
+        </select>
+        {errors.employee?.message && (
+          <p className="text-[#ff0000] text-[10px]">
+            {errors.employee.message.toString()}
+          </p>
+        )}
+      </div>
+      <InputField
+        label="Rate"
+        name="rate"
+        defaultValue={data?.rate}
+        register={register}
+        error={errors?.rate}
+      />
+      <div className="flex flex-col text-xs gap-2 text-[#333333]">
+        <label className="text-left">Type</label>
+        <select
+          className="w-full bg-transparent rounded-md ring-2 ring-[#ECEEF6] focus:outline-2 focus:outline-blue-200 p-2"
+          {...register("type")}
+          defaultValue={data?.type}
+        >
+          <option value="Daily">Daily</option>
+          <option value="Weekly">Weekly</option>
+          <option value="Bi-weekly">Bi-weekly</option>
+          <option value="Monthly">Monthly</option>
+          <option value="Contractual">Contractual</option>
+        </select>
+        {errors.type?.message && (
+          <p className="text-[#ff0000] text-[10px]">
+            {errors.type.message.toString()}
           </p>
         )}
       </div>

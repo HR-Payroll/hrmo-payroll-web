@@ -39,7 +39,10 @@ const DepartmentForm = ({
   });
 
   return (
-    <form className="flex flex-col gap-4 text-[#333333]" onSubmit={onSubmit}>
+    <form
+      className="flex flex-col gap-4 text-[#333333] p-4"
+      onSubmit={onSubmit}
+    >
       <h1 className="text-center text-sm font-semibold">
         {type === "create" ? "Add Department" : "Edit Department"}
       </h1>
