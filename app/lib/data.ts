@@ -141,7 +141,10 @@ export const indivReportData = [
   {
     id: 1,
     date: "01/02/2025",
+    employeeId: "2025010001",
     name: "CAILING, CHRISTY",
+    department: "Accounting Office",
+    category: "Job Order",
     timeinam: "08:00 AM",
     timeoutam: "12:00 PM",
     timeinpm: "01:00 PM",
@@ -150,7 +153,10 @@ export const indivReportData = [
   {
     id: 2,
     date: "02/02/2025",
+    employeeId: "2025010001",
     name: "CAILING, CHRISTY",
+    department: "Accounting Office",
+    category: "Job Order",
     timeinam: "08:00 AM",
     timeoutam: "12:00 PM",
     timeinpm: "01:00 PM",
@@ -159,7 +165,10 @@ export const indivReportData = [
   {
     id: 3,
     date: "03/02/2025",
+    employeeId: "2025010001",
     name: "CAILING, CHRISTY",
+    department: "Accounting Office",
+    category: "Job Order",
     timeinam: "08:00 AM",
     timeoutam: "12:00 PM",
     timeinpm: "01:00 PM",
@@ -168,7 +177,10 @@ export const indivReportData = [
   {
     id: 4,
     date: "04/02/2025",
+    employeeId: "2025010001",
     name: "CAILING, CHRISTY",
+    department: "Accounting Office",
+    category: "Job Order",
     timeinam: "08:00 AM",
     timeoutam: "12:00 PM",
     timeinpm: "01:00 PM",
@@ -177,7 +189,10 @@ export const indivReportData = [
   {
     id: 5,
     date: "05/02/2025",
+    employeeId: "2025010001",
     name: "CAILING, CHRISTY",
+    department: "Accounting Office",
+    category: "Job Order",
     timeinam: "08:00 AM",
     timeoutam: "12:00 PM",
     timeinpm: "01:00 PM",
@@ -186,7 +201,10 @@ export const indivReportData = [
   {
     id: 6,
     date: "06/02/2025",
+    employeeId: "2025010001",
     name: "CAILING, CHRISTY",
+    department: "Accounting Office",
+    category: "Job Order",
     timeinam: "08:00 AM",
     timeoutam: "12:00 PM",
     timeinpm: "01:00 PM",
@@ -195,7 +213,10 @@ export const indivReportData = [
   {
     id: 7,
     date: "07/02/2025",
+    employeeId: "2025010001",
     name: "CAILING, CHRISTY",
+    department: "Accounting Office",
+    category: "Job Order",
     timeinam: "08:00 AM",
     timeoutam: "12:00 PM",
     timeinpm: "01:00 PM",
@@ -204,7 +225,10 @@ export const indivReportData = [
   {
     id: 8,
     date: "08/02/2025",
+    employeeId: "2025010001",
     name: "CAILING, CHRISTY",
+    department: "Accounting Office",
+    category: "Job Order",
     timeinam: "08:00 AM",
     timeoutam: "12:00 PM",
     timeinpm: "01:00 PM",
@@ -213,7 +237,10 @@ export const indivReportData = [
   {
     id: 9,
     date: "09/02/2025",
+    employeeId: "2025010001",
     name: "CAILING, CHRISTY",
+    department: "Accounting Office",
+    category: "Job Order",
     timeinam: "08:00 AM",
     timeoutam: "12:00 PM",
     timeinpm: "01:00 PM",
@@ -222,7 +249,10 @@ export const indivReportData = [
   {
     id: 10,
     date: "10/02/2025",
+    employeeId: "2025010001",
     name: "CAILING, CHRISTY",
+    department: "Accounting Office",
+    category: "Job Order",
     timeinam: "08:00 AM",
     timeoutam: "12:00 PM",
     timeinpm: "01:00 PM",
@@ -242,7 +272,7 @@ export const rateData = [
   },
   {
     id: 2,
-    employeeId: "2025010001",
+    employeeId: "2025010002",
     name: "CABELTO, MICHELLE ANN",
     department: "Accounting Office",
     category: "Job Order",
@@ -251,7 +281,7 @@ export const rateData = [
   },
   {
     id: 3,
-    employeeId: "2025010001",
+    employeeId: "2025010003",
     name: "VALCURZA, MA. THERESA",
     department: "Accounting Office",
     category: "Job Order",
@@ -263,8 +293,10 @@ export const rateData = [
 export const mandDeducData = [
   {
     id: 1,
+    employeeId: "2025010001",
     name: "CAILING, CHRISTY",
     department: "Accounting Office",
+    category: "Job Order",
     gsisgs: "",
     ec: "",
     gsisps: "",
@@ -276,8 +308,10 @@ export const mandDeducData = [
   },
   {
     id: 2,
+    employeeId: "2025010002",
     name: "CABELTO, MICHELLE ANN",
     department: "Accounting Office",
+    category: "Job Order",
     gsisgs: "",
     ec: "",
     gsisps: "",
@@ -289,8 +323,10 @@ export const mandDeducData = [
   },
   {
     id: 3,
+    employeeId: "2025010003",
     name: "VALCURZA, MA. THERESA",
     department: "Accounting Office",
+    category: "Job Order",
     gsisgs: "",
     ec: "",
     gsisps: "",
@@ -305,8 +341,10 @@ export const mandDeducData = [
 export const loanDeducData = [
   {
     id: 1,
+    employeeId: "2025010001",
     name: "CAILING, CHRISTY",
     department: "Accounting Office",
+    category: "Job Order",
     mplhdmf: "",
     gfal: "",
     landbank: "",
@@ -320,8 +358,10 @@ export const loanDeducData = [
   },
   {
     id: 2,
+    employeeId: "2025010002",
     name: "CABELTO, MICHELLE ANN",
     department: "Accounting Office",
+    category: "Job Order",
     mplhdmf: "",
     gfal: "",
     landbank: "",
@@ -335,8 +375,10 @@ export const loanDeducData = [
   },
   {
     id: 3,
+    employeeId: "2025010003",
     name: "VALCURZA, MA. THERESA",
     department: "Accounting Office",
+    category: "Job Order",
     mplhdmf: "",
     gfal: "",
     landbank: "",

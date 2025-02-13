@@ -11,7 +11,7 @@ const TableSearch = () => {
       <input
         type="text"
         placeholder="Search"
-        className="bg-transparent focus:ring-2 focus:ring-slate-300 p-2"
+        className="w-full bg-transparent focus:ring-2 focus:ring-slate-300 px-2 py-1.5"
       ></input>
     </div>
   );

@@ -1,6 +1,8 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
+import PageInfo from "@/app/components/PageInfo";
 import TableSearch from "@/app/components/TableSearch";
+import Filters from "@/app/components/Filters";
 import UploadButton from "@/app/components/UploadButton";
 import FormModal from "@/app/components/FormModal";
 import Table from "@/app/components/Table";
@@ -62,6 +64,27 @@ const columns = [
 ];
 
 const MandatoryDeductions = () => {
+  const [filteredData, setFilteredData] = useState(mandDeducData);
+
+  const handleFilterChange = ({
+    category,
+    department,
+  }: {
+    category: string;
+    department: string;
+  }) => {
+    let filtered = mandDeducData;
+
+    if (category) {
+      filtered = filtered.filter((emp) => emp.category === category);
+    }
+    if (department) {
+      filtered = filtered.filter((emp) => emp.department === department);
+    }
+
+    setFilteredData(filtered);
+  };
+
   const renderRow = (item: any) => (
     <tr
       key={item.id}
@@ -114,25 +137,31 @@ const MandatoryDeductions = () => {
   );
 
   return (
-    <div className="flex-1 rounded-md bg-white border-2 border-[#ECEEF6] gap-4 m-4 mt-0 p-4 text-[#333333]">
+    <div className="flex-1 rounded-md bg-white border-2 border-[#ECEEF6] gap-4 m-4 mt-10 p-4 text-[#333333]">
+      {/* Page Information */}
+      <div className="absolute top-0 left-0 p-4">
+        <PageInfo
+          title="Payroll Register"
+          info="Manage your employee's mandatory deductions for the payroll register in this page."
+        />
+      </div>
       {/* Search and Buttons */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row justify-between gap-4">
         <div>
           <TableSearch />
         </div>
-        <div className="flex flex-row items-center gap-4">
-          <div className="cursor-pointer">
-            <UploadButton />
+        <div className="flex flex-col md:flex-row items-center justify-center gap-4 cursor-pointer">
+          <div>
+            <Filters onFilterChange={handleFilterChange} />
           </div>
-          <div className="cursor-pointer">
+          <div className="flex flex-row items-center justify-center gap-4 cursor-pointer">
+            <UploadButton />
             <FormModal table="deduction" type="create" title="Add Deductions" />
           </div>
         </div>
       </div>
-
       {/* Table */}
-      <Table columns={columns} data={mandDeducData} rowRenderer={renderRow} />
-
+      <Table columns={columns} data={filteredData} rowRenderer={renderRow} />
       {/* Pagination */}
       <Pagination />
     </div>

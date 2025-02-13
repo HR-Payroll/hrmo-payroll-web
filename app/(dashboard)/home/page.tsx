@@ -1,20 +1,28 @@
 import React from "react";
+import PageInfo from "@/app/components/PageInfo";
 import TotalCard from "@/app/components/TotalCard";
+import StatsChart from "@/app/components/EmpStatsChart";
+import PayCalendar from "@/app/components/PayCalendar";
+import CompChart from "@/app/components/EmpCompChart";
 import {
   MdWorkOutline,
   MdOutlineGroups,
   MdOutlineGroups2,
   MdOutlineGroups3,
 } from "react-icons/md";
-import StatsChart from "@/app/components/EmpStatsChart";
-import PayCalendar from "@/app/components/PayCalendar";
-import CompChart from "@/app/components/EmpCompChart";
 
 const HomePage = () => {
   return (
     <div className="flex flex-col md:flex-row gap-4 px-4 pb-4">
+      {/* Page Information */}
+      <div className="absolute top-0 left-0 p-4">
+        <PageInfo
+          title="Dashboard"
+          info="Welcome to HRMO - Payroll Management System. Here's your overview."
+        />
+      </div>
       {/* LEFT */}
-      <div className="w-full h-full lg:w-2/3">
+      <div className="w-full h-full lg:w-2/3 mt-10">
         {/* TOTAL CARDS */}
         <div className="flex flex-wrap justify-between gap-4">
           <TotalCard
@@ -48,7 +56,7 @@ const HomePage = () => {
         </div>
       </div>
       {/* RIGHT */}
-      <div className="w-full lg:w-1/3 flex flex-col gap-4">
+      <div className="w-full lg:w-1/3 flex flex-col gap-4 mt-10">
         {/* PAY DATE */}
         <div className="w-full h-full">
           <PayCalendar />
