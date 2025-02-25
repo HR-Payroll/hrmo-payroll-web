@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 
 const data = [
   { name: "Dept A", value: 10 },
@@ -85,12 +85,18 @@ const EmployeeCompositionChart = () => {
       <div>
         <ResponsiveContainer width="100%" height={200}>
           <PieChart>
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "#F8FAFB",
+                borderRadius: "5px",
+                color: "#333",
+              }}
+              cursor={{ fill: "rgba(255, 255, 255, 0.2)" }}
+            />
             <Pie
               data={data}
               cx="50%"
               cy="50%"
-              labelLine={false}
-              label={renderCustomizedLabel}
               innerRadius={20}
               outerRadius={95}
               fill="#8884d8"

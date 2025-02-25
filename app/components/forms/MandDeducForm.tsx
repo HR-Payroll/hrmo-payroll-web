@@ -39,13 +39,7 @@ const schema = z.object({
 
 type Inputs = z.infer<typeof schema>;
 
-const MandDeductionForm = ({
-  type,
-  data,
-}: {
-  type: "create" | "update";
-  data?: any;
-}) => {
+const MandDeductionForm = ({ data }: { data?: any }) => {
   const {
     register,
     handleSubmit,
@@ -64,9 +58,7 @@ const MandDeductionForm = ({
       onSubmit={onSubmit}
     >
       <h1 className="text-center text-sm font-semibold">
-        {type === "create"
-          ? "Add Mandatory Deductions"
-          : "Edit Mandatory Deductions"}
+        Add Mandatory Deductions
       </h1>
       <div className="overflow-y-scroll flex flex-col gap-4 p-4">
         <div className="flex flex-col text-xs gap-2 text-[#333333]">
@@ -179,7 +171,7 @@ const MandDeductionForm = ({
           error={errors?.sss}
         />
         <button className="w-full rounded-md bg-blue-200 hover:bg-blue-300 active:bg-blue-400 active:text-white text-[#0000ff] text-xs mt-2 p-2 cursor-pointer">
-          {type === "create" ? "Create" : "Update"}
+          Create
         </button>
       </div>
     </form>

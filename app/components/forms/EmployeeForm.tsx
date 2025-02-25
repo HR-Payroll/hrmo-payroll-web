@@ -32,13 +32,7 @@ const schema = z.object({
 
 type Inputs = z.infer<typeof schema>;
 
-const EmployeeForm = ({
-  type,
-  data,
-}: {
-  type: "create" | "update";
-  data?: any;
-}) => {
+const EmployeeForm = ({ data }: { data?: any }) => {
   const {
     register,
     handleSubmit,
@@ -56,9 +50,7 @@ const EmployeeForm = ({
       className="flex flex-col gap-4 text-[#333333] p-4"
       onSubmit={onSubmit}
     >
-      <h1 className="text-center text-sm font-semibold">
-        {type === "create" ? "Add Employee" : "Edit Employee"}
-      </h1>
+      <h1 className="text-center text-sm font-semibold">Add Employee</h1>
       <InputField
         label="ID Number"
         name="idnum"
@@ -110,7 +102,7 @@ const EmployeeForm = ({
         )}
       </div>
       <button className="w-full rounded-md bg-blue-200 hover:bg-blue-300 active:bg-blue-400 active:text-white text-[#0000ff] text-xs mt-2 p-2 cursor-pointer">
-        {type === "create" ? "Create" : "Update"}
+        Create
       </button>
     </form>
   );

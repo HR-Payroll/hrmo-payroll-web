@@ -1,12 +1,23 @@
 "use client";
 import React from "react";
-import { MdOutlineFileUpload } from "react-icons/md";
+import { MdOutlineUploadFile } from "react-icons/md";
 
 const UploadButton = () => {
   return (
-    <div className="flex flex-row items-center justify-center rounded-md bg-[#ECEEF6] hover:bg-slate-300 active:bg-slate-400 active:text-white gap-1 py-2 px-6 text-[#333333]">
-      <MdOutlineFileUpload className="text-base" />
-      <button className="hidden lg:block text-xs">Upload File</button>
+    <div className="flex flex-row items-center justify-center rounded-md bg-[#ECEEF6] hover:bg-slate-300 active:bg-slate-400 active:text-white py-2 px-6">
+      <label
+        className="flex items-center text-xs text-[#333333] gap-2 cursor-pointer"
+        htmlFor="img"
+      >
+        <MdOutlineUploadFile size={16} />
+        <span>Upload File</span>
+      </label>
+      <input
+        type="file"
+        id="img"
+        className="hidden"
+        accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+      />
     </div>
   );
 };

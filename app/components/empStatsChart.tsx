@@ -38,7 +38,14 @@ const EmployeeStatsChart = () => {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
-            <Tooltip />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "#F8FAFB",
+                borderRadius: "5px",
+                color: "#333",
+              }}
+              cursor={{ fill: "rgba(255, 255, 255, 0.2)" }}
+            />
             <Legend />
             <Bar dataKey="reg" fill="#3b82f6" />
             <Bar dataKey="cas" fill="#60a5fa" />

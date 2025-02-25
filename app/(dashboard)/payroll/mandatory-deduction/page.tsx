@@ -1,169 +1,116 @@
-"use client";
-import React, { useState } from "react";
-import PageInfo from "@/app/components/PageInfo";
-import TableSearch from "@/app/components/TableSearch";
-import Filters from "@/app/components/Filters";
+import React from "react";
 import UploadButton from "@/app/components/UploadButton";
-import FormModal from "@/app/components/FormModal";
-import Table from "@/app/components/Table";
-import Pagination from "@/app/components/Pagination";
+import AddButton from "@/app/components/AddButton";
+import DataTable from "@/app/components/DataTable";
+import { GridColDef } from "@mui/x-data-grid";
 import { mandDeducData } from "@/app/lib/data";
 
-const columns = [
+const columns: GridColDef[] = [
   {
-    header: "Employee Name",
-    accessor: "name",
-    className: "font-semibold p-2",
+    field: "employee",
+    headerName: "Employee Name",
+    headerClassName: "custom-header",
+    flex: 1.2,
+    align: "center",
+    headerAlign: "center",
   },
   {
-    header: "Department",
-    accessor: "department",
-    className: "hidden sm:table-cell font-semibold p-2",
+    field: "department",
+    headerName: "Department",
+    headerClassName: "custom-header",
+    flex: 0.6,
+    align: "center",
+    headerAlign: "center",
   },
   {
-    header: "GSIS (GS)",
-    accessor: "gsisgs",
-    className: "hidden sm:table-cell font-semibold p-2",
+    field: "gsisgs",
+    headerName: "GSIS(GS)",
+    headerClassName: "custom-header",
+    flex: 0.5,
+    align: "center",
+    headerAlign: "center",
+    editable: true,
   },
   {
-    header: "EC",
-    accessor: "ec",
-    className: "hidden sm:table-cell font-semibold p-2",
+    field: "ec",
+    headerName: "EC",
+    headerClassName: "custom-header",
+    flex: 0.5,
+    align: "center",
+    headerAlign: "center",
+    editable: true,
   },
   {
-    header: "GSIS (PS)",
-    accessor: "gsisps",
-    className: "hidden sm:table-cell font-semibold p-2",
+    field: "gsisps",
+    headerName: "GSIS(PS)",
+    headerClassName: "custom-header",
+    flex: 0.5,
+    align: "center",
+    headerAlign: "center",
+    editable: true,
   },
   {
-    header: "PHIC",
-    accessor: "phic",
-    className: "hidden sm:table-cell font-semibold p-2",
+    field: "phic",
+    headerName: "PHIC",
+    headerClassName: "custom-header",
+    flex: 0.5,
+    align: "center",
+    headerAlign: "center",
+    editable: true,
   },
   {
-    header: "HDMF (GS)",
-    accessor: "hdmf-gs",
-    className: "hidden md:table-cell font-semibold p-2",
+    field: "hdmfgs",
+    headerName: "HDMF(GS)",
+    headerClassName: "custom-header",
+    flex: 0.5,
+    align: "center",
+    headerAlign: "center",
+    editable: true,
   },
   {
-    header: "HDMF (PS)",
-    accessor: "hdmf-ps",
-    className: "hidden md:table-cell font-semibold p-2",
+    field: "hdmfps",
+    headerName: "HDMF(PS)",
+    headerClassName: "custom-header",
+    flex: 0.5,
+    align: "center",
+    headerAlign: "center",
+    editable: true,
   },
   {
-    header: "WTax",
-    accessor: "wtax",
-    className: "hidden md:table-cell font-semibold p-2",
+    field: "wtax",
+    headerName: "WTax",
+    headerClassName: "custom-header",
+    flex: 0.5,
+    align: "center",
+    headerAlign: "center",
+    editable: true,
   },
   {
-    header: "SSS",
-    accessor: "sss",
-    className: "hidden md:table-cell font-semibold p-2",
+    field: "sss",
+    headerName: "SSS",
+    headerClassName: "custom-header",
+    flex: 0.5,
+    align: "center",
+    headerAlign: "center",
+    editable: true,
   },
-  { header: "Actions", accessor: "actions", className: "font-semibold p-2" },
 ];
 
 const MandatoryDeductions = () => {
-  const [filteredData, setFilteredData] = useState(mandDeducData);
-
-  const handleFilterChange = ({
-    category,
-    department,
-  }: {
-    category: string;
-    department: string;
-  }) => {
-    let filtered = mandDeducData;
-
-    if (category) {
-      filtered = filtered.filter((emp) => emp.category === category);
-    }
-    if (department) {
-      filtered = filtered.filter((emp) => emp.department === department);
-    }
-
-    setFilteredData(filtered);
-  };
-
-  const renderRow = (item: any) => (
-    <tr
-      key={item.id}
-      className="border-t border-[#ECEEF6] even:bg-slate-50 hover:bg-slate-100 active:bg-slate-200 text-xs text-[#333333]"
-    >
-      <td className="p-1">{item.name}</td>
-      <td className="hidden sm:table-cell p-1">{item.department}</td>
-      <td className="hidden sm:table-cell p-1">{item.gsisgs}</td>
-      <td className="hidden sm:table-cell p-1">{item.ec}</td>
-      <td className="hidden sm:table-cell p-1">{item.gsisps}</td>
-      <td className="hidden sm:table-cell p-1">{item.phic}</td>
-      <td className="hidden md:table-cell p-1">{item.hdmfgs}</td>
-      <td className="hidden md:table-cell p-1">{item.gsisps}</td>
-      <td className="hidden md:table-cell p-1">{item.wtax}</td>
-      <td className="hidden md:table-cell p-1">{item.sss}</td>
-      <td className="p-1">
-        <div className="flex items-center justify-center gap-2 text-base">
-          <div className="flex items-center justify-center rounded-full bg-[#ECEEF6] hover:bg-slate-300 active:bg-slate-400 active:text-white text-[#333333] p-1 cursor-pointer">
-            <FormModal
-              table="deduction"
-              type="update"
-              title="Edit Mandatory Deductions"
-              data={{
-                id: 1,
-                category: "Job Order",
-                deptname: "Accounting Office",
-                empname: "CAILING, CHRISTY",
-                gsisgs: "0.00",
-                ec: "0.00",
-                gsisps: "0.00",
-                phic: "0.00",
-                hdmfgs: "0.00",
-                hdmfps: "0.00",
-                wtax: "0.00",
-                sss: "0.00",
-              }}
-            />
-          </div>
-          <div className="flex items-center justify-center rounded-full bg-[#ECEEF6] hover:bg-slate-300 active:bg-slate-400 active:text-white text-[#333333] p-1 cursor-pointer">
-            <FormModal
-              table="deduction"
-              type="delete"
-              title="Delete Mandatory Deductions"
-              id={item.id}
-            />
-          </div>
-        </div>
-      </td>
-    </tr>
-  );
-
   return (
-    <div className="flex-1 rounded-md bg-white border-2 border-[#ECEEF6] gap-4 m-4 mt-10 p-4 text-[#333333]">
-      {/* Page Information */}
-      <div className="absolute top-0 left-0 p-4">
-        <PageInfo
-          title="Payroll Register"
-          info="Manage your employee's mandatory deductions for the payroll register in this page."
-        />
-      </div>
-      {/* Search and Buttons */}
-      <div className="flex flex-col md:flex-row justify-between gap-4">
-        <div>
-          <TableSearch />
-        </div>
-        <div className="flex flex-col md:flex-row items-center justify-center gap-4 cursor-pointer">
-          <div>
-            <Filters onFilterChange={handleFilterChange} />
-          </div>
-          <div className="flex flex-row items-center justify-center gap-4 cursor-pointer">
-            <UploadButton />
-            <FormModal table="deduction" type="create" title="Add Deductions" />
-          </div>
+    <div className="flex-1 rounded-md bg-white border-2 border-[#ECEEF6] gap-4 m-4 mt-10 sm:mt-0 p-4 text-[#333333]">
+      <div className="flex flex-row items-center justify-between gap-4">
+        <h1 className="text-base font-semibold text-[#333333]">
+          Mandatory Deductions
+        </h1>
+        <div className="flex flex-row items-center justify-end gap-2 sm:gap-4 cursor-pointer">
+          <UploadButton />
+          <AddButton table="deduction" title="Add Deductions" />
         </div>
       </div>
-      {/* Table */}
-      <Table columns={columns} data={filteredData} rowRenderer={renderRow} />
-      {/* Pagination */}
-      <Pagination />
+      <div className="mt-4">
+        <DataTable columns={columns} rows={mandDeducData} />
+      </div>
     </div>
   );
 };
