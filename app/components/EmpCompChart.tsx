@@ -25,28 +25,7 @@ const data = [
   { name: "Dept T", value: 105 },
 ];
 
-const COLORS = [
-  "#99f6e4",
-  "#a5f3fc",
-  "#bae6fd",
-  "#bfdbfe",
-  "#c7d2fe",
-  "#5eead4",
-  "#67e8f9",
-  "#7dd3fc",
-  "#93c5fd",
-  "#a5b4fc",
-  "#2dd4bf",
-  "#22d3ee",
-  "#38bdf8",
-  "#60a5fa",
-  "#818cf8",
-  "#14b8a6",
-  "#06b6d4",
-  "#0ea5e9",
-  "#3b82f6",
-  "#6366f1",
-];
+const COLORS = ["#3b82f6", "#60a5fa", "#93c5fd"];
 
 const renderCustomizedLabel = ({
   cx,
@@ -91,7 +70,7 @@ const EmployeeCompositionChart = () => {
                 borderRadius: "5px",
                 color: "#333",
               }}
-              cursor={{ fill: "rgba(255, 255, 255, 0.2)" }}
+              cursor={{ fill: "rgba(219, 234, 254, 0.5)" }}
             />
             <Pie
               data={data}

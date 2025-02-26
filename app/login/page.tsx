@@ -1,40 +1,48 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 const LoginPage = () => {
   return (
-    <div className="w-screen h-screen flex flex-col justify-center items-center font-sans">
-      <form className="w-sm h-fit flex flex-col items-start gap-3 rounded-md bg-gray-50 p-10 drop-shadow-[0_0_250px_rgba(59,130,246,0.80)]  border-2 border-indigo-50">
-        <h1 className="text-2xl font-semibold text-neutral-800">
-          Administrator Log In
-        </h1>
+    <div className="w-screen h-screen flex flex-col justify-center items-center bg-radial from-blue-500/50 from-5% to-[#F8FAFB] to-70% z-50- text-[#333333] text-xs font-[family-name:var(--font-arimo)] selection:bg-blue-200 selection:text-[#0000ff]">
+      <form className="w-fit h-fit flex flex-col justify-center items-center gap-4 rounded-md bg-white p-8 border-2 border-[#ECEEF6]">
+        <h1 className="text-base font-semibold">Administrator Log In</h1>
         <Image
           src="/login.png"
           alt="Admin Log In"
-          width={500}
-          height={500}
-          className="rounded-sm"
+          width={300}
+          height={300}
+          className="rounded-md"
         ></Image>
-        <p className="text-neutral-800 text-base">Log In Identification</p>
-        <input
-          type="text"
-          placeholder="username"
-          className="w-full py-2 pl-6 bg-white border-2 border-indigo-50 rounded-sm"
-        ></input>
-        <p className="text-neutral-800 text-base">Password</p>
-        <input
-          type="password"
-          placeholder="password"
-          className="w-full py-2 pl-6 bg-white border-2 border-indigo-50 rounded-sm"
-        ></input>
-        <p className="text-blue-700 text-base">Forgot password?</p>
-        <button className="w-full rounded-sm bg-blue-700/20 py-2 text-blue-700 text-base">
-          Log In
-        </button>
+        <div className="w-full flex flex-col gap-2">
+          <label>Log In Identification</label>
+          <input
+            type="text"
+            placeholder="Username"
+            className="py-2 pl-4 bg-transparent border-2 border-[#ECEEF6] rounded-md focus:outline focus:outline-blue-500"
+          ></input>
+        </div>
+        <div className="w-full flex flex-col gap-2">
+          <label>Password</label>
+          <input
+            type="password"
+            placeholder="Password"
+            className="py-2 pl-4 bg-transparent border-2 border-[#ECEEF6] rounded-md focus:outline focus:outline-blue-500"
+          ></input>
+        </div>
+        <div className="w-full flex flex-col gap-4">
+          <Link
+            href={"#"}
+            className="text-blue-600 hover:text-[#0000ff] cursor-pointer"
+          >
+            Forgot password?
+          </Link>
+          <button className="w-full rounded-md bg-blue-200 hover:bg-blue-300 text-[#0000ff] active:text-white font-semibold py-2 cursor-pointer">
+            <Link href="./home">Log In</Link>
+          </button>
+        </div>
       </form>
-      <div className="mt-2 text-neutral-800 text-base">
-        Copyright © 2025 HR Payroll Management
-      </div>
+      <div className="mt-2">Copyright © 2025 HRMO Payroll Management</div>
     </div>
   );
 };

@@ -10,7 +10,7 @@ const UploadButton = () => {
         htmlFor="img"
       >
         <MdOutlineUploadFile size={16} />
-        <span>Upload File</span>
+        <span className="hidden lg:block text-xs">Upload File</span>
       </label>
       <input
         type="file"

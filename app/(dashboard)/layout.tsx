@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import Sidebar from "@/app/components/Sidebar";
-import Navbar from "@/app/components/Navbar";
+import Topbar from "@/app/components/Topbar";
 
 export default function DashboardLayout({
   children,
@@ -9,7 +9,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="h-screen flex">
+    <div className="h-screen flex font-[family-name:var(--font-arimo)] selection:bg-blue-200 selection:text-[#0000ff]">
       {/* LEFT */}
       <div className="w-[20%] md:w-[10%] lg:w-[24%] xl:w-[20%] p-4 bg-white border-r-1 border-[#E8E8E8] drop-shadow-xl">
         <Link
@@ -25,9 +25,9 @@ export default function DashboardLayout({
         <Sidebar />
       </div>
       {/* RIGHT */}
-      <div className="relative w-[80%] md:w-[90%] lg:w-[76%] xl:w-[80%] bg-[#F8FAFB] overflow-y-scroll">
+      <div className="w-[80%] md:w-[90%] lg:w-[76%] xl:w-[80%] bg-[#F8FAFB]">
         <div className="flex items-center justify-between p-4">
-          <Navbar />
+          <Topbar />
         </div>
         {children}
       </div>

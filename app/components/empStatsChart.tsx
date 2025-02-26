@@ -35,21 +35,40 @@ const EmployeeStatsChart = () => {
       <div className="mt-2 -ml-8">
         <ResponsiveContainer width="100%" height={320}>
           <BarChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
+            <CartesianGrid
+              strokeDasharray="3 3"
+              vertical={false}
+              stroke="#ECEEF6"
+            />
+            <XAxis dataKey="name" axisLine={false} tickLine={false} />
+            <YAxis axisLine={false} tickLine={false} />
             <Tooltip
               contentStyle={{
                 backgroundColor: "#F8FAFB",
                 borderRadius: "5px",
                 color: "#333",
               }}
-              cursor={{ fill: "rgba(255, 255, 255, 0.2)" }}
+              cursor={{ fill: "rgba(219, 234, 254, 0.5)" }}
             />
             <Legend />
-            <Bar dataKey="reg" fill="#3b82f6" />
-            <Bar dataKey="cas" fill="#60a5fa" />
-            <Bar dataKey="j_o" fill="#93c5fd" />
+            <Bar
+              dataKey="reg"
+              fill="#3b82f6"
+              legendType="circle"
+              radius={[10, 10, 0, 0]}
+            />
+            <Bar
+              dataKey="cas"
+              fill="#60a5fa"
+              legendType="circle"
+              radius={[10, 10, 0, 0]}
+            />
+            <Bar
+              dataKey="j_o"
+              fill="#93c5fd"
+              legendType="circle"
+              radius={[10, 10, 0, 0]}
+            />
           </BarChart>
         </ResponsiveContainer>
       </div>

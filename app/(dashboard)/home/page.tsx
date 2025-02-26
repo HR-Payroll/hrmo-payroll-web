@@ -12,9 +12,9 @@ import {
 
 const HomePage = () => {
   return (
-    <div className="flex flex-col md:flex-row gap-4 px-4 pb-4">
+    <div className="flex flex-col md:flex-row mt-10 lg:mt-0 gap-4 px-4 pb-4">
       {/* LEFT */}
-      <div className="w-full h-full lg:w-2/3">
+      <div className="w-full h-full lg:w-2/3 flex flex-col gap-4">
         {/* TOTAL CARDS */}
         <div className="flex flex-wrap justify-between gap-4">
           <TotalCard
@@ -43,12 +43,12 @@ const HomePage = () => {
           />
         </div>
         {/* STATISTICS */}
-        <div className="w-full h-full mt-4">
+        <div className="w-full h-full">
           <StatsChart />
         </div>
       </div>
       {/* RIGHT */}
-      <div className="w-full lg:w-1/3 flex flex-col gap-4">
+      <div className="w-full h-full lg:w-1/3 flex flex-col gap-4">
         {/* PAY DATE */}
         <div className="w-full h-full">
           <PayCalendar />

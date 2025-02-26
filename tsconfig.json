@@ -1,16 +1,7 @@
 {
   "compilerOptions": {
-<<<<<<< HEAD
     "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],
-=======
-    "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
->>>>>>> 7582e58 (Components (sidebar, navbar) and Dashboard initial contents)
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -28,13 +19,7 @@
       }
     ],
     "paths": {
-<<<<<<< HEAD
       "@/*": ["./src/*"]
-=======
-      "@/*": [
-        "./*"
-      ]
->>>>>>> 7582e58 (Components (sidebar, navbar) and Dashboard initial contents)
     }
   },
   "include": [

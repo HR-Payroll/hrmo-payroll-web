@@ -68,7 +68,7 @@ const Summary = () => {
     <div className="flex-1 rounded-md bg-white border-2 border-[#ECEEF6] gap-4 m-4 mt-10 sm:mt-0 p-4 text-[#333333]">
       <div className="flex flex-row items-center justify-between gap-4">
         <h1 className="text-base font-semibold text-[#333333]">Summary</h1>
-        <div className="flex flex-row items-center justify-end gap-2 sm:gap-4 cursor-pointer">
+        <div className="flex flex-row items-center justify-end gap-4 sm:gap-4 cursor-pointer">
           <UploadButton />
         </div>
       </div>

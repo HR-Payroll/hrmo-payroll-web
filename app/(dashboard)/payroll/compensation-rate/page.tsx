@@ -54,6 +54,8 @@ const columns: GridColDef[] = [
     flex: 1,
     align: "center",
     headerAlign: "center",
+    type: "singleSelect",
+    valueOptions: ["Daily", "Weekly", "Bi-weekly", "Monthly", "Contractual"],
     editable: true,
   },
 ];
@@ -65,7 +67,7 @@ const CompensationRate = () => {
         <h1 className="text-base font-semibold text-[#333333]">
           Compensation Rate
         </h1>
-        <div className="flex flex-row items-center justify-end gap-2 sm:gap-4 cursor-pointer">
+        <div className="flex flex-row items-center justify-end gap-4 sm:gap-4 cursor-pointer">
           <UploadButton />
           <AddButton table="rate" title="Add Rate" />
         </div>
