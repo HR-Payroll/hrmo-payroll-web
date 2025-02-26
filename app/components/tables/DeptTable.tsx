@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
-import moment from "moment";
 import { MdDeleteOutline } from "react-icons/md";
 
 type Props = {
@@ -21,8 +20,18 @@ const DataTable = (props: Props) => {
     flex: 1,
     align: "center",
     headerAlign: "center",
-    renderCell: (params) =>
-      moment(params.row.dateCreated).format("YYYY-MM-DD HH:mm:ss"),
+    renderCell: (params) => {
+      if (!params.value) return "N/A";
+      return new Date(params.value).toLocaleString("en-US", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true,
+      });
+    },
   };
 
   const actionColumn: GridColDef = {

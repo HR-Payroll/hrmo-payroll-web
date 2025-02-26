@@ -1,7 +1,7 @@
 "use client";
 import React, { JSX, useState } from "react";
-import { MdOutlineAdd, MdOutlineClose } from "react-icons/md";
 import dynamic from "next/dynamic";
+import { MdOutlineAdd, MdOutlineClose } from "react-icons/md";
 
 const DepartmentForm = dynamic(() => import("./forms/DepartmentForm"), {
   loading: () => <h1 className="text-xs text-[#333333]">Loading...</h1>,

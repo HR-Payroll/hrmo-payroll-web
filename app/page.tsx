@@ -8,7 +8,9 @@ export default function Home() {
       <Image src="/logo.png" alt="logo" width={200} height={200}></Image>
       <div className="flex flex-col">
         <h1 className="text-2xl font-bold">Welcome to</h1>
-        <h1 className="text-4xl font-black">HRMO Payroll Management</h1>
+        <h1 className="text-4xl font-black">
+          HRMO - Payroll Management System
+        </h1>
         <h1 className="italic text-base font-medium">
           Simplifying Payroll, Enhancing Efficiency
         </h1>

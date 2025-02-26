@@ -24,9 +24,12 @@ const DataTable = (props: Props) => {
       return (
         <div
           onClick={() => handleDelete(params.row.id)}
-          className="flex items-center justify-center rounded-full hover:text-[#0000ff] active:text-blue-200 text-[#333333] p-1 mt-1 cursor-pointer"
+          className="w-full flex items-center justify-center p-1 cursor-pointer"
         >
-          <MdDeleteOutline size={16} />
+          <MdDeleteOutline
+            size={25}
+            className="w-fit rounded-full bg-slate-200 hover:bg-slate-300 active:bg-slate-400 active:text-white text-[#333333] p-1"
+          />
         </div>
       );
     },

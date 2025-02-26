@@ -1,7 +1,7 @@
 import React from "react";
 import UploadButton from "@/app/components/UploadButton";
 import AddButton from "@/app/components/AddButton";
-import DeptTable from "@/app/components/DataTable";
+import DeptTable from "@/app/components/tables/DeptTable";
 import { GridColDef } from "@mui/x-data-grid";
 import { departmentData } from "@/app/lib/data";
 

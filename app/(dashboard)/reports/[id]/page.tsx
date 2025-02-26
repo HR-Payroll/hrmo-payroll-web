@@ -1,6 +1,6 @@
 import React from "react";
 import UploadButton from "@/app/components/UploadButton";
-import DataTable from "@/app/components/DataTable";
+import DataTable from "@/app/components/tables/DataTable";
 import { GridColDef } from "@mui/x-data-grid";
 import { singleReportData } from "@/app/lib/data";
 

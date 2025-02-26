@@ -18,7 +18,7 @@ const Navbar = () => {
     <div className="relative w-full flex flex-row items-center justify-between">
       <div className="hidden lg:block items-center">
         <h1 className="text-base font-semibold text-[#333333]">
-          Welcome to LGU Jasaan HRMO - Payroll Management System
+          LGU Jasaan HRMO - Payroll Management System
         </h1>
         <h6 className="text-xs text-gray-600 text-wrap">
           An automated system that integrates with DTR/biometrics to streamline
