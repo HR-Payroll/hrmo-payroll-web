@@ -1,8 +1,9 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { JSX, useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import Image from "next/image";
 import {
+  MdOutlineMenu,
   MdOutlineSpaceDashboard,
   MdWorkOutline,
   MdOutlineGroups,
@@ -13,149 +14,140 @@ import {
   MdOutlineHorizontalRule,
 } from "react-icons/md";
 
-const sidebarItems = [
-  {
-    title: "",
-    items: [
-      {
-        icon: <MdOutlineSpaceDashboard />,
-        label: "Dashboard",
-        href: "/home",
-      },
-      {
-        icon: <MdWorkOutline />,
-        label: "Department",
-        href: "/departments",
-      },
-      {
-        icon: <MdOutlineGroups />,
-        label: "Employees",
-        href: "/employees",
-      },
-      {
-        icon: <MdOutlineTableView />,
-        label: "Report",
-        href: "/reports",
-      },
-      {
-        icon: <MdOutlinePayment />,
-        label: "Payroll",
-        href: "#",
-        children: [
-          {
-            label: "Compensation Rate",
-            href: "/payroll/compensation-rate",
-          },
-          {
-            label: "Mandatory Deductions",
-            href: "/payroll/mandatory-deduction",
-          },
-          {
-            label: "Loans and Other Deductions",
-            href: "/payroll/loan-deduction",
-          },
-          {
-            label: "Summary",
-            href: "/payroll/summary",
-          },
-        ],
-      },
-    ],
-  },
-];
+interface SidebarItemProps {
+  href: string;
+  icon: JSX.Element;
+  label: string;
+  isCollapsed: boolean;
+}
+
+const SidebarItem = ({ href, icon, label, isCollapsed }: SidebarItemProps) => {
+  return (
+    <Link
+      href={href}
+      className="flex items-center gap-4 px-4 py-2 hover:bg-blue-100 hover:border-l-[10px] hover:border-blue-500 focus:border-blue-500 focus:bg-blue-100 focus:border-l-[10px] focus:text-[#0000ff] transition-all ease-in-out duration-700"
+    >
+      {icon}
+      {!isCollapsed && <span className="text-xs font-medium">{label}</span>}
+    </Link>
+  );
+};
 
 const Sidebar = () => {
-  const [openMenu, setOpenMenu] = useState<string | null>(null);
-  const pathname = usePathname();
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isPayrollExpanded, setIsPayrollExpanded] = useState(false);
 
   useEffect(() => {
-    const activeItem = sidebarItems
-      .flatMap((i) => i.items)
-      .find(
-        (item) =>
-          item.href === pathname ||
-          item.children?.some((c) => c.href === pathname)
-      );
+    const handleResize = () => {
+      setIsCollapsed(window.innerWidth < 768);
+    };
 
-    if (activeItem?.children) {
-      setOpenMenu(activeItem.label);
-    } else {
-      setOpenMenu(null);
-    }
-  }, [pathname]);
-
-  const toggleMenu = (label: string) => {
-    setOpenMenu(openMenu === label ? null : label);
-  };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
-    <div className="mt-4 text-xs">
-      {sidebarItems.map((i) => (
-        <div className="flex flex-col gap-2" key={i.title}>
-          <span className="hidden lg:block text-[#333333]">{i.title}</span>
-          {i.items.map((item) => (
-            <div key={item.label}>
-              {/* Parent Item */}
-              {item.children ? (
-                <div
-                  className={`flex items-center justify-between lg:justify-start gap-4 p-2 cursor-pointer rounded-md transition-all ${
-                    pathname.includes("/payroll")
-                      ? "bg-blue-100"
-                      : "hover:bg-blue-100"
-                  }`}
-                  onClick={() => toggleMenu(item.label)}
-                >
-                  <div className="flex items-center gap-4">
-                    <span className="text-base text-[#333333]">
-                      {item.icon}
-                    </span>
-                    <span className="hidden lg:block">{item.label}</span>
-                  </div>
-                  {openMenu === item.label ? (
-                    <MdOutlineKeyboardArrowUp className="text-base text-[#333333]" />
-                  ) : (
-                    <MdOutlineKeyboardArrowDown className="text-base text-[#333333]" />
-                  )}
-                </div>
-              ) : (
-                <Link
-                  href={item.href}
-                  className={`flex items-center justify-center lg:justify-start gap-4 p-2 cursor-pointer rounded-md transition-all ${
-                    pathname === item.href
-                      ? "bg-blue-100 border-r-[10px] border-blue-500"
-                      : "hover:bg-blue-100"
-                  }`}
-                >
-                  <span className="text-base text-[#333333]">{item.icon}</span>
-                  <span className="hidden lg:block">{item.label}</span>
-                </Link>
-              )}
+    <div
+      className={`h-screen fixed left-0 top-0 z-50 bg-white text-[#333333] drop-shadow-2xl font-[family-name:var(--font-arimo)] selection:bg-blue-200 selection:text-[#0000ff] transition-all ${
+        isCollapsed ? "w-16" : "w-64"
+      }`}
+    >
+      <div className="flex items-center justify-between border-b-2 border-[#ECEEF6] p-3">
+        {!isCollapsed && (
+          <Link href="/home" className="flex items-center justify-center">
+            <Image
+              src="/hrmo.png"
+              alt="HRMO Logo"
+              width={200}
+              height={200}
+            ></Image>
+          </Link>
+        )}
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="rounded-full hover:bg-blue-100 active:bg-blue-200 active:text-[#0000ff] text-[#333333] p-2 cursor-pointer"
+        >
+          <MdOutlineMenu size={20} />
+        </button>
+      </div>
 
-              {/* Child Items */}
-              {item.children && openMenu === item.label && (
-                <div className="ml-6">
-                  {item.children.map((subItem) => (
-                    <Link
-                      href={subItem.href}
-                      key={subItem.label}
-                      className={`flex items-center justify-center lg:justify-start gap-4 p-2 text-xs text-gray-600 rounded-md transition-all ${
-                        pathname === subItem.href
-                          ? "bg-blue-100 border-r-[10px] border-blue-500"
-                          : "hover:bg-blue-100"
-                      }`}
-                    >
-                      <span className="text-base text-[#333333]">
-                        <MdOutlineHorizontalRule />
-                      </span>
-                      <span className="hidden lg:block">{subItem.label}</span>
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
+      <nav className="mt-2">
+        <SidebarItem
+          href="/home"
+          icon={<MdOutlineSpaceDashboard size={16} />}
+          label="Dashboard"
+          isCollapsed={isCollapsed}
+        />
+        <SidebarItem
+          href="/departments"
+          icon={<MdWorkOutline size={16} />}
+          label="Departments"
+          isCollapsed={isCollapsed}
+        />
+        <SidebarItem
+          href="/employees"
+          icon={<MdOutlineGroups size={16} />}
+          label="Employees"
+          isCollapsed={isCollapsed}
+        />
+        <SidebarItem
+          href="/reports"
+          icon={<MdOutlineTableView size={16} />}
+          label="Reports"
+          isCollapsed={isCollapsed}
+        />
+
+        <div>
+          <button
+            onClick={() => setIsPayrollExpanded(!isPayrollExpanded)}
+            className="flex items-center gap-4 px-4 py-2 w-full hover:bg-blue-100 hover:border-l-[10px] hover:border-blue-500 focus:text-[#0000ff] cursor-pointer transition-all ease-in-out duration-700"
+          >
+            <MdOutlinePayment size={16} />
+            {!isCollapsed && (
+              <span className="text-xs font-medium">Payroll</span>
+            )}
+            {!isCollapsed &&
+              (isPayrollExpanded ? (
+                <MdOutlineKeyboardArrowUp
+                  size={16}
+                  className="ml-auto cursor-pointer"
+                />
+              ) : (
+                <MdOutlineKeyboardArrowDown
+                  size={16}
+                  className="ml-auto cursor-pointer"
+                />
+              ))}
+          </button>
+
+          <div className={`${isPayrollExpanded ? "block" : "hidden"} ml-6`}>
+            <SidebarItem
+              href="/payroll/compensation-rate"
+              icon={<MdOutlineHorizontalRule size={16} />}
+              label="Compensation Rate"
+              isCollapsed={isCollapsed}
+            />
+            <SidebarItem
+              href="/payroll/mandatory-deduction"
+              icon={<MdOutlineHorizontalRule size={16} />}
+              label="Mandatory Deductions"
+              isCollapsed={isCollapsed}
+            />
+            <SidebarItem
+              href="/payroll/loan-deduction"
+              icon={<MdOutlineHorizontalRule size={16} />}
+              label="Loans & Deductions"
+              isCollapsed={isCollapsed}
+            />
+            <SidebarItem
+              href="/payroll/summary"
+              icon={<MdOutlineHorizontalRule size={16} />}
+              label="Summary"
+              isCollapsed={isCollapsed}
+            />
+          </div>
         </div>
-      ))}
+      </nav>
     </div>
   );
 };

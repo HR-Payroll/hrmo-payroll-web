@@ -15,7 +15,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="relative w-full flex flex-row items-center justify-between">
+    <div className="relative w-full flex flex-row items-center justify-between p-4">
       <div className="hidden lg:block items-center">
         <h1 className="text-base font-semibold text-[#333333]">
           LGU Jasaan HRMO - Payroll Management System
@@ -25,7 +25,7 @@ const Navbar = () => {
           payroll and boost efficiency.
         </h6>
       </div>
-      <div className="absolute top-0 right-0 flex flex-row items-center justify-center">
+      <div className="absolute top-4 right-4 flex flex-row items-center justify-center">
         <MdOutlineAdminPanelSettings className="text-4xl text-[#333333]" />
         <div className="hidden sm:block flex-col pt-1 px-2 text-[#333333]">
           <p className="font-semibold text-xs">HRMO - OIC</p>
