@@ -1,24 +1,28 @@
 @import "tailwindcss";
 
-@theme {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.react-calendar {
+  width: 100% !important;
+  border: none !important;
+  font-family: "Arimo", sans-serif !important;
 }
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+.react-calendar__navigation {
+  margin-bottom: 0px !important;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.react-calendar__month-view__weekdays__weekday {
+  font-weight: 500 !important;
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+.react-calendar__tile {
+  padding: 7px !important;
+}
+
+.react-calendar__navigation__label__labelText {
+  font-weight: 600 !important;
+}
+
+.react-calendar__tile--active {
+  background-color: #dbeafe !important;
+  color: #0000ff !important;
 }
