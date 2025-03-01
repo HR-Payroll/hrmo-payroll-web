@@ -1,4 +1,5 @@
 "use client";
+import { logOut } from "@/actions/authActions";
 import React, { useState } from "react";
 import {
   MdOutlineAdminPanelSettings,
@@ -9,9 +10,9 @@ import {
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     console.log("Logged out successfully!");
-    window.location.href = "/login";
+    await logOut();
   };
 
   return (
