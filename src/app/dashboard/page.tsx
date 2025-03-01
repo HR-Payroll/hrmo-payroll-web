@@ -9,8 +9,12 @@ import {
   MdOutlineGroups2,
   MdOutlineGroups3,
 } from "react-icons/md";
+import { auth } from "@/auth";
 
-const HomePage = () => {
+const HomePage = async () => {
+  const userSession = await auth();
+
+  console.log(userSession);
   return (
     <div className="flex flex-col md:flex-row mt-10 lg:mt-0 gap-4 px-4 pb-4 w-full h-full">
       {/* LEFT */}
