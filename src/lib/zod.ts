@@ -9,3 +9,12 @@ export const LoginSchema = object({
     "Password is required"
   ),
 });
+
+export const DepartmentSchema = object({
+  name: string()
+    .min(3, { message: "Department name must be at least 3 characters long!" })
+    .max(20, {
+      message: "Department name must be at most 20 characters long!",
+    }),
+  category: string().min(1, "Category is required"),
+});

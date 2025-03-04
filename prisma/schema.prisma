@@ -21,3 +21,24 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model Department {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String   @unique
+  category  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  SUPER_ADMIN
+  REGULAR_ADMIN
+  CASUAL_ADMIN
+  JOB_ORDER_ADMIN
+}
+
+enum Category {
+  REGULAR
+  CASUAL
+  JOB_ORDER
+}

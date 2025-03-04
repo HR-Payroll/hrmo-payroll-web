@@ -1,60 +1,81 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import InputField from "../InputField";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { DepartmentSchema } from "@/lib/zod";
+import Button from "../ui/Button";
+import { createDepartment } from "@/actions/department";
 
-const schema = z.object({
-  deptname: z
-    .string()
-    .min(3, { message: "Department name must be at least 3 characters long!" })
-    .max(20, {
-      message: "Department name must be at most 20 characters long!",
-    }),
-  category: z.enum(["Regular", "Casual", "Job Order"], {
-    message: "*Required",
-  }),
-});
+const DepartmentForm = ({
+  data,
+  onClose,
+}: {
+  data?: any;
+  onClose: Function;
+}) => {
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [isAdding, setIsAdding] = useState<boolean>(false);
 
-type Inputs = z.infer<typeof schema>;
-
-const DepartmentForm = ({ data }: { data?: any }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<Inputs>({
-    resolver: zodResolver(schema),
+  } = useForm<z.infer<typeof DepartmentSchema>>({
+    resolver: zodResolver(DepartmentSchema),
+    defaultValues: {
+      name: "",
+      category: "",
+    },
   });
 
-  const onSubmit = handleSubmit((data) => {
-    console.log(data);
-  });
+  const CATEGORY_OPTIONS: Record<string, string> = {
+    Regular: "REGULAR",
+    Casual: "CASUAL",
+    "Job Order": "JOB_ORDER",
+  };
+
+  const onSubmit = async (data: z.infer<typeof DepartmentSchema>) => {
+    setServerError(null);
+    setIsAdding(true);
+
+    try {
+      const result = await createDepartment(data);
+      setIsAdding(false);
+      console.log(result);
+      onClose();
+    } catch (error) {
+      console.log(error);
+      setIsAdding(false);
+    }
+  };
 
   return (
     <form
       className="flex flex-col gap-4 text-[#333333] p-4"
-      onSubmit={onSubmit}
+      onSubmit={handleSubmit(onSubmit)}
     >
       <h1 className="text-center text-sm font-semibold">Add Department</h1>
       <InputField
         label="Department Name"
-        name="deptname"
-        defaultValue={data?.deptname}
+        name="name"
         register={register}
-        error={errors?.deptname}
+        error={errors?.name}
       />
       <div className="flex flex-col text-xs gap-2 text-[#333333]">
         <label className="text-left">Category</label>
         <select
           className="w-full bg-transparent rounded-md ring-2 ring-[#ECEEF6] focus:outline-2 focus:outline-blue-200 p-2"
           {...register("category")}
-          defaultValue={data?.category}
         >
-          <option value="Regular">Regular</option>
-          <option value="Casual">Casual</option>
-          <option value="Job Order">Job Order</option>
+          {Object.keys(CATEGORY_OPTIONS).map((key: string) => {
+            return (
+              <option key={key} value={CATEGORY_OPTIONS[key]}>
+                {key}
+              </option>
+            );
+          })}
         </select>
         {errors.category?.message && (
           <p className="text-[#ff0000] text-[10px]">
@@ -62,9 +83,12 @@ const DepartmentForm = ({ data }: { data?: any }) => {
           </p>
         )}
       </div>
-      <button className="w-full rounded-md bg-blue-200 hover:bg-blue-300 active:bg-blue-400 active:text-white text-[#0000ff] text-xs mt-2 p-2 cursor-pointer">
-        Create
-      </button>
+      <Button
+        label={isAdding ? "Creating..." : "Create"}
+        type="submit"
+        isLoading={isAdding}
+      />
+      {serverError && <p style={{ color: "red" }}>{serverError}</p>}
     </form>
   );
 };

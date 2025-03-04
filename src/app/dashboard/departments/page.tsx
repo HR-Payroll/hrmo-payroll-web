@@ -4,10 +4,11 @@ import AddButton from "@/components/AddButton";
 import DeptTable from "@/components/tables/DeptTable";
 import { GridColDef } from "@mui/x-data-grid";
 import { departmentData } from "@/lib/data";
+import { getAllDepartment } from "@/data/department";
 
 const columns: GridColDef[] = [
   {
-    field: "department",
+    field: "name",
     headerName: "Department Name",
     headerClassName: "custom-header",
     flex: 1.5,
@@ -36,7 +37,10 @@ const columns: GridColDef[] = [
   },
 ];
 
-const Departments = () => {
+const Departments = async () => {
+  const departments = (await getAllDepartment()) as any;
+
+  console.log(departments);
   return (
     <div className="flex-1 rounded-md bg-white border-2 border-[#ECEEF6] gap-4 m-4 mt-10 sm:mt-0 p-4 text-[#333333]">
       <div className="flex flex-row items-center justify-between gap-4">
@@ -47,7 +51,7 @@ const Departments = () => {
         </div>
       </div>
       <div className="mt-4">
-        <DeptTable columns={columns} rows={departmentData} />
+        <DeptTable columns={columns} rows={departments} />
       </div>
     </div>
   );

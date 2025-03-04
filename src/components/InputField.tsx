@@ -25,6 +25,7 @@ const InputField = ({
     <div className="flex flex-col text-xs gap-2 text-[#333333]">
       <label className="text-left">{label}</label>
       <input
+        name={name}
         type={type}
         placeholder="Enter here"
         {...register(name)}

@@ -5,7 +5,7 @@ import { MdDeleteOutline } from "react-icons/md";
 
 type Props = {
   columns: GridColDef[];
-  rows: object[];
+  rows?: object[];
 };
 
 const DataTable = (props: Props) => {
@@ -14,7 +14,7 @@ const DataTable = (props: Props) => {
   };
 
   const dateColumn: GridColDef = {
-    field: "dateCreated",
+    field: "createdAt",
     headerName: "Date Created",
     headerClassName: "custom-header",
     flex: 1,
