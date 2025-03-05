@@ -30,15 +30,59 @@ model Department {
   updatedAt DateTime @updatedAt
 }
 
-enum Role {
-  SUPER_ADMIN
-  REGULAR_ADMIN
-  CASUAL_ADMIN
-  JOB_ORDER_ADMIN
+model Employee {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  recordNo   String   @unique
+  name       String   @unique
+  category   String
+  department String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
-enum Category {
-  REGULAR
-  CASUAL
-  JOB_ORDER
+model Rate {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  category   String
+  department String
+  employee   String
+  rate       String
+  type       String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Mandatory {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  category   String
+  department String
+  employee   String
+  gsisgs     String
+  ec         String
+  gsisps     String
+  phic       String
+  hdmfgs     String
+  hdmfps     String
+  wtax       String
+  sss        String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Loan {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  category   String
+  department String
+  employee   String
+  mplhdmf    String
+  gfal       String
+  landbank   String
+  cb         String
+  eml        String
+  mplgsis    String
+  tagum      String
+  ucpb       String
+  mpllite    String
+  sb         String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }

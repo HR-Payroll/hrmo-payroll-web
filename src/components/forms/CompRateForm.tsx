@@ -1,57 +1,71 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import InputField from "../InputField";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { RateSchema } from "@/lib/zod";
+import { createRate } from "@/actions/rate";
+import Button from "../ui/Button";
 
-const schema = z.object({
-  category: z.enum(["Regular", "Casual", "Job Order"], {
-    message: "*Required",
-  }),
-  deptname: z.enum(
-    [
-      "Accounting Office",
-      "Assessor's Office",
-      "Consultant's Office",
-      "Contractual 20%",
-      "Dept. of Agriculture",
-    ],
-    {
-      message: "*Required",
-    }
-  ),
-  employee: z.enum(
-    ["CAILING, CHRISTY", "CABELTO, MICHELLE ANN", "VALCURZA, MA. THERESA"],
-    {
-      message: "*Required",
-    }
-  ),
-  rate: z.string().min(8, { message: "*Required" }),
-  type: z.enum(["Daily", "Weekly", "Bi-weekly", "Monthly", "Contractual"], {
-    message: "*Required",
-  }),
-});
+const CompensationRateForm = ({
+  data,
+  onClose,
+}: {
+  data?: any;
+  onClose: Function;
+}) => {
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [isAdding, setIsAdding] = useState<boolean>(false);
 
-type Inputs = z.infer<typeof schema>;
-
-const CompensationRateForm = ({ data }: { data?: any }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<Inputs>({
-    resolver: zodResolver(schema),
+  } = useForm<z.infer<typeof RateSchema>>({
+    resolver: zodResolver(RateSchema),
+    defaultValues: {
+      category: "",
+      department: "",
+      employee: "",
+      rate: "",
+      type: "",
+    },
   });
 
-  const onSubmit = handleSubmit((data) => {
-    console.log(data);
-  });
+  const CATEGORY_OPTIONS: Record<string, string> = {
+    Regular: "REGULAR",
+    Casual: "CASUAL",
+    "Job Order": "JOB_ORDER",
+  };
+
+  const TYPE_OPTIONS: Record<string, string> = {
+    Daily: "DAILY",
+    Weekly: "WEEKLY",
+    "Bi-weekly": "BI-WEEKLY",
+    Monthly: "MONTHLY",
+    Contractual: "CONTRACTUAL",
+  };
+
+  const onSubmit = async (data: z.infer<typeof RateSchema>) => {
+    setServerError(null);
+    setIsAdding(true);
+
+    try {
+      const result = await createRate(data);
+      setIsAdding(false);
+      console.log(result);
+      onClose();
+    } catch (error) {
+      console.log(error);
+      setIsAdding(false);
+    }
+  };
 
   return (
     <form
       className="flex flex-col gap-4 text-[#333333] p-4"
-      onSubmit={onSubmit}
+      onSubmit={handleSubmit(onSubmit)}
     >
       <h1 className="text-center text-sm font-semibold">
         Add Employee Compensation Rate
@@ -63,9 +77,13 @@ const CompensationRateForm = ({ data }: { data?: any }) => {
           {...register("category")}
           defaultValue={data?.category}
         >
-          <option value="Regular">Regular</option>
-          <option value="Casual">Casual</option>
-          <option value="Job Order">Job Order</option>
+          {Object.keys(CATEGORY_OPTIONS).map((key: string) => {
+            return (
+              <option key={key} value={CATEGORY_OPTIONS[key]}>
+                {key}
+              </option>
+            );
+          })}
         </select>
         {errors.category?.message && (
           <p className="text-[#ff0000] text-[10px]">
@@ -77,18 +95,14 @@ const CompensationRateForm = ({ data }: { data?: any }) => {
         <label className="text-left">Department</label>
         <select
           className="w-full bg-transparent rounded-md ring-2 ring-[#ECEEF6] focus:outline-2 focus:outline-blue-200 p-2"
-          {...register("deptname")}
-          defaultValue={data?.deptname}
+          {...register("department")}
+          defaultValue={data?.department}
         >
-          <option value="Accounting Office">Accounting Office</option>
-          <option value="Assessor's Office">Assessor's Office</option>
-          <option value="Consultant's Office">Consultant's Office</option>
-          <option value="Contractual 20%">Contractual 20%</option>
-          <option value="Dept. of Agriculture">Dept. of Agriculture</option>
+          {/* ADD OPTIONS */}
         </select>
-        {errors.deptname?.message && (
+        {errors.department?.message && (
           <p className="text-[#ff0000] text-[10px]">
-            {errors.deptname.message.toString()}
+            {errors.department.message.toString()}
           </p>
         )}
       </div>
@@ -99,9 +113,7 @@ const CompensationRateForm = ({ data }: { data?: any }) => {
           {...register("employee")}
           defaultValue={data?.employee}
         >
-          <option value="CAILING, CHRISTY">CAILING, CHRISTY</option>
-          <option value="CABELTO, MICHELLE ANN">CABELTO, MICHELLE ANN</option>
-          <option value="VALCURZA, MA. THERESA">VALCURZA, MA. THERESA</option>
+          {/* ADD OPTIONS */}
         </select>
         {errors.employee?.message && (
           <p className="text-[#ff0000] text-[10px]">
@@ -123,11 +135,13 @@ const CompensationRateForm = ({ data }: { data?: any }) => {
           {...register("type")}
           defaultValue={data?.type}
         >
-          <option value="Daily">Daily</option>
-          <option value="Weekly">Weekly</option>
-          <option value="Bi-weekly">Bi-weekly</option>
-          <option value="Monthly">Monthly</option>
-          <option value="Contractual">Contractual</option>
+          {Object.keys(TYPE_OPTIONS).map((key: string) => {
+            return (
+              <option key={key} value={TYPE_OPTIONS[key]}>
+                {key}
+              </option>
+            );
+          })}
         </select>
         {errors.type?.message && (
           <p className="text-[#ff0000] text-[10px]">
@@ -135,9 +149,12 @@ const CompensationRateForm = ({ data }: { data?: any }) => {
           </p>
         )}
       </div>
-      <button className="w-full rounded-md bg-blue-200 hover:bg-blue-300 active:bg-blue-400 active:text-white text-[#0000ff] text-xs mt-2 p-2 cursor-pointer">
-        Create
-      </button>
+      <Button
+        label={isAdding ? "Creating..." : "Create"}
+        type="submit"
+        isLoading={isAdding}
+      />
+      {serverError && <p style={{ color: "red" }}>{serverError}</p>}
     </form>
   );
 };

@@ -5,8 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { DepartmentSchema } from "@/lib/zod";
-import Button from "../ui/Button";
 import { createDepartment } from "@/actions/department";
+import Button from "../ui/Button";
 
 const DepartmentForm = ({
   data,
@@ -60,6 +60,7 @@ const DepartmentForm = ({
       <InputField
         label="Department Name"
         name="name"
+        defaultValue={data?.name}
         register={register}
         error={errors?.name}
       />
