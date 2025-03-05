@@ -8,7 +8,21 @@ import { EmployeeSchema } from "@/lib/zod";
 import { createEmployee } from "@/actions/employee";
 import Button from "../ui/Button";
 
-const EmployeeForm = ({ data, onClose }: { data?: any; onClose: Function }) => {
+const EmployeeForm = ({
+  data,
+  onClose,
+  departments,
+}: {
+  data?: any;
+  onClose: Function;
+  departments: {
+    name: string;
+    category: string;
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
+  }[];
+}) => {
   const [serverError, setServerError] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState<boolean>(false);
 
@@ -95,7 +109,11 @@ const EmployeeForm = ({ data, onClose }: { data?: any; onClose: Function }) => {
           {...register("department")}
           defaultValue={data?.department}
         >
-          {/* ADD OPTIONS */}
+          {departments &&
+            departments.length > 0 &&
+            departments.map((item) => {
+              return <option value={item.id}>{item.name}</option>;
+            })}
         </select>
         {errors.department?.message && (
           <p className="text-[#ff0000] text-[10px]">

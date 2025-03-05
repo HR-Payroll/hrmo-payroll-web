@@ -35,7 +35,7 @@ model Employee {
   recordNo   String   @unique
   name       String   @unique
   category   String
-  department String
+  department String   @db.ObjectId
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
@@ -43,8 +43,8 @@ model Employee {
 model Rate {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   category   String
-  department String
-  employee   String
+  department String   @db.ObjectId
+  employee   String   @db.ObjectId
   rate       String
   type       String
   createdAt  DateTime @default(now())
@@ -54,8 +54,8 @@ model Rate {
 model Mandatory {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   category   String
-  department String
-  employee   String
+  department String   @db.ObjectId
+  employee   String   @db.ObjectId
   gsisgs     String
   ec         String
   gsisps     String
@@ -71,8 +71,8 @@ model Mandatory {
 model Loan {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   category   String
-  department String
-  employee   String
+  department String   @db.ObjectId
+  employee   String   @db.ObjectId
   mplhdmf    String
   gfal       String
   landbank   String

@@ -3,9 +3,7 @@ import { EmployeeSchema } from "@/lib/zod";
 import { z } from "zod";
 import { prisma } from "../../prisma/prisma";
 
-export const createEmployee = async (
-  data: z.infer<typeof EmployeeSchema>
-) => {
+export const createEmployee = async (data: z.infer<typeof EmployeeSchema>) => {
   const validateData = EmployeeSchema.parse(data);
 
   if (!validateData) {
@@ -16,7 +14,12 @@ export const createEmployee = async (
 
   try {
     await prisma.employee.create({
-      data: { recordNo: recordNo, name: name, category: category, department: department, },
+      data: {
+        recordNo: recordNo,
+        name: name,
+        category: category,
+        department: department,
+      },
     });
 
     return { success: "Employee has been added successfully!" };
