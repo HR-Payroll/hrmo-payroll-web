@@ -3,9 +3,7 @@ import { RateSchema } from "@/lib/zod";
 import { z } from "zod";
 import { prisma } from "../../prisma/prisma";
 
-export const createRate = async (
-  data: z.infer<typeof RateSchema>
-) => {
+export const createRate = async (data: z.infer<typeof RateSchema>) => {
   const validateData = RateSchema.parse(data);
 
   if (!validateData) {
@@ -16,7 +14,13 @@ export const createRate = async (
 
   try {
     await prisma.rate.create({
-      data: { category: category, department: department, employee: employee, rate: rate, type: type },
+      data: {
+        category: category,
+        department: department,
+        employee: employee,
+        rate: rate,
+        type: type,
+      },
     });
 
     return { success: "Rate has been added successfully!" };

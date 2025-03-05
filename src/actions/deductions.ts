@@ -12,11 +12,35 @@ export const createDeductions = async (
     return { error: "Invalid input fields" };
   }
 
-  const { category, department, employee, gsisgs, ec, gsisps, phic, hdmfgs, hdmfps, wtax, sss } = validateData;
+  const {
+    category,
+    department,
+    employee,
+    gsisgs,
+    ec,
+    gsisps,
+    phic,
+    hdmfgs,
+    hdmfps,
+    wtax,
+    sss,
+  } = validateData;
 
   try {
     await prisma.mandatory.create({
-      data: { category: category, department: department, employee: employee, gsisgs: gsisgs, ec: ec, gsisps: gsisps, phic: phic, hdmfgs: hdmfgs, hdmfps: hdmfps, wtax: wtax, sss: sss },
+      data: {
+        category: category,
+        department: department,
+        employee: employee,
+        gsisgs: gsisgs,
+        ec: ec,
+        gsisps: gsisps,
+        phic: phic,
+        hdmfgs: hdmfgs,
+        hdmfps: hdmfps,
+        wtax: wtax,
+        sss: sss,
+      },
     });
 
     return { success: "Mandatory Deductions has been added successfully!" };

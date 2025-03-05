@@ -19,15 +19,23 @@ const LoanDeducForm = dynamic(() => import("./forms/LoanDeducForm"), {
   loading: () => <h1 className="text-xs text-[#333333]">Loading...</h1>,
 });
 
-const AddButton = ({ title, table }: { title: string; table: string }) => {
+const AddButton = ({
+  title,
+  table,
+  data,
+}: {
+  title: string;
+  table: string;
+  data?: any;
+}) => {
   const [open, setOpen] = useState(false);
 
   const forms: { [key: string]: () => JSX.Element } = {
     department: () => <DepartmentForm onClose={onClose} />,
-    employee: () => <EmployeeForm />,
-    rate: () => <CompRateForm />,
-    deduction: () => <MandDeducForm />,
-    loan: () => <LoanDeducForm />,
+    employee: () => <EmployeeForm departments={data} onClose={onClose} />,
+    rate: () => <CompRateForm onClose={() => {}} />,
+    deduction: () => <MandDeducForm onClose={() => {}} />,
+    loan: () => <LoanDeducForm onClose={() => {}} />,
   };
 
   const onClose = () => {

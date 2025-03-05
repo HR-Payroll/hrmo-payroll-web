@@ -5,7 +5,7 @@ import { MdDeleteOutline } from "react-icons/md";
 
 type Props = {
   columns: GridColDef[];
-  rows: object[];
+  rows?: any[];
 };
 
 const DataTable = (props: Props) => {
@@ -39,6 +39,7 @@ const DataTable = (props: Props) => {
     <DataGrid
       rows={props.rows}
       columns={[...props.columns, actionColumn]}
+      getRowId={(row) => row._id.toString()}
       columnHeaderHeight={40}
       rowHeight={36}
       getRowClassName={(params) =>
