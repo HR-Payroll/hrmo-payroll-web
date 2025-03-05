@@ -1,63 +1,71 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import InputField from "../InputField";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { LoanSchema } from "@/lib/zod";
+import { createLoan } from "@/actions/loan";
+import Button from "../ui/Button";
 
-const schema = z.object({
-  category: z.enum(["Regular", "Casual", "Job Order"], {
-    message: "*Required",
-  }),
-  deptname: z.enum(
-    [
-      "Accounting Office",
-      "Assessor's Office",
-      "Consultant's Office",
-      "Contractual 20%",
-      "Dept. of Agriculture",
-    ],
-    {
-      message: "*Required",
-    }
-  ),
-  employee: z.enum(
-    ["CAILING, CHRISTY", "CABELTO, MICHELLE ANN", "VALCURZA, MA. THERESA"],
-    {
-      message: "*Required",
-    }
-  ),
-  mplhdmf: z.string().min(8, { message: "*Required" }),
-  gfal: z.string().min(8, { message: "*Required" }),
-  landbank: z.string().min(8, { message: "*Required" }),
-  cb: z.string().min(8, { message: "*Required" }),
-  eml: z.string().min(8, { message: "*Required" }),
-  mplgsis: z.string().min(8, { message: "*Required" }),
-  tagum: z.string().min(8, { message: "*Required" }),
-  ucpb: z.string().min(8, { message: "*Required" }),
-  mpllite: z.string().min(8, { message: "*Required" }),
-  sb: z.string().min(8, { message: "*Required" }),
-});
+const LoanDeductionForm = ({
+  data,
+  onClose,
+}: {
+  data?: any;
+  onClose: Function;
+}) => {
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [isAdding, setIsAdding] = useState<boolean>(false);
 
-type Inputs = z.infer<typeof schema>;
-
-const LoanDeductionForm = ({ data }: { data?: any }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<Inputs>({
-    resolver: zodResolver(schema),
+  } = useForm<z.infer<typeof LoanSchema>>({
+    resolver: zodResolver(LoanSchema),
+    defaultValues: {
+      category: "",
+      department: "",
+      employee: "",
+      mplhdmf: "",
+      gfal: "",
+      landbank: "",
+      cb: "",
+      eml: "",
+      mplgsis: "",
+      tagum: "",
+      ucpb: "",
+      mpllite: "",
+      sb: "",
+    },
   });
 
-  const onSubmit = handleSubmit((data) => {
-    console.log(data);
-  });
+  const CATEGORY_OPTIONS: Record<string, string> = {
+    Regular: "REGULAR",
+    Casual: "CASUAL",
+    "Job Order": "JOB_ORDER",
+  };
+
+  const onSubmit = async (data: z.infer<typeof LoanSchema>) => {
+    setServerError(null);
+    setIsAdding(true);
+
+    try {
+      const result = await createLoan(data);
+      setIsAdding(false);
+      console.log(result);
+      onClose();
+    } catch (error) {
+      console.log(error);
+      setIsAdding(false);
+    }
+  };
 
   return (
     <form
       className="h-[500px] flex flex-col gap-4 text-[#333333]"
-      onSubmit={onSubmit}
+      onSubmit={handleSubmit(onSubmit)}
     >
       <h1 className="text-center text-sm font-semibold">
         Add Loan and Other Deductions
@@ -70,9 +78,13 @@ const LoanDeductionForm = ({ data }: { data?: any }) => {
             {...register("category")}
             defaultValue={data?.category}
           >
-            <option value="Regular">Regular</option>
-            <option value="Casual">Casual</option>
-            <option value="Job Order">Job Order</option>
+            {Object.keys(CATEGORY_OPTIONS).map((key: string) => {
+              return (
+                <option key={key} value={CATEGORY_OPTIONS[key]}>
+                  {key}
+                </option>
+              );
+            })}
           </select>
           {errors.category?.message && (
             <p className="text-[#ff0000] text-[10px]">
@@ -84,18 +96,14 @@ const LoanDeductionForm = ({ data }: { data?: any }) => {
           <label className="text-left">Department</label>
           <select
             className="w-full bg-transparent rounded-md ring-2 ring-[#ECEEF6] focus:outline-2 focus:outline-blue-200 p-2"
-            {...register("deptname")}
-            defaultValue={data?.deptname}
+            {...register("department")}
+            defaultValue={data?.department}
           >
-            <option value="Accounting Office">Accounting Office</option>
-            <option value="Assessor's Office">Assessor's Office</option>
-            <option value="Consultant's Office">Consultant's Office</option>
-            <option value="Contractual 20%">Contractual 20%</option>
-            <option value="Dept. of Agriculture">Dept. of Agriculture</option>
+            {/* ADD OPTIONS */}
           </select>
-          {errors.deptname?.message && (
+          {errors.department?.message && (
             <p className="text-[#ff0000] text-[10px]">
-              {errors.deptname.message.toString()}
+              {errors.department.message.toString()}
             </p>
           )}
         </div>
@@ -106,9 +114,7 @@ const LoanDeductionForm = ({ data }: { data?: any }) => {
             {...register("employee")}
             defaultValue={data?.employee}
           >
-            <option value="CAILING, CHRISTY">CAILING, CHRISTY</option>
-            <option value="CABELTO, MICHELLE ANN">CABELTO, MICHELLE ANN</option>
-            <option value="VALCURZA, MA. THERESA">VALCURZA, MA. THERESA</option>
+            {/* ADD OPTIONS */}
           </select>
           {errors.employee?.message && (
             <p className="text-[#ff0000] text-[10px]">
@@ -186,9 +192,12 @@ const LoanDeductionForm = ({ data }: { data?: any }) => {
           register={register}
           error={errors?.sb}
         />
-        <button className="w-full rounded-md bg-blue-200 hover:bg-blue-300 active:bg-blue-400 active:text-white text-[#0000ff] text-xs mt-2 p-2 cursor-pointer">
-          Create
-        </button>
+        <Button
+          label={isAdding ? "Creating..." : "Create"}
+          type="submit"
+          isLoading={isAdding}
+        />
+        {serverError && <p style={{ color: "red" }}>{serverError}</p>}
       </div>
     </form>
   );

@@ -19,7 +19,7 @@ export const createDepartment = async (
       data: { name: name, category: category },
     });
 
-    return { success: "Category has been added successfully!" };
+    return { success: "Department has been added successfully!" };
   } catch (error) {
     return { error: "Something went wrong, try again later." };
   }
