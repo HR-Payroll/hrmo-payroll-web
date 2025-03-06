@@ -33,7 +33,7 @@ const Navbar = () => {
           <p className="text-[10px]">Super Administrator</p>
         </div>
         <div
-          className="rounded-full hover:bg-slate-300 active:bg-slate-400 active:text-white text-[#333333] p-1 cursor-pointer"
+          className="rounded-full hover:bg-blue-100 active:bg-blue-200 active:text-[#0000ff] text-[#333333] p-1 cursor-pointer"
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         >
           {isDropdownOpen ? (

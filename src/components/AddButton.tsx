@@ -54,7 +54,7 @@ const AddButton = ({
 
       {open && (
         <div className="h-full w-full fixed top-0 left-0 bg-radial from-blue-500/50 from-5% to-transparent to-80% z-50 flex items-center justify-center">
-          <div className="relative w-[70%] md:w-[60%] lg:w-[50%] xl:w-[40%] 2xl:w-[30%] bg-white rounded-md border-2 border-[#ECEEF6] p-4">
+          <div className="relative w-[70%] sm:w-[60%] md:w-[50%] lg:w-[40%] xl:w-[30%] 2xl:w-[20%] bg-white rounded-md border-2 border-[#ECEEF6] p-4">
             {forms[table] ? forms[table]() : <h1>Form not found!</h1>}
             <div className="absolute top-4 right-4">
               <button
