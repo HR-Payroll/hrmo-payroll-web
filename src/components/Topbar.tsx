@@ -26,7 +26,7 @@ const Navbar = () => {
           payroll and boost efficiency.
         </h6>
       </div>
-      <div className="absolute top-4 right-4 flex flex-row items-center justify-center">
+      <div className="absolute top-4 right-0 flex flex-row items-center justify-center">
         <MdOutlineAdminPanelSettings className="text-4xl text-[#333333]" />
         <div className="hidden sm:block flex-col pt-1 px-2 text-[#333333]">
           <p className="font-semibold text-xs">HRMO - OIC</p>

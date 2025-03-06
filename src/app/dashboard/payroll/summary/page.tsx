@@ -73,7 +73,7 @@ const Summary = () => {
         </div>
       </div>
       <div className="mt-4">
-        <ViewTable columns={columns} rows={summaryData} slug="summary" />
+        <ViewTable columns={columns} rows={[]} slug="summary" />
       </div>
     </div>
   );

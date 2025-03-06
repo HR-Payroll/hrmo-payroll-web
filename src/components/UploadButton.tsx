@@ -9,8 +9,8 @@ const UploadButton = () => {
         className="flex items-center text-xs text-[#333333] gap-2 cursor-pointer"
         htmlFor="img"
       >
-        <MdOutlineUploadFile size={16} />
-        <span className="hidden lg:block text-xs">Upload File</span>
+        <MdOutlineUploadFile size={18} />
+        <span className="hidden lg:block text-sm">Upload File</span>
       </label>
       <input
         type="file"

@@ -23,10 +23,12 @@ const AddButton = ({
   title,
   table,
   data,
+  reload,
 }: {
   title: string;
   table: string;
   data?: any;
+  reload?: VoidFunction;
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -40,6 +42,7 @@ const AddButton = ({
 
   const onClose = () => {
     setOpen(false);
+    if (reload) reload();
   };
 
   return (
@@ -48,8 +51,8 @@ const AddButton = ({
         onClick={() => setOpen(true)}
         className="flex flex-row items-center justify-center rounded-md bg-blue-200 hover:bg-blue-300 active:bg-blue-400 active:text-white gap-1 py-2 px-6 text-[#0000ff] cursor-pointer"
       >
-        <MdOutlineAdd size={16} />
-        <span className="hidden lg:block text-xs">{title}</span>
+        <MdOutlineAdd size={18} />
+        <span className="hidden lg:block text-sm">{title}</span>
       </button>
 
       {open && (

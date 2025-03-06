@@ -15,8 +15,30 @@ export const getDepartmentById = async (id: string) => {
 
 export const getAllDepartment = async () => {
   try {
-    const departments = await prisma.department.findMany();
+    const departments = await prisma.department.aggregateRaw({
+      pipeline: [
+        {
+          $lookup: {
+            from: "Employee",
+            localField: "_id",
+            foreignField: "department",
+            as: "employees",
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            name: 1,
+            employees: { $size: "$employees" },
+            category: 1,
+            createdAt: 1,
+            updatedAt: 1,
+          },
+        },
+      ],
+    });
 
+    console.log(departments);
     return departments;
   } catch (error: any) {
     console.log(error);

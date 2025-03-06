@@ -1,23 +1,58 @@
 "use client";
-import React, { useState } from "react";
-import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
-import { MdDeleteOutline } from "react-icons/md";
-import { Box } from "@mui/material";
-import Alert from "../ui/Alert";
-import { deleteDepartment } from "@/actions/department";
 
-const DataTable = ({ data, reload }: { data: any[]; reload: VoidFunction }) => {
+import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
+import React, { useState } from "react";
+import { MdDeleteOutline } from "react-icons/md";
+import Alert from "../ui/Alert";
+import { deleteEmployee } from "@/actions/employee";
+
+function EmployeesTable({
+  data,
+  reload,
+}: {
+  data?: any[];
+  reload?: VoidFunction;
+}) {
   const [isDelete, setDelete] = useState(null);
 
   const columns: GridColDef[] = [
     {
-      field: "name",
-      headerName: "Department Name",
+      field: "recordNo",
+      headerName: "ID Number",
       headerClassName: "custom-header",
       flex: 1,
       align: "center",
       headerAlign: "center",
       editable: true,
+    },
+    {
+      field: "name",
+      headerName: "Employee Name",
+      headerClassName: "custom-header",
+      flex: 1.5,
+      align: "center",
+      headerAlign: "center",
+      editable: true,
+    },
+    {
+      field: "department",
+      headerName: "Department",
+      headerClassName: "custom-header",
+      flex: 1,
+      align: "center",
+      headerAlign: "center",
+      type: "singleSelect",
+      valueOptions: [
+        "Accounting Office",
+        "Assessor's Office",
+        "Consultant's Office",
+        "Contractual 20%",
+        "Dept. of Agriculture",
+      ],
+      editable: true,
+      valueGetter: (value) => {
+        return value["name"];
+      },
     },
     {
       field: "category",
@@ -40,38 +75,10 @@ const DataTable = ({ data, reload }: { data: any[]; reload: VoidFunction }) => {
       },
     },
     {
-      field: "employees",
-      headerName: "Total Employees",
-      headerClassName: "custom-header",
-      flex: 0.5,
-      align: "center",
-      headerAlign: "center",
-    },
-    {
-      field: "createdAt",
-      headerName: "Date Created",
-      headerClassName: "custom-header",
-      flex: 1,
-      align: "center",
-      headerAlign: "center",
-      renderCell: (params) => {
-        if (!params.value) return "N/A";
-        return new Date(params.value.$date).toLocaleString("en-US", {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-          hour12: true,
-        });
-      },
-    },
-    {
       field: "action",
       headerName: "Action",
       headerClassName: "custom-header",
-      width: 100,
+      flex: 0.5,
       align: "center",
       headerAlign: "center",
       renderCell: (params: any) => {
@@ -80,9 +87,12 @@ const DataTable = ({ data, reload }: { data: any[]; reload: VoidFunction }) => {
             onClick={() => {
               setDelete(params.id);
             }}
-            className="flex items-center justify-center rounded-full hover:text-[#0000ff] active:text-blue-200 text-[#333333] p-1 mt-1 cursor-pointer"
+            className="w-full flex items-center justify-center p-1 cursor-pointer"
           >
-            <MdDeleteOutline size={16} />
+            <MdDeleteOutline
+              size={25}
+              className="w-fit rounded-full bg-slate-200 hover:bg-slate-300 active:bg-slate-400 active:text-white text-[#333333] p-1"
+            />
           </div>
         );
       },
@@ -91,8 +101,8 @@ const DataTable = ({ data, reload }: { data: any[]; reload: VoidFunction }) => {
 
   const onDelete = async () => {
     try {
-      await deleteDepartment(isDelete!);
-      reload();
+      await deleteEmployee(isDelete!);
+      if (reload) reload();
     } catch (error) {
       console.log(error);
     }
@@ -102,8 +112,8 @@ const DataTable = ({ data, reload }: { data: any[]; reload: VoidFunction }) => {
     <>
       <Alert
         open={!!isDelete}
-        title="Delete Department"
-        message="Are you sure you want to delete this department?"
+        title="Delete Employee"
+        message="Are you sure you want to delete this employee?"
         onClose={() => {
           setDelete(null);
         }}
@@ -126,8 +136,8 @@ const DataTable = ({ data, reload }: { data: any[]; reload: VoidFunction }) => {
       <DataGrid
         rows={data}
         columns={columns}
-        columnHeaderHeight={40}
         getRowId={(row) => row._id.$oid.toString()}
+        columnHeaderHeight={40}
         rowHeight={36}
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 !== 0 ? "odd-row" : ""
@@ -204,6 +214,6 @@ const DataTable = ({ data, reload }: { data: any[]; reload: VoidFunction }) => {
       />
     </>
   );
-};
+}
 
-export default DataTable;
+export default EmployeesTable;

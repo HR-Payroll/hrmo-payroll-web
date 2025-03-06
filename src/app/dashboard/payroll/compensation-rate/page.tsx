@@ -73,7 +73,7 @@ const CompensationRate = () => {
         </div>
       </div>
       <div className="mt-4">
-        <DataTable columns={columns} rows={rateData} />
+        <DataTable columns={columns} rows={[]} />
       </div>
     </div>
   );

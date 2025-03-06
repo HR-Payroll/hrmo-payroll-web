@@ -109,7 +109,7 @@ const MandatoryDeductions = () => {
         </div>
       </div>
       <div className="mt-4">
-        <DataTable columns={columns} rows={mandDeducData} />
+        <DataTable columns={columns} rows={[]} />
       </div>
     </div>
   );

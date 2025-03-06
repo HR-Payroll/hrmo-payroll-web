@@ -18,7 +18,7 @@ const HomePage = async () => {
   return (
     <div className="flex flex-col md:flex-row mt-10 lg:mt-0 gap-4 px-4 pb-4 w-full h-full">
       {/* LEFT */}
-      <div className="w-full h-full lg:w-2/3 flex flex-col gap-4">
+      <div className="w-full h-full flex flex-col gap-4">
         {/* TOTAL CARDS */}
         <div className="flex w-full flex-wrap justify-between gap-4">
           <TotalCard

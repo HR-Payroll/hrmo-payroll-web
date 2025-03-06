@@ -27,3 +27,17 @@ export const createEmployee = async (data: z.infer<typeof EmployeeSchema>) => {
     return { error: "Something went wrong, try again later." };
   }
 };
+
+export const deleteEmployee = async (id: string) => {
+  try {
+    await prisma.employee.delete({
+      where: {
+        id,
+      },
+    });
+
+    return { success: "Employee has been deleted successfully!" };
+  } catch (error) {
+    return { error: "Something went wrong, try again later." };
+  }
+};
