@@ -26,14 +26,14 @@ const Navbar = () => {
           payroll and boost efficiency.
         </h6>
       </div>
-      <div className="absolute top-4 right-4 flex flex-row items-center justify-center">
+      <div className="absolute top-4 right-0 flex flex-row items-center justify-center">
         <MdOutlineAdminPanelSettings className="text-4xl text-[#333333]" />
         <div className="hidden sm:block flex-col pt-1 px-2 text-[#333333]">
           <p className="font-semibold text-xs">HRMO - OIC</p>
           <p className="text-[10px]">Super Administrator</p>
         </div>
         <div
-          className="rounded-full hover:bg-slate-300 active:bg-slate-400 active:text-white text-[#333333] p-1 cursor-pointer"
+          className="rounded-full hover:bg-blue-100 active:bg-blue-200 active:text-[#0000ff] text-[#333333] p-1 cursor-pointer"
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         >
           {isDropdownOpen ? (

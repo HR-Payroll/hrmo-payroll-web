@@ -24,3 +24,17 @@ export const createDepartment = async (
     return { error: "Something went wrong, try again later." };
   }
 };
+
+export const deleteDepartment = async (id: string) => {
+  try {
+    await prisma.department.delete({
+      where: {
+        id,
+      },
+    });
+
+    return { success: "Department has been deleted successfully!" };
+  } catch (error) {
+    return { error: "Something went wrong, try again later." };
+  }
+};

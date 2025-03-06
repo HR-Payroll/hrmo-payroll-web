@@ -111,8 +111,8 @@ const EmployeeForm = ({
         >
           {departments &&
             departments.length > 0 &&
-            departments.map((item) => {
-              return <option value={item.id}>{item.name}</option>;
+            departments.map((item: any) => {
+              return <option value={item._id.$oid}>{item.name}</option>;
             })}
         </select>
         {errors.department?.message && (

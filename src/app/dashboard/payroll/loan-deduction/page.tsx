@@ -127,7 +127,7 @@ const LoanDeductions = () => {
         </div>
       </div>
       <div className="mt-4">
-        <DataTable columns={columns} rows={loanDeducData} />
+        <DataTable columns={columns} rows={[]} />
       </div>
     </div>
   );

@@ -36,53 +36,26 @@ model Employee {
   name       String   @unique
   category   String
   department String   @db.ObjectId
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-}
-
-model Rate {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  category   String
-  department String   @db.ObjectId
-  employee   String   @db.ObjectId
-  rate       String
-  type       String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-}
-
-model Mandatory {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  category   String
-  department String   @db.ObjectId
-  employee   String   @db.ObjectId
-  gsisgs     String
-  ec         String
-  gsisps     String
-  phic       String
-  hdmfgs     String
-  hdmfps     String
-  wtax       String
-  sss        String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-}
-
-model Loan {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  category   String
-  department String   @db.ObjectId
-  employee   String   @db.ObjectId
-  mplhdmf    String
-  gfal       String
-  landbank   String
-  cb         String
-  eml        String
-  mplgsis    String
-  tagum      String
-  ucpb       String
-  mpllite    String
-  sb         String
+  rate       Float?   @default(0)
+  type       String?
+  gsisgs     Float?   @default(0)
+  ec         Float?   @default(0)
+  gsisps     Float?   @default(0)
+  phic       Float?   @default(0)
+  hdmfgs     Float?   @default(0)
+  hdmfps     Float?   @default(0)
+  wtax       Float?   @default(0)
+  sss        Float?   @default(0)
+  mplhdmf    Float?   @default(0)
+  gfal       Float?   @default(0)
+  landbank   Float?   @default(0)
+  cb         Float?   @default(0)
+  eml        Float?   @default(0)
+  mplgsis    Float?   @default(0)
+  tagum      Float?   @default(0)
+  ucpb       Float?   @default(0)
+  mpllite    Float?   @default(0)
+  sb         Float?   @default(0)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
