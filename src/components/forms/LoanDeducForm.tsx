@@ -1,12 +1,12 @@
 "use client";
 import React, { useState } from "react";
-import InputField from "../InputField";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { LoanSchema } from "@/lib/zod";
 import { createLoan } from "@/actions/loan";
+import { useForm } from "react-hook-form";
+import { LoanSchema } from "@/lib/zod";
+import InputField from "../InputField";
 import Button from "../ui/Button";
+import { z } from "zod";
 
 const LoanDeductionForm = ({
   data,
@@ -67,11 +67,11 @@ const LoanDeductionForm = ({
       className="h-[500px] flex flex-col gap-4 text-[#333333]"
       onSubmit={handleSubmit(onSubmit)}
     >
-      <h1 className="text-center text-sm font-semibold">
+      <h1 className="text-center text-base font-semibold">
         Add Loan and Other Deductions
       </h1>
       <div className="overflow-y-scroll flex flex-col gap-4 p-4">
-        <div className="flex flex-col text-xs gap-2 text-[#333333]">
+        <div className="flex flex-col text-sm gap-2 text-[#333333]">
           <label className="text-left">Category</label>
           <select
             className="w-full bg-transparent rounded-md ring-2 ring-[#ECEEF6] focus:outline-2 focus:outline-blue-200 p-2"
@@ -87,12 +87,12 @@ const LoanDeductionForm = ({
             })}
           </select>
           {errors.category?.message && (
-            <p className="text-[#ff0000] text-[10px]">
+            <p className="text-[#ff0000] text-xs">
               {errors.category.message.toString()}
             </p>
           )}
         </div>
-        <div className="flex flex-col text-xs gap-2 text-[#333333]">
+        <div className="flex flex-col text-sm gap-2 text-[#333333]">
           <label className="text-left">Department</label>
           <select
             className="w-full bg-transparent rounded-md ring-2 ring-[#ECEEF6] focus:outline-2 focus:outline-blue-200 p-2"
@@ -102,12 +102,12 @@ const LoanDeductionForm = ({
             {/* ADD OPTIONS */}
           </select>
           {errors.department?.message && (
-            <p className="text-[#ff0000] text-[10px]">
+            <p className="text-[#ff0000] text-xs">
               {errors.department.message.toString()}
             </p>
           )}
         </div>
-        <div className="flex flex-col text-xs gap-2 text-[#333333]">
+        <div className="flex flex-col text-sm gap-2 text-[#333333]">
           <label className="text-left">Employee</label>
           <select
             className="w-full bg-transparent rounded-md ring-2 ring-[#ECEEF6] focus:outline-2 focus:outline-blue-200 p-2"
@@ -117,7 +117,7 @@ const LoanDeductionForm = ({
             {/* ADD OPTIONS */}
           </select>
           {errors.employee?.message && (
-            <p className="text-[#ff0000] text-[10px]">
+            <p className="text-[#ff0000] text-xs">
               {errors.employee.message.toString()}
             </p>
           )}
@@ -192,11 +192,13 @@ const LoanDeductionForm = ({
           register={register}
           error={errors?.sb}
         />
-        <Button
-          label={isAdding ? "Creating..." : "Create"}
-          type="submit"
-          isLoading={isAdding}
-        />
+        <div className="mt-4">
+          <Button
+            label={isAdding ? "Creating..." : "Create"}
+            type="submit"
+            isLoading={isAdding}
+          />
+        </div>
         {serverError && <p style={{ color: "red" }}>{serverError}</p>}
       </div>
     </form>

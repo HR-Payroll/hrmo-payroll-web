@@ -3,7 +3,6 @@ import UploadButton from "@/components/UploadButton";
 import AddButton from "@/components/AddButton";
 import DataTable from "@/components/tables/DataTable";
 import { GridColDef } from "@mui/x-data-grid";
-import { rateData } from "@/lib/data";
 
 const columns: GridColDef[] = [
   {
@@ -62,9 +61,9 @@ const columns: GridColDef[] = [
 
 const CompensationRate = () => {
   return (
-    <div className="flex-1 rounded-md bg-white border-2 border-[#ECEEF6] gap-4 m-4 mt-10 sm:mt-0 p-4 text-[#333333]">
+    <div className="flex-1 rounded-md bg-white border-2 border-[#ECEEF6] gap-4 mt-10 sm:mt-0 p-4 text-[#333333]">
       <div className="flex flex-row items-center justify-between gap-4">
-        <h1 className="text-base font-semibold text-[#333333]">
+        <h1 className="hidden sm:block text-base font-semibold text-[#333333]">
           Compensation Rate
         </h1>
         <div className="flex flex-row items-center justify-end gap-4 sm:gap-4 cursor-pointer">

@@ -16,12 +16,12 @@ const Navbar = () => {
   };
 
   return (
-    <div className="relative w-full flex flex-row items-center justify-between p-4">
+    <div className="relative w-full flex flex-row items-center justify-between px-2 py-4">
       <div className="hidden lg:block items-center">
         <h1 className="text-base font-semibold text-[#333333]">
           LGU Jasaan HRMO - Payroll Management System
         </h1>
-        <h6 className="text-xs text-gray-600 text-wrap">
+        <h6 className="text-sm text-gray-600 text-wrap">
           An automated system that integrates with DTR/biometrics to streamline
           payroll and boost efficiency.
         </h6>
@@ -29,8 +29,8 @@ const Navbar = () => {
       <div className="absolute top-4 right-0 flex flex-row items-center justify-center">
         <MdOutlineAdminPanelSettings className="text-4xl text-[#333333]" />
         <div className="hidden sm:block flex-col pt-1 px-2 text-[#333333]">
-          <p className="font-semibold text-xs">HRMO - OIC</p>
-          <p className="text-[10px]">Super Administrator</p>
+          <p className="font-semibold text-sm">HRMO - OIC</p>
+          <p className="text-xs">Super Administrator</p>
         </div>
         <div
           className="rounded-full hover:bg-blue-100 active:bg-blue-200 active:text-[#0000ff] text-[#333333] p-1 cursor-pointer"
@@ -43,7 +43,7 @@ const Navbar = () => {
           )}
         </div>
         {isDropdownOpen && (
-          <div className="absolute top-10 right-0 w-42 bg-white border border-[#333333] rounded-md shadow-lg text-xs text-[#333333]">
+          <div className="absolute top-12 right-0 w-42 bg-white border border-[#333333] rounded-md shadow-lg text-sm text-[#333333]">
             <button
               onClick={handleLogout}
               className="w-full text-left px-4 py-2 hover:bg-gray-100 active:text-black cursor-pointer"

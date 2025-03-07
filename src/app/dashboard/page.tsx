@@ -16,7 +16,7 @@ const HomePage = async () => {
 
   console.log(userSession);
   return (
-    <div className="flex flex-col md:flex-row mt-10 lg:mt-0 gap-4 px-4 pb-4 w-full h-full">
+    <div className="w-full h-full flex flex-col md:flex-row mt-10 lg:mt-0 gap-4 px-2 pb-4">
       {/* LEFT */}
       <div className="w-full h-full flex flex-col gap-4">
         {/* TOTAL CARDS */}
