@@ -62,7 +62,7 @@ const AddButton = ({
             <div className="absolute top-4 right-4">
               <button
                 onClick={() => setOpen(false)}
-                className="rounded-md hover:bg-slate-200 active:bg-slate-300 active:text-white text-[#333333] text-md p-1 cursor-pointer"
+                className="rounded-full hover:bg-blue-100 active:bg-blue-200 active:text-[#0000ff] text-[#333333] text-base p-2 cursor-pointer"
               >
                 <MdOutlineClose />
               </button>

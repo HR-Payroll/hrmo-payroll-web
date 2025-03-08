@@ -48,7 +48,7 @@ const EmployeeStatsChart = () => {
                 borderRadius: "5px",
                 color: "#333",
               }}
-              cursor={{ fill: "rgba(219, 234, 254, 0.5)" }}
+              cursor={{ fill: "rgba(219, 234, 254, 0.7)" }}
             />
             <Legend />
             <Bar

@@ -14,7 +14,7 @@ const TotalCard = ({
 }) => {
   return (
     <div className="flex-1 rounded-md bg-white border-2 border-[#ECEEF6] p-4 text-[#333333]">
-      <div className="justify-self-start pb-2 text-xs">
+      <div className="justify-self-start pb-2 text-sm">
         <p>{type}</p>
       </div>
       <div className="flex flex-row justify-between items-center">
@@ -23,7 +23,7 @@ const TotalCard = ({
           {icon}
         </span>
       </div>
-      <div className="mt-4 p-1 rounded-full bg-green-100 text-[10px] text-[#008000]">
+      <div className="mt-4 py-1 px-3 w-fit rounded-full bg-green-100 text-xs text-[#008000]">
         <p>{growth}</p>
       </div>
     </div>

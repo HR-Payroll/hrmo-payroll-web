@@ -1,12 +1,12 @@
 "use client";
 import React, { useState } from "react";
-import InputField from "../InputField";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { DepartmentSchema } from "@/lib/zod";
 import { createDepartment } from "@/actions/department";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { DepartmentSchema } from "@/lib/zod";
+import { useForm } from "react-hook-form";
+import InputField from "../InputField";
 import Button from "../ui/Button";
+import { z } from "zod";
 
 const DepartmentForm = ({
   data,
@@ -56,7 +56,7 @@ const DepartmentForm = ({
       className="flex flex-col gap-4 text-[#333333] p-4"
       onSubmit={handleSubmit(onSubmit)}
     >
-      <h1 className="text-center text-sm font-semibold">Add Department</h1>
+      <h1 className="text-center text-base font-semibold">Add Department</h1>
       <InputField
         label="Department Name"
         name="name"
@@ -64,7 +64,7 @@ const DepartmentForm = ({
         register={register}
         error={errors?.name}
       />
-      <div className="flex flex-col text-xs gap-2 text-[#333333]">
+      <div className="flex flex-col text-sm gap-2 text-[#333333]">
         <label className="text-left">Category</label>
         <select
           className="w-full bg-transparent rounded-md ring-2 ring-[#ECEEF6] focus:outline-2 focus:outline-blue-200 p-2"
@@ -79,16 +79,18 @@ const DepartmentForm = ({
           })}
         </select>
         {errors.category?.message && (
-          <p className="text-[#ff0000] text-[10px]">
+          <p className="text-[#ff0000] text-xs">
             {errors.category.message.toString()}
           </p>
         )}
       </div>
-      <Button
-        label={isAdding ? "Creating..." : "Create"}
-        type="submit"
-        isLoading={isAdding}
-      />
+      <div className="mt-4">
+        <Button
+          label={isAdding ? "Creating..." : "Create"}
+          type="submit"
+          isLoading={isAdding}
+        />
+      </div>
       {serverError && <p style={{ color: "red" }}>{serverError}</p>}
     </form>
   );

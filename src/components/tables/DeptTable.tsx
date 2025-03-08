@@ -1,10 +1,9 @@
 "use client";
 import React, { useState } from "react";
 import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
-import { MdDeleteOutline } from "react-icons/md";
-import { Box } from "@mui/material";
-import Alert from "../ui/Alert";
 import { deleteDepartment } from "@/actions/department";
+import { MdDeleteOutline } from "react-icons/md";
+import Alert from "../ui/Alert";
 
 const DataTable = ({ data, reload }: { data: any[]; reload: VoidFunction }) => {
   const [isDelete, setDelete] = useState(null);

@@ -1,12 +1,12 @@
 "use client";
 import React, { useState } from "react";
-import InputField from "../InputField";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { EmployeeSchema } from "@/lib/zod";
 import { createEmployee } from "@/actions/employee";
+import { EmployeeSchema } from "@/lib/zod";
+import { useForm } from "react-hook-form";
+import InputField from "../InputField";
 import Button from "../ui/Button";
+import { z } from "zod";
 
 const EmployeeForm = ({
   data,
@@ -66,7 +66,7 @@ const EmployeeForm = ({
       className="flex flex-col gap-4 text-[#333333] p-4"
       onSubmit={handleSubmit(onSubmit)}
     >
-      <h1 className="text-center text-sm font-semibold">Add Employee</h1>
+      <h1 className="text-center text-base font-semibold">Add Employee</h1>
       <InputField
         label="ID Number"
         name="recordNo"
@@ -81,7 +81,7 @@ const EmployeeForm = ({
         register={register}
         error={errors?.name}
       />
-      <div className="flex flex-col text-xs gap-2 text-[#333333]">
+      <div className="flex flex-col text-sm gap-2 text-[#333333]">
         <label className="text-left">Category</label>
         <select
           className="w-full bg-transparent rounded-md ring-2 ring-[#ECEEF6] focus:outline-2 focus:outline-blue-200 p-2"
@@ -97,12 +97,12 @@ const EmployeeForm = ({
           })}
         </select>
         {errors.category?.message && (
-          <p className="text-[#ff0000] text-[10px]">
+          <p className="text-[#ff0000] text-xs">
             {errors.category.message.toString()}
           </p>
         )}
       </div>
-      <div className="flex flex-col text-xs gap-2 text-[#333333]">
+      <div className="flex flex-col text-sm gap-2 text-[#333333]">
         <label className="text-left">Department</label>
         <select
           className="w-full bg-transparent rounded-md ring-2 ring-[#ECEEF6] focus:outline-2 focus:outline-blue-200 p-2"
@@ -116,16 +116,19 @@ const EmployeeForm = ({
             })}
         </select>
         {errors.department?.message && (
-          <p className="text-[#ff0000] text-[10px]">
+          <p className="text-[#ff0000] text-xs">
             {errors.department.message.toString()}
           </p>
         )}
       </div>
-      <Button
-        label={isAdding ? "Creating..." : "Create"}
-        type="submit"
-        isLoading={isAdding}
-      />
+      <div className="mt-4">
+        <Button
+          label={isAdding ? "Creating..." : "Create"}
+          type="submit"
+          isLoading={isAdding}
+        />
+      </div>
+
       {serverError && <p style={{ color: "red" }}>{serverError}</p>}
     </form>
   );

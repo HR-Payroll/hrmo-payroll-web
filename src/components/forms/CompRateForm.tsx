@@ -1,12 +1,12 @@
 "use client";
 import React, { useState } from "react";
-import InputField from "../InputField";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { RateSchema } from "@/lib/zod";
 import { createRate } from "@/actions/rate";
+import { useForm } from "react-hook-form";
+import { RateSchema } from "@/lib/zod";
+import InputField from "../InputField";
 import Button from "../ui/Button";
+import { z } from "zod";
 
 const CompensationRateForm = ({
   data,
@@ -67,10 +67,10 @@ const CompensationRateForm = ({
       className="flex flex-col gap-4 text-[#333333] p-4"
       onSubmit={handleSubmit(onSubmit)}
     >
-      <h1 className="text-center text-sm font-semibold">
+      <h1 className="text-center text-base font-semibold">
         Add Employee Compensation Rate
       </h1>
-      <div className="flex flex-col text-xs gap-2 text-[#333333]">
+      <div className="flex flex-col text-sm gap-2 text-[#333333]">
         <label className="text-left">Category</label>
         <select
           className="w-full bg-transparent rounded-md ring-2 ring-[#ECEEF6] focus:outline-2 focus:outline-blue-200 p-2"
@@ -86,12 +86,12 @@ const CompensationRateForm = ({
           })}
         </select>
         {errors.category?.message && (
-          <p className="text-[#ff0000] text-[10px]">
+          <p className="text-[#ff0000] text-xs">
             {errors.category.message.toString()}
           </p>
         )}
       </div>
-      <div className="flex flex-col text-xs gap-2 text-[#333333]">
+      <div className="flex flex-col text-sm gap-2 text-[#333333]">
         <label className="text-left">Department</label>
         <select
           className="w-full bg-transparent rounded-md ring-2 ring-[#ECEEF6] focus:outline-2 focus:outline-blue-200 p-2"
@@ -101,12 +101,12 @@ const CompensationRateForm = ({
           {/* ADD OPTIONS */}
         </select>
         {errors.department?.message && (
-          <p className="text-[#ff0000] text-[10px]">
+          <p className="text-[#ff0000] text-xs">
             {errors.department.message.toString()}
           </p>
         )}
       </div>
-      <div className="flex flex-col text-xs gap-2 text-[#333333]">
+      <div className="flex flex-col text-sm gap-2 text-[#333333]">
         <label className="text-left">Employee</label>
         <select
           className="w-full bg-transparent rounded-md ring-2 ring-[#ECEEF6] focus:outline-2 focus:outline-blue-200 p-2"
@@ -116,7 +116,7 @@ const CompensationRateForm = ({
           {/* ADD OPTIONS */}
         </select>
         {errors.employee?.message && (
-          <p className="text-[#ff0000] text-[10px]">
+          <p className="text-[#ff0000] text-xs">
             {errors.employee.message.toString()}
           </p>
         )}
@@ -128,7 +128,7 @@ const CompensationRateForm = ({
         register={register}
         error={errors?.rate}
       />
-      <div className="flex flex-col text-xs gap-2 text-[#333333]">
+      <div className="flex flex-col text-sm gap-2 text-[#333333]">
         <label className="text-left">Type</label>
         <select
           className="w-full bg-transparent rounded-md ring-2 ring-[#ECEEF6] focus:outline-2 focus:outline-blue-200 p-2"
@@ -144,16 +144,18 @@ const CompensationRateForm = ({
           })}
         </select>
         {errors.type?.message && (
-          <p className="text-[#ff0000] text-[10px]">
+          <p className="text-[#ff0000] text-xs">
             {errors.type.message.toString()}
           </p>
         )}
       </div>
-      <Button
-        label={isAdding ? "Creating..." : "Create"}
-        type="submit"
-        isLoading={isAdding}
-      />
+      <div className="mt-4">
+        <Button
+          label={isAdding ? "Creating..." : "Create"}
+          type="submit"
+          isLoading={isAdding}
+        />
+      </div>
       {serverError && <p style={{ color: "red" }}>{serverError}</p>}
     </form>
   );
