@@ -7,7 +7,7 @@ import { getAllEmployee } from "@/data/employee";
 import { revalidatePath } from "next/cache";
 
 const Employees = async () => {
-  const departments = await getAllDepartment();
+  const departments = (await getAllDepartment()) as any;
   const employees = (await getAllEmployee()) as any;
 
   async function reload() {
@@ -30,7 +30,11 @@ const Employees = async () => {
         </div>
       </div>
       <div className="mt-4">
-        <EmployeesTable data={employees} reload={reload} />
+        <EmployeesTable
+          employees={employees}
+          departments={departments}
+          reload={reload}
+        />
       </div>
     </div>
   );

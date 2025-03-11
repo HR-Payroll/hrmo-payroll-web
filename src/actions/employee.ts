@@ -28,6 +28,28 @@ export const createEmployee = async (data: z.infer<typeof EmployeeSchema>) => {
   }
 };
 
+export const updateEmployee = async (
+  id: string,
+  payload: {
+    recordNo?: string;
+    name?: string;
+    category?: string;
+    department?: any;
+  }
+) => {
+  try {
+    await prisma.employee.update({
+      where: { id },
+      data: { ...payload },
+    });
+
+    return { success: "Employee has been updated successfully!" };
+  } catch (error) {
+    console.log(error);
+    return { error: "Something went wrong, try again later." };
+  }
+};
+
 export const deleteEmployee = async (id: string) => {
   try {
     await prisma.employee.delete({
