@@ -35,7 +35,7 @@ model Employee {
   recordNo   String   @unique
   name       String   @unique
   category   String
-  department String   @db.ObjectId
+  department String   @map("department") @db.ObjectId
   rate       Float?   @default(0)
   type       String?
   gsisgs     Float?   @default(0)

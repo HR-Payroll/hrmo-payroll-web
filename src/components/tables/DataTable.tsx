@@ -2,6 +2,7 @@
 import React from "react";
 import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
 import { MdDeleteOutline } from "react-icons/md";
+import { tableStyle } from "@/lib/themes";
 
 type Props = {
   columns: GridColDef[];
@@ -63,57 +64,7 @@ const DataTable = (props: Props) => {
       disableRowSelectionOnClick
       disableColumnSelector
       disableDensitySelector
-      sx={{
-        "& .odd-row": {
-          backgroundColor: "#F8FAFC",
-        },
-        "& .custom-header": {
-          backgroundColor: "#bfdbfe",
-          color: "#000",
-          fontWeight: "bold",
-          textAlign: "center",
-        },
-        "& .MuiDataGrid-main": {
-          fontFamily: "Inter, sans-serif",
-          color: "#333333",
-          fontSize: "smaller",
-        },
-        "& .MuiDataGrid-toolbarContainer": {
-          flexDirection: "row-reverse",
-        },
-        "& .MuiInputBase-input-MuiInput-input": {
-          fontFamily: "Inter, sans-serif",
-          color: "#333333",
-          fontSize: "smaller",
-        },
-        "& .MuiSvgIcon-root": {
-          color: "#9CA3AF",
-          fontSize: "16px",
-          marginLeft: "5px",
-        },
-        "& .MuiInputBase-root": {
-          fontSize: "12px",
-          fontFamily: "Inter, sans-serif",
-          color: "#6B7280",
-        },
-        "& .MuiPaginationItem-root.Mui-selected": {
-          backgroundColor: "#D0C8FC",
-          color: "#000",
-        },
-        "& .MuiButtonBase-root.Mui-disabled": {
-          color: "#ccc",
-        },
-        "& .MuiTablePagination-root": {
-          fontSize: "12px",
-          minHeight: "30px",
-          fontFamily: "Inter, sans-serif",
-          color: "#333",
-        },
-        "& .MuiTablePagination-displayedRows, & .MuiTablePagination-selectLabel":
-          {
-            fontSize: "12px",
-          },
-      }}
+      sx={tableStyle}
     />
   );
 };

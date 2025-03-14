@@ -38,10 +38,8 @@ export const getAllDepartment = async () => {
       ],
     });
 
-    console.log(departments);
     return departments;
   } catch (error: any) {
-    console.log(error);
     return null;
   }
 };
