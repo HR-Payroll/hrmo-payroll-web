@@ -1,9 +1,11 @@
 "use server";
-import { EmployeeSchema } from "@/lib/zod";
 import { z } from "zod";
+import { EmployeeSchema } from "@/lib/zod";
 import { prisma } from "../../prisma/prisma";
 
-export const createEmployee = async (data: z.infer<typeof EmployeeSchema>) => {
+export const createEmployee = async (
+  data: z.infer<typeof EmployeeSchema>
+) => {
   const validateData = EmployeeSchema.parse(data);
 
   if (!validateData) {
@@ -22,9 +24,9 @@ export const createEmployee = async (data: z.infer<typeof EmployeeSchema>) => {
       },
     });
 
-    return { success: "Employee has been added successfully!" };
+    return { success: "Employee has been successfully added!" };
   } catch (error) {
-    return { error: "Something went wrong, try again later." };
+    return { error: "Something went wrong, please try again later." };
   }
 };
 
@@ -43,10 +45,10 @@ export const updateEmployee = async (
       data: { ...payload },
     });
 
-    return { success: "Employee has been updated successfully!" };
+    return { success: "Employee has been successfully updated!" };
   } catch (error) {
     console.log(error);
-    return { error: "Something went wrong, try again later." };
+    return { error: "Something went wrong, please try again later." };
   }
 };
 
@@ -58,8 +60,8 @@ export const deleteEmployee = async (id: string) => {
       },
     });
 
-    return { success: "Employee has been deleted successfully!" };
+    return { success: "Employee has been successfully deleted!" };
   } catch (error) {
-    return { error: "Something went wrong, try again later." };
+    return { error: "Something went wrong, please try again later." };
   }
 };

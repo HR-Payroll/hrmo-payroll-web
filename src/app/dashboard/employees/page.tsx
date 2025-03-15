@@ -1,10 +1,10 @@
 import React from "react";
-import UploadButton from "@/components/UploadButton";
-import AddButton from "@/components/AddButton";
-import EmployeesTable from "@/components/tables/EmployeesTable";
-import { getAllDepartment } from "@/data/department";
-import { getAllEmployee } from "@/data/employee";
 import { revalidatePath } from "next/cache";
+import { getAllEmployee } from "@/data/employee";
+import { getAllDepartment } from "@/data/department";
+import AddButton from "@/components/AddButton";
+import UploadButton from "@/components/UploadButton";
+import EmployeesTable from "@/components/tables/EmployeesTable";
 
 const Employees = async () => {
   const departments = (await getAllDepartment()) as any;
@@ -16,10 +16,10 @@ const Employees = async () => {
   }
 
   return (
-    <div className="flex-1 overflow-x-auto rounded-md bg-white border-2 border-[#ECEEF6] gap-4 mt-10 sm:mt-0 p-4 text-[#333333]">
-      <div className="flex flex-row items-center justify-between gap-4">
+    <div className="w-full bg-white rounded-md border-2 border-[#ECEEF6] gap-y-4 mt-10 sm:mt-0 p-4 text-[#333333]">
+      <div className="w-full flex flex-row items-center justify-between">
         <h1 className="hidden sm:block text-base font-semibold">Employees</h1>
-        <div className="flex flex-row items-center justify-end gap-4 sm:gap-4 cursor-pointer">
+        <div className="flex flex-row gap-4 cursor-pointer">
           <UploadButton />
           <AddButton
             data={departments}
@@ -29,7 +29,7 @@ const Employees = async () => {
           />
         </div>
       </div>
-      <div className="mt-4">
+      <div className="w-full mt-4">
         <EmployeesTable
           employees={employees}
           departments={departments}

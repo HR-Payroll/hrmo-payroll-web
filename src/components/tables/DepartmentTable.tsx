@@ -4,7 +4,7 @@ import Alert from "../ui/Alert";
 import { tableStyle } from "@/lib/themes";
 import SnackbarInfo, { initialSnackbar } from "../ui/SnackbarInfo";
 import { MdDeleteOutline, MdCheck, MdClose } from "react-icons/md";
-import { deleteEmployee, updateEmployee } from "@/actions/employee";
+import { deleteDepartment, updateDepartment } from "@/actions/department";
 import { styled, Tooltip, tooltipClasses, TooltipProps } from "@mui/material";
 import {
   DataGrid,
@@ -15,18 +15,16 @@ import {
   GridToolbar,
 } from "@mui/x-data-grid";
 
-function EmployeesTable({
-  employees,
+function DepartmentTable({
   departments,
   reload,
 }: {
-  employees?: any[];
-  departments: any[];
+  departments?: any[];
   reload?: VoidFunction;
 }) {
   const [isDelete, setDelete] = useState(null);
   const [isEditing, setEditing] = useState<any>();
-  const [data, setData] = useState(employees);
+  const [data, setData] = useState(departments);
   const [snackbar, setSnackbar] = useState({
     message: "",
     type: "info",
@@ -35,36 +33,10 @@ function EmployeesTable({
 
   const columns: GridColDef[] = [
     {
-      field: "recordNo",
-      headerName: "ID Number",
-      headerClassName: "custom-header",
-      flex: 1,
-      align: "center",
-      headerAlign: "center",
-      editable: true,
-      preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
-        const value = params.props.value;
-        const hasError =
-          value.length < 1 || value === ""
-            ? "Please input a valid ID Number."
-            : null;
-        return { ...params.props, error: hasError };
-      },
-      renderEditCell: (props: GridRenderEditCellParams) => {
-        const { error } = props;
-
-        return (
-          <StyledTooltip open={!!error} title={error}>
-            <GridEditInputCell {...props} />
-          </StyledTooltip>
-        );
-      },
-    },
-    {
       field: "name",
-      headerName: "Employee Name",
+      headerName: "Department Name",
       headerClassName: "custom-header",
-      flex: 1.5,
+      flex: 1,
       align: "center",
       headerAlign: "center",
       editable: true,
@@ -72,7 +44,7 @@ function EmployeesTable({
         const value = params.props.value;
         const hasError =
           value.length < 1 || value === ""
-            ? "Please input a valid name."
+            ? "Please input a valid department name."
             : null;
         return { ...params.props, error: hasError };
       },
@@ -84,28 +56,6 @@ function EmployeesTable({
             <GridEditInputCell {...props} />
           </StyledTooltip>
         );
-      },
-    },
-    {
-      field: "department",
-      headerName: "Department",
-      headerClassName: "custom-header",
-      flex: 1,
-      align: "center",
-      headerAlign: "center",
-      type: "singleSelect",
-      valueOptions: departments.map((item) => item.name) || [],
-      editable: true,
-      valueSetter: (value, row) => {
-        const department = departments.find((dept: any) => dept.name === value);
-
-        return {
-          ...row,
-          department,
-        };
-      },
-      valueGetter: (value) => {
-        return value ? value["name"] : "N/A";
       },
     },
     {
@@ -138,6 +88,36 @@ function EmployeesTable({
       },
     },
     {
+      field: "employees",
+      headerName: "Total Employees",
+      headerClassName: "custom-header",
+      flex: 0.5,
+      align: "center",
+      headerAlign: "center",
+      editable: false,
+    },
+    {
+      field: "createdAt",
+      headerName: "Date Created",
+      headerClassName: "custom-header",
+      flex: 1,
+      align: "center",
+      headerAlign: "center",
+      editable: false,
+      renderCell: (params) => {
+        if (!params.value) return "N/A";
+        return new Date(params.value.$date).toLocaleString("en-US", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: true,
+        });
+      },
+    },
+    {
       field: "action",
       headerName: "Action",
       headerClassName: "custom-header",
@@ -156,10 +136,8 @@ function EmployeesTable({
                     );
 
                     onUpdate(params.id, {
-                      recordNo: row.recordNo,
                       name: row.name,
                       category: row.category,
-                      department: row.department._id.$oid,
                     });
                   }}
                   className="w-full flex items-center justify-center p-1 cursor-pointer"
@@ -219,16 +197,14 @@ function EmployeesTable({
   const onUpdate = async (
     id: string,
     payload: {
-      recordNo?: string;
       name?: string;
       category?: string;
-      department?: any;
     }
   ) => {
     try {
-      await updateEmployee(id, payload);
+      await updateDepartment(id, payload);
       setSnackbar({
-        message: "Employee info successfully updated!",
+        message: "Department info successfully updated!",
         type: "success",
         modal: true,
       });
@@ -238,7 +214,7 @@ function EmployeesTable({
       setEditing(temp);
     } catch (error) {
       setSnackbar({
-        message: "Failed to update employee!",
+        message: "Failed to update department!",
         type: "error",
         modal: true,
       });
@@ -247,11 +223,11 @@ function EmployeesTable({
 
   const onDelete = async () => {
     try {
-      await deleteEmployee(isDelete!);
+      await deleteDepartment(isDelete!);
       if (reload) reload();
     } catch (error) {
       setSnackbar({
-        message: "Failed to delete employee!",
+        message: "Failed to delete department!",
         type: "error",
         modal: true,
       });
@@ -288,8 +264,8 @@ function EmployeesTable({
     <>
       <Alert
         open={!!isDelete}
-        title="Delete Employee"
-        message="Are you sure you want to delete this employee?"
+        title="Delete Department"
+        message="Are you sure you want to delete this department?"
         onClose={() => {
           setDelete(null);
         }}
@@ -356,4 +332,4 @@ function EmployeesTable({
   );
 }
 
-export default EmployeesTable;
+export default DepartmentTable;

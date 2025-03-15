@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createRate } from "@/actions/rate";
 import { useForm } from "react-hook-form";
 import { RateSchema } from "@/lib/zod";
 import InputField from "../InputField";
@@ -47,26 +46,8 @@ const CompensationRateForm = ({
     Contractual: "CONTRACTUAL",
   };
 
-  const onSubmit = async (data: z.infer<typeof RateSchema>) => {
-    setServerError(null);
-    setIsAdding(true);
-
-    try {
-      const result = await createRate(data);
-      setIsAdding(false);
-      console.log(result);
-      onClose();
-    } catch (error) {
-      console.log(error);
-      setIsAdding(false);
-    }
-  };
-
   return (
-    <form
-      className="flex flex-col gap-4 text-[#333333] p-4"
-      onSubmit={handleSubmit(onSubmit)}
-    >
+    <form className="flex flex-col gap-4 text-[#333333] p-4">
       <h1 className="text-center text-base font-semibold">
         Add Employee Compensation Rate
       </h1>
