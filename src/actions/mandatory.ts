@@ -1,21 +1,19 @@
 "use server";
 import { prisma } from "../../prisma/prisma";
 
-export const updateLoan = async (
+export const updateMandatory = async (
   id: string,
   payload: {
     name?: string;
     department?: any;
-    mplhdmf?: number;
-    gfal?: number;
-    landbank?: number;
-    cb?: number;
-    eml?: number;
-    mplgsis?: number;
-    tagum?: number;
-    ucpb?: number;
-    mpllite?: number;
-    sb?: number;
+    gsisgs?: number;
+    ec?: number;
+    gsisps?: number;
+    phic?: number;
+    hdmfgs?: number;
+    hdmfps?: number;
+    wtax?: number;
+    sss?: number;
   }
 ) => {
   try {
@@ -24,7 +22,7 @@ export const updateLoan = async (
       data: { ...payload },
     });
 
-    return { success: "Employee Loans & Other Deductions has been successfully updated!" };
+    return { success: "Employee Mandatory Deductions has been successfully updated!" };
   } catch (error) {
     console.log(error);
     return { error: "Something went wrong, please try again later." };

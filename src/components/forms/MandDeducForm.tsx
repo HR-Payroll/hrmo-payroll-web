@@ -1,12 +1,12 @@
 "use client";
 import React, { useState } from "react";
-import { createDeductions } from "@/actions/deductions";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MandatorySchema } from "@/lib/zod";
 import { useForm } from "react-hook-form";
 import InputField from "../InputField";
 import Button from "../ui/Button";
 import { z } from "zod";
+import { updateMandatory } from "@/actions/mandatory";
 
 const MandDeductionForm = ({
   data,
@@ -45,26 +45,8 @@ const MandDeductionForm = ({
     "Job Order": "JOB_ORDER",
   };
 
-  const onSubmit = async (data: z.infer<typeof MandatorySchema>) => {
-    setServerError(null);
-    setIsAdding(true);
-
-    try {
-      const result = await createDeductions(data);
-      setIsAdding(false);
-      console.log(result);
-      onClose();
-    } catch (error) {
-      console.log(error);
-      setIsAdding(false);
-    }
-  };
-
   return (
-    <form
-      className="h-[500px] flex flex-col gap-4 text-[#333333]"
-      onSubmit={handleSubmit(onSubmit)}
-    >
+    <form className="h-[500px] flex flex-col gap-4 text-[#333333]">
       <h1 className="text-center text-base font-semibold">
         Add Mandatory Deductions
       </h1>

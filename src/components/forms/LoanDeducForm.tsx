@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createLoan } from "@/actions/loan";
 import { useForm } from "react-hook-form";
 import { LoanSchema } from "@/lib/zod";
 import InputField from "../InputField";
@@ -47,26 +46,8 @@ const LoanDeductionForm = ({
     "Job Order": "JOB_ORDER",
   };
 
-  const onSubmit = async (data: z.infer<typeof LoanSchema>) => {
-    setServerError(null);
-    setIsAdding(true);
-
-    try {
-      const result = await createLoan(data);
-      setIsAdding(false);
-      console.log(result);
-      onClose();
-    } catch (error) {
-      console.log(error);
-      setIsAdding(false);
-    }
-  };
-
   return (
-    <form
-      className="h-[500px] flex flex-col gap-4 text-[#333333]"
-      onSubmit={handleSubmit(onSubmit)}
-    >
+    <form className="h-[500px] flex flex-col gap-4 text-[#333333]">
       <h1 className="text-center text-base font-semibold">
         Add Loan and Other Deductions
       </h1>

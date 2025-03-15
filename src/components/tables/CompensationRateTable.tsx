@@ -1,6 +1,8 @@
 "use client";
-import { tableStyle } from "@/lib/themes";
+import React, { useState } from "react";
 import { styled } from "@mui/material";
+import { tableStyle } from "@/lib/themes";
+import { updateRate } from "@/actions/rate";
 import Tooltip, { tooltipClasses, TooltipProps } from "@mui/material/Tooltip";
 import {
   DataGrid,
@@ -10,15 +12,26 @@ import {
   GridRenderEditCellParams,
   GridToolbar,
 } from "@mui/x-data-grid";
-import React from "react";
 
 function CompensationRateTable({
   rates,
+  employees,
   departments,
+  reload,
 }: {
-  rates: any[];
+  rates?: any[];
+  employees: any[];
   departments: any[];
+  reload?: VoidFunction;
 }) {
+  const [isEditing, setEditing] = useState<any>();
+  const [data, setData] = useState(employees);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    type: "info",
+    modal: false,
+  });
+
   const columns: GridColDef[] = [
     {
       field: "recordNo",
@@ -27,6 +40,7 @@ function CompensationRateTable({
       flex: 1,
       align: "center",
       headerAlign: "center",
+      editable: false,
     },
     {
       field: "name",
@@ -35,6 +49,7 @@ function CompensationRateTable({
       flex: 1.5,
       align: "center",
       headerAlign: "center",
+      editable: false,
     },
     {
       field: "department",
@@ -44,7 +59,7 @@ function CompensationRateTable({
       align: "center",
       headerAlign: "center",
       type: "singleSelect",
-      valueOptions: departments.map((item) => item.name) || [],
+      editable: false,
       valueGetter: (value) => {
         return value ? value["name"] : "N/A";
       },
@@ -58,6 +73,7 @@ function CompensationRateTable({
       headerAlign: "center",
       type: "singleSelect",
       valueOptions: ["Regular", "Casual", "Job Order"],
+      editable: false,
       valueGetter: (row) => {
         const dept = {
           REGULAR: "Regular",
@@ -80,7 +96,9 @@ function CompensationRateTable({
       preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
         console.log(params.props.value);
         const hasError =
-          params.props.value < 1 ? "Please input a valid rate." : null;
+          params.props.value < 1
+            ? "Please input a valid compensation rate."
+            : null;
         return { ...params.props, error: hasError };
       },
       renderEditCell: (props: GridRenderEditCellParams) => {
@@ -103,6 +121,28 @@ function CompensationRateTable({
       type: "singleSelect",
       valueOptions: ["Daily", "Weekly", "Bi-weekly", "Monthly", "Contractual"],
       editable: true,
+      valueSetter: (value, row) => {
+        const type = {
+          Daily: "DAILY",
+          Weekly: "WEEKLY",
+          "Bi-weekly": "BI_WEEKLY",
+          Monthly: "MONTHLY",
+          Contractual: "CONTRACTUAL",
+        } as any;
+
+        return { ...row, category: type[value] };
+      },
+      valueGetter: (row) => {
+        const type = {
+          DAILY: "Daily",
+          WEEKLY: "Weekly",
+          BI_WEEKLY: "Bi-weekly",
+          MONTHLY: "Monthly",
+          CONTRACTUAL: "Contractual",
+        };
+
+        return type[row];
+      },
     },
   ];
 
@@ -115,19 +155,77 @@ function CompensationRateTable({
     },
   }));
 
+  const onUpdate = async (
+    id: string,
+    payload: {
+      recordNo?: string;
+      name?: string;
+      department?: any;
+      category?: string;
+      rate?: number;
+      type?: string;
+    }
+  ) => {
+    try {
+      await updateRate(id, payload);
+      setSnackbar({
+        message: "Employee compensation rate info successfully updated!",
+        type: "success",
+        modal: true,
+      });
+
+      const temp = { ...isEditing };
+      delete temp[id];
+      setEditing(temp);
+    } catch (error) {
+      setSnackbar({
+        message: "Failed to update employee compensation rate!",
+        type: "error",
+        modal: true,
+      });
+    }
+  };
+
+  const processUpdate = async (newRow: any, oldRow: any, params: any) => {
+    const isChanged = Object.keys(newRow).some((key) => {
+      const newValue = newRow[key];
+      const oldValue = oldRow[key];
+
+      if (typeof newValue === "object" && typeof oldValue === "object") {
+        return JSON.stringify(newValue) !== JSON.stringify(oldValue);
+      }
+
+      return newValue !== oldValue;
+    });
+
+    if (
+      (isChanged && !isEditing) ||
+      (isEditing && !Object.keys(isEditing).includes(params.rowId))
+    ) {
+      setEditing({ ...isEditing, [params.rowId]: oldRow });
+    }
+
+    setData((prev: any) =>
+      prev.map((row: any) => (row._id.$oid === params.rowId ? newRow : row))
+    );
+
+    return { ...newRow, isNew: false };
+  };
+
   return (
     <>
       <DataGrid
-        rows={rates}
+        rows={data}
         columns={columns}
-        getRowId={(row) => {
-          return row._id.$oid.toString();
-        }}
+        getRowId={(row) => row._id.$oid.toString()}
         columnHeaderHeight={40}
         rowHeight={36}
-        getRowClassName={(params) =>
-          params.indexRelativeToCurrentPage % 2 !== 0 ? "odd-row" : ""
-        }
+        getRowClassName={(params) => {
+          if (isEditing && Object.keys(isEditing).includes(params.id as string))
+            return "edited-row";
+
+          return params.indexRelativeToCurrentPage % 2 !== 0 ? "odd-row" : "";
+        }}
         initialState={{
           pagination: {
             paginationModel: {
@@ -146,11 +244,8 @@ function CompensationRateTable({
         disableRowSelectionOnClick
         disableColumnSelector
         disableDensitySelector
-        processRowUpdate={(row, _, params) => {
-          console.log(row, params);
-          return { ...row, isNew: false };
-        }}
         sx={tableStyle}
+        processRowUpdate={processUpdate}
       />
     </>
   );

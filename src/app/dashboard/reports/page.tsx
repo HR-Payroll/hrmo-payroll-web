@@ -1,6 +1,6 @@
 import React from "react";
 import UploadButton from "@/components/UploadButton";
-import ViewTable from "@/components/tables/ViewTable";
+import ReportTable from "@/components/tables/ReportTable";
 import { GridColDef } from "@mui/x-data-grid";
 import { reportData } from "@/lib/data";
 
@@ -65,7 +65,7 @@ const Reports = () => {
         </div>
       </div>
       <div className="mt-4">
-        <ViewTable columns={columns} rows={reportData} slug="reports" />
+        <ReportTable columns={columns} rows={reportData} slug="reports" />
       </div>
     </div>
   );

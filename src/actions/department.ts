@@ -1,6 +1,6 @@
 "use server";
-import { DepartmentSchema } from "@/lib/zod";
 import { z } from "zod";
+import { DepartmentSchema } from "@/lib/zod";
 import { prisma } from "../../prisma/prisma";
 
 export const createDepartment = async (
@@ -19,9 +19,29 @@ export const createDepartment = async (
       data: { name: name, category: category },
     });
 
-    return { success: "Department has been added successfully!" };
+    return { success: "Department has been successfully added!" };
   } catch (error) {
-    return { error: "Something went wrong, try again later." };
+    return { error: "Something went wrong, please try again later." };
+  }
+};
+
+export const updateDepartment = async (
+  id: string,
+  payload: {
+    name?: string;
+    category?: string;
+  }
+) => {
+  try {
+    await prisma.employee.update({
+      where: { id },
+      data: { ...payload },
+    });
+
+    return { success: "Department has been successfully updated!" };
+  } catch (error) {
+    console.log(error);
+    return { error: "Something went wrong, please try again later." };
   }
 };
 
@@ -33,9 +53,9 @@ export const deleteDepartment = async (id: string) => {
       },
     });
 
-    return { success: "Department has been deleted successfully!" };
+    return { success: "Department has been successfully deleted!" };
   } catch (error) {
-    return { error: "Something went wrong, try again later." };
+    return { error: "Something went wrong, please try again later." };
   }
 };
 
