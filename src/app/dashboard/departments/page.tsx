@@ -18,7 +18,7 @@ const Departments = async () => {
       <div className="w-full flex flex-row items-center justify-between gap-4">
         <h1 className="hidden sm:block text-base font-semibold">Departments</h1>
         <div className="flex flex-row gap-4 cursor-pointer">
-          <UploadButton />
+          <UploadButton reload={reload} />
           <AddButton
             table="department"
             title="Add Department"

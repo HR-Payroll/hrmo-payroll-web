@@ -12,9 +12,11 @@ const EmployeeForm = ({
   data,
   onClose,
   departments,
+  setSnackbar,
 }: {
   data?: any;
   onClose: Function;
+  setSnackbar: Function;
   departments: {
     name: string;
     category: string;
@@ -52,11 +54,29 @@ const EmployeeForm = ({
 
     try {
       const result = await createEmployee(data);
+      if (result && result.error) {
+        setIsAdding(false);
+        return setSnackbar({
+          message: result.error,
+          type: "error",
+          modal: true,
+        });
+      }
+
+      setSnackbar({
+        message: result.success,
+        type: "success",
+        modal: true,
+      });
+
       setIsAdding(false);
-      console.log(result);
       onClose();
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      setSnackbar({
+        message: error.message,
+        type: "error",
+        modal: true,
+      });
       setIsAdding(false);
     }
   };
@@ -112,7 +132,11 @@ const EmployeeForm = ({
           {departments &&
             departments.length > 0 &&
             departments.map((item: any) => {
-              return <option value={item._id.$oid}>{item.name}</option>;
+              return (
+                <option key={item._id.$oid} value={item._id.$oid}>
+                  {item.name}
+                </option>
+              );
             })}
         </select>
         {errors.department?.message && (

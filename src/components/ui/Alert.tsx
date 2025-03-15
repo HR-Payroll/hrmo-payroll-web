@@ -38,7 +38,11 @@ function Alert({
         </DialogContent>
         <DialogActions>
           {buttons?.map((item) => {
-            return <Button onClick={item.onClick}>{item.label}</Button>;
+            return (
+              <Button key={item.label} onClick={item.onClick}>
+                {item.label}
+              </Button>
+            );
           })}
         </DialogActions>
       </Dialog>
