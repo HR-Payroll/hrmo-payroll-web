@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import Alert from "../ui/Alert";
 import { tableStyle } from "@/lib/themes";
 import SnackbarInfo, { initialSnackbar } from "../ui/SnackbarInfo";
-import { MdDeleteOutline, MdCheck, MdClose } from "react-icons/md";
 import { deleteEmployee, updateEmployee } from "@/actions/employee";
 import { styled, Tooltip, tooltipClasses, TooltipProps } from "@mui/material";
 import {
@@ -14,6 +13,14 @@ import {
   GridRenderEditCellParams,
   GridToolbar,
 } from "@mui/x-data-grid";
+import {
+  MdDeleteOutline,
+  MdCheckCircle,
+  MdCheck,
+  MdClose,
+} from "react-icons/md";
+import { GoXCircleFill } from "react-icons/go";
+
 
 function EmployeesTable({
   employees,
@@ -32,6 +39,10 @@ function EmployeesTable({
     type: "info",
     modal: false,
   });
+
+  useEffect(() => {
+    setData(employees);
+  }, [employees]);
 
   const columns: GridColDef[] = [
     {
@@ -248,7 +259,10 @@ function EmployeesTable({
   const onDelete = async () => {
     try {
       await deleteEmployee(isDelete!);
-      if (reload) reload();
+      if (reload) {
+        console.log("tae");
+        reload();
+      }
     } catch (error) {
       setSnackbar({
         message: "Failed to delete employee!",

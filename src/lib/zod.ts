@@ -11,11 +11,7 @@ export const LoginSchema = object({
 });
 
 export const DepartmentSchema = object({
-  name: string()
-    .min(3, { message: "Department name must be at least 3 characters long!" })
-    .max(20, {
-      message: "Department name must be at most 20 characters long!",
-    }),
+  name: string().min(1, "Department name is required"),
   category: string().min(1, "Category is required"),
 });
 
