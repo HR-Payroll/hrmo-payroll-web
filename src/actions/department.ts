@@ -38,3 +38,26 @@ export const deleteDepartment = async (id: string) => {
     return { error: "Something went wrong, try again later." };
   }
 };
+
+export const uploadDepartment = async (
+  data: z.infer<typeof DepartmentSchema>[]
+) => {
+  for (var i = 0; i < data.length; i++) {
+    const validateData = DepartmentSchema.parse(data[i]);
+    if (!validateData) {
+      return { error: "Invalid input fields", row: i + 1 };
+    }
+  }
+
+  try {
+    await prisma.$transaction([
+      prisma.department.createMany({
+        data,
+      }),
+    ]);
+
+    return { success: "Department has been uploaded successfully!" };
+  } catch (error) {
+    return { error: "Something went wrong, try again later." };
+  }
+};

@@ -2,6 +2,7 @@
 import React, { JSX, useState } from "react";
 import dynamic from "next/dynamic";
 import { MdOutlineAdd, MdOutlineClose } from "react-icons/md";
+import SnackbarInfo, { initialSnackbar } from "./ui/SnackbarInfo";
 
 const DepartmentForm = dynamic(() => import("./forms/DepartmentForm"), {
   loading: () => <h1 className="text-xs text-[#333333]">Loading...</h1>,
@@ -31,18 +32,31 @@ const AddButton = ({
   reload?: VoidFunction;
 }) => {
   const [open, setOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    type: "info",
+    modal: false,
+  });
 
   const forms: { [key: string]: () => JSX.Element } = {
     department: () => <DepartmentForm onClose={onClose} />,
-    employee: () => <EmployeeForm departments={data} onClose={onClose} />,
+    employee: () => (
+      <EmployeeForm
+        setSnackbar={(params: any) => {
+          setSnackbar(params);
+        }}
+        departments={data}
+        onClose={onClose}
+      />
+    ),
     rate: () => <CompRateForm onClose={() => {}} />,
     deduction: () => <MandDeducForm onClose={() => {}} />,
     loan: () => <LoanDeducForm onClose={() => {}} />,
   };
 
   const onClose = () => {
-    setOpen(false);
     if (reload) reload();
+    setOpen(false);
   };
 
   return (
@@ -69,6 +83,16 @@ const AddButton = ({
             </div>
           </div>
         </div>
+      )}
+      {snackbar.modal && (
+        <SnackbarInfo
+          isOpen={snackbar.modal}
+          type={snackbar.type as any}
+          message={snackbar.message}
+          onClose={() => {
+            setSnackbar(initialSnackbar);
+          }}
+        />
       )}
     </>
   );

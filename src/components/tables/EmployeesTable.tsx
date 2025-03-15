@@ -9,7 +9,7 @@ import {
   GridToolbar,
   useGridApiRef,
 } from "@mui/x-data-grid";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   MdDeleteOutline,
   MdCheckCircle,
@@ -40,6 +40,10 @@ function EmployeesTable({
     type: "info",
     modal: false,
   });
+
+  useEffect(() => {
+    setData(employees);
+  }, [employees]);
 
   const columns: GridColDef[] = [
     {
@@ -256,7 +260,10 @@ function EmployeesTable({
   const onDelete = async () => {
     try {
       await deleteEmployee(isDelete!);
-      if (reload) reload();
+      if (reload) {
+        console.log("tae");
+        reload();
+      }
     } catch (error) {
       setSnackbar({
         message: "Failed to delete employee!",
