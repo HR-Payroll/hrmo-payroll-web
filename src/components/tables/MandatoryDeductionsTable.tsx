@@ -10,7 +10,6 @@ import {
   GridEditInputCell,
   GridPreProcessEditCellProps,
   GridRenderEditCellParams,
-  GridToolbar,
 } from "@mui/x-data-grid";
 
 function MandatoryDeductionsTable({
@@ -35,7 +34,7 @@ function MandatoryDeductionsTable({
       field: "name",
       headerName: "Employee Name",
       headerClassName: "custom-header",
-      flex: 1.2,
+      flex: 1.3,
       align: "center",
       headerAlign: "center",
       editable: false,
@@ -44,7 +43,7 @@ function MandatoryDeductionsTable({
       field: "department",
       headerName: "Department",
       headerClassName: "custom-header",
-      flex: 0.6,
+      flex: 0.7,
       align: "center",
       headerAlign: "center",
       editable: false,
@@ -343,17 +342,8 @@ function MandatoryDeductionsTable({
           },
         },
       }}
-      slots={{ toolbar: GridToolbar }}
-      slotProps={{
-        toolbar: {
-          showQuickFilter: true,
-          quickFilterProps: { debounceMs: 500 },
-        },
-      }}
       pageSizeOptions={[5, 10, 20]}
       disableRowSelectionOnClick
-      disableColumnSelector
-      disableDensitySelector
       sx={tableStyle}
       processRowUpdate={processUpdate}
     />

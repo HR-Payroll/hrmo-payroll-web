@@ -12,17 +12,17 @@ export const tableStyle = {
     textAlign: "center",
   },
   "& .MuiDataGrid-main": {
-    fontFamily: "Inter, sans-serif",
+    fontFamily: "Arimo, sans-serif",
     color: "#333333",
-    fontSize: "smaller",
+    fontSize: "14px",
   },
   "& .MuiDataGrid-toolbarContainer": {
     flexDirection: "row-reverse",
   },
   "& .MuiInputBase-input-MuiInput-input": {
-    fontFamily: "Inter, sans-serif",
+    fontFamily: "Arimo, sans-serif",
     color: "#333333",
-    fontSize: "smaller",
+    fontSize: "14px",
   },
   "& .MuiSvgIcon-root": {
     color: "#9CA3AF",
@@ -30,8 +30,8 @@ export const tableStyle = {
     marginLeft: "5px",
   },
   "& .MuiInputBase-root": {
-    fontSize: "12px",
-    fontFamily: "Inter, sans-serif",
+    fontSize: "14px",
+    fontFamily: "Arimo, sans-serif",
     color: "#6B7280",
   },
   "& .MuiPaginationItem-root.Mui-selected": {
@@ -42,12 +42,12 @@ export const tableStyle = {
     color: "#ccc",
   },
   "& .MuiTablePagination-root": {
-    fontSize: "12px",
+    fontSize: "14px",
     minHeight: "30px",
-    fontFamily: "Inter, sans-serif",
+    fontFamily: "Arimo, sans-serif",
     color: "#333",
   },
   "& .MuiTablePagination-displayedRows, & .MuiTablePagination-selectLabel": {
-    fontSize: "12px",
+    fontSize: "14px",
   },
 };

@@ -10,13 +10,21 @@ import {
   MdOutlineGroups3,
 } from "react-icons/md";
 import { auth } from "@/auth";
+import PageInfo from "@/components/PageInfo";
 
 const HomePage = async () => {
   const userSession = await auth();
 
   console.log(userSession);
   return (
-    <div className="w-full h-full flex flex-col md:flex-row mt-10 lg:mt-0 gap-4 px-2 pb-4">
+    <div className="w-full h-full flex flex-col md:flex-row gap-4 px-2 pb-4">
+      <div className="absolute top-4">
+        <PageInfo
+          title="LGU Jasaan HRMO - Payroll Management System"
+          info="An automated system that integrates with DTR/biometrics to streamline
+          payroll and boost efficiency."
+        />
+      </div>
       {/* LEFT */}
       <div className="w-full h-full flex flex-col gap-4">
         {/* TOTAL CARDS */}

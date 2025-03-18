@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Alert from "../ui/Alert";
 import { tableStyle } from "@/lib/themes";
 import SnackbarInfo, { initialSnackbar } from "../ui/SnackbarInfo";
@@ -11,16 +11,8 @@ import {
   GridEditInputCell,
   GridPreProcessEditCellProps,
   GridRenderEditCellParams,
-  GridToolbar,
 } from "@mui/x-data-grid";
-import {
-  MdDeleteOutline,
-  MdCheckCircle,
-  MdCheck,
-  MdClose,
-} from "react-icons/md";
-import { GoXCircleFill } from "react-icons/go";
-
+import { MdDeleteOutline, MdCheck, MdClose } from "react-icons/md";
 
 function EmployeesTable({
   employees,
@@ -208,7 +200,7 @@ function EmployeesTable({
               >
                 <MdDeleteOutline
                   size={25}
-                  className="w-fit rounded-full bg-slate-200 hover:bg-slate-300 active:bg-slate-400 active:text-white text-[#333333] p-1"
+                  className="w-fit rounded-full bg-[#ECEEF6] hover:bg-blue-200 active:bg-blue-300 active:text-[#0000ff] text-[#333333] p-1"
                 />
               </div>
             )}
@@ -342,17 +334,8 @@ function EmployeesTable({
             },
           },
         }}
-        slots={{ toolbar: GridToolbar }}
-        slotProps={{
-          toolbar: {
-            showQuickFilter: true,
-            quickFilterProps: { debounceMs: 500 },
-          },
-        }}
         pageSizeOptions={[5, 10, 20]}
         disableRowSelectionOnClick
-        disableColumnSelector
-        disableDensitySelector
         sx={tableStyle}
         processRowUpdate={processUpdate}
       />

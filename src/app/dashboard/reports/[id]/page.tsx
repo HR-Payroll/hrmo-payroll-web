@@ -66,9 +66,7 @@ const SingleReportPage = () => {
           <UploadButton />
         </div>
       </div>
-      <div className="mt-4">
-        <DataTable columns={columns} rows={singleReportData} />
-      </div>
+      <div className="mt-4"></div>
     </div>
   );
 };
