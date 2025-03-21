@@ -7,11 +7,29 @@ import UploadButton from "@/components/UploadButton";
 import AddButton from "@/components/AddButton";
 import DepartmentTable from "@/components/tables/DepartmentTable";
 
-const Departments = async () => {
-  const departments = (await getAllDepartment()) as any;
+const Departments = async (props: {
+  searchParams?: Promise<{
+    search?: string;
+    page?: string;
+    limit?: string;
+  }>;
+}) => {
+  const params = await props.searchParams;
+  const search = params?.search;
+  const page = params?.page;
+  const limit = params?.limit;
+
+  let isLoading = true;
+  const departments = (await getAllDepartment(
+    search,
+    Number(page || 0),
+    Number(limit || 10)
+  )) as any;
+  isLoading = false;
 
   async function reload() {
     "use server";
+
     revalidatePath("/dashboard/departments");
   }
 
@@ -37,7 +55,14 @@ const Departments = async () => {
         </div>
       </div>
       <div className="w-full mt-4">
-        <DepartmentTable departments={departments} reload={reload} />
+        <DepartmentTable
+          departments={departments.items}
+          reload={reload}
+          isLoading={isLoading}
+          limit={departments.pageSize}
+          rowCount={departments.pageRange}
+          page={departments.page}
+        />
       </div>
     </div>
   );

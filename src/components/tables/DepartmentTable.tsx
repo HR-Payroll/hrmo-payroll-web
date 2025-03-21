@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Alert from "../ui/Alert";
 import { tableStyle } from "@/lib/themes";
 import SnackbarInfo, { initialSnackbar } from "../ui/SnackbarInfo";
@@ -10,25 +10,57 @@ import {
   DataGrid,
   GridColDef,
   GridEditInputCell,
+  GridPaginationModel,
   GridPreProcessEditCellProps,
   GridRenderEditCellParams,
 } from "@mui/x-data-grid";
+import { usePathname, useRouter } from "next/navigation";
 
 function DepartmentTable({
   departments,
   reload,
+  isLoading,
+  page = 0,
+  limit = 10,
+  rowCount = 0,
 }: {
   departments?: any[];
   reload?: VoidFunction;
+  isLoading?: boolean;
+  page?: number;
+  limit?: number;
+  rowCount?: number;
 }) {
+  const router = useRouter();
+  const pathname = usePathname();
+
   const [isDelete, setDelete] = useState(null);
   const [isEditing, setEditing] = useState<any>();
   const [data, setData] = useState(departments);
+  const [pageSize, setPageSize] = useState(limit);
   const [snackbar, setSnackbar] = useState({
     message: "",
     type: "info",
     modal: false,
   });
+
+  const onPageChange = (model: GridPaginationModel) => {
+    let query = pathname;
+
+    if (model.page !== 0 && model.pageSize !== 10) {
+      query = `${pathname}?page=${model.page}&limit=${model.pageSize}`;
+    } else if (model.page !== 0) {
+      query = `${pathname}?page=${model.page}`;
+    } else if (model.pageSize !== 10) {
+      query = `${pathname}?limit=${model.pageSize}`;
+    }
+
+    router.push(query);
+  };
+
+  useEffect(() => {
+    setData(departments);
+  }, [departments]);
 
   const columns: GridColDef[] = [
     {
@@ -287,23 +319,25 @@ function DepartmentTable({
       <DataGrid
         rows={data}
         columns={columns}
+        loading={isLoading}
         getRowId={(row) => row._id.$oid.toString()}
         columnHeaderHeight={40}
         rowHeight={36}
+        rowCount={rowCount}
         getRowClassName={(params) => {
           if (isEditing && Object.keys(isEditing).includes(params.id as string))
             return "edited-row";
 
           return params.indexRelativeToCurrentPage % 2 !== 0 ? "odd-row" : "";
         }}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 10,
-            },
-          },
-        }}
         pageSizeOptions={[5, 10, 20]}
+        paginationMode="server"
+        paginationModel={{ page, pageSize }}
+        onPaginationModelChange={(model) => {
+          page = model.page;
+          setPageSize(model.pageSize);
+          onPageChange(model);
+        }}
         disableRowSelectionOnClick
         sx={tableStyle}
         processRowUpdate={processUpdate}
