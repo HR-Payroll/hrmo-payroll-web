@@ -1,8 +1,10 @@
 import React from "react";
 import { revalidatePath } from "next/cache";
 import { getAllDepartment } from "@/data/department";
-import AddButton from "@/components/AddButton";
+import PageInfo from "@/components/PageInfo";
+import TableSearch from "@/components/TableSearch";
 import UploadButton from "@/components/UploadButton";
+import AddButton from "@/components/AddButton";
 import DepartmentTable from "@/components/tables/DepartmentTable";
 
 const Departments = async () => {
@@ -14,10 +16,18 @@ const Departments = async () => {
   }
 
   return (
-    <div className="w-full bg-white rounded-md border-2 border-[#ECEEF6] gap-y-4 mt-10 sm:mt-0 p-4 text-[#333333]">
-      <div className="w-full flex flex-row items-center justify-between">
-        <h1 className="hidden sm:block text-base font-semibold">Departments</h1>
-        <div className="flex flex-row gap-4 cursor-pointer">
+    <div className="w-full bg-white rounded-md border-2 border-[#ECEEF6] p-4 text-[#333333]">
+      <div className="absolute top-4 -ml-4">
+        <PageInfo
+          title="Departments"
+          info="Manage your company's departments in this page. You can add, edit, or delete department details here."
+        />
+      </div>
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-y-4">
+        <div>
+          <TableSearch />
+        </div>
+        <div className="flex flex-row items-center gap-4 cursor-pointer">
           <UploadButton reload={reload} />
           <AddButton
             table="department"

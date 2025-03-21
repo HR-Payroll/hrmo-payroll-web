@@ -5,7 +5,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { MdDeleteOutline, MdOutlineRemoveRedEye } from "react-icons/md";
 import Link from "next/link";
 
-function ReportTable({
+function SummaryTable({
   employees,
   departments,
   reload,
@@ -69,8 +69,8 @@ function ReportTable({
       },
     },
     {
-      field: "numDays",
-      headerName: "Number of Days",
+      field: "earnings",
+      headerName: "Total Earnings",
       headerClassName: "custom-header",
       flex: 1,
       align: "center",
@@ -78,8 +78,17 @@ function ReportTable({
       editable: false,
     },
     {
-      field: "minsLate",
-      headerName: "Minutes Late",
+      field: "deductions",
+      headerName: "Total Deductions",
+      headerClassName: "custom-header",
+      flex: 1,
+      align: "center",
+      headerAlign: "center",
+      editable: false,
+    },
+    {
+      field: "income",
+      headerName: "NET INCOME",
       headerClassName: "custom-header",
       flex: 1,
       align: "center",
@@ -135,4 +144,4 @@ function ReportTable({
   );
 }
 
-export default ReportTable;
+export default SummaryTable;

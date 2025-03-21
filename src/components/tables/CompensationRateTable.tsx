@@ -10,7 +10,6 @@ import {
   GridEditInputCell,
   GridPreProcessEditCellProps,
   GridRenderEditCellParams,
-  GridToolbar,
 } from "@mui/x-data-grid";
 
 function CompensationRateTable({
@@ -233,17 +232,8 @@ function CompensationRateTable({
             },
           },
         }}
-        slots={{ toolbar: GridToolbar }}
-        slotProps={{
-          toolbar: {
-            showQuickFilter: true,
-            quickFilterProps: { debounceMs: 500 },
-          },
-        }}
         pageSizeOptions={[5, 10, 20]}
         disableRowSelectionOnClick
-        disableColumnSelector
-        disableDensitySelector
         sx={tableStyle}
         processRowUpdate={processUpdate}
       />

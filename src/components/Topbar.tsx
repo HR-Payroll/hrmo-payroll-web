@@ -1,6 +1,7 @@
 "use client";
-import { logOut } from "@/actions/authActions";
 import React, { useState } from "react";
+import { logOut } from "@/actions/authActions";
+import PageInfo from "./PageInfo";
 import {
   MdOutlineAdminPanelSettings,
   MdOutlineKeyboardArrowUp,
@@ -16,24 +17,16 @@ const Navbar = () => {
   };
 
   return (
-    <div className="relative w-full flex flex-row items-center justify-between px-2 py-4">
-      <div className="hidden lg:block items-center">
-        <h1 className="text-base font-semibold text-[#333333]">
-          LGU Jasaan HRMO - Payroll Management System
-        </h1>
-        <h6 className="text-sm text-gray-600 text-wrap">
-          An automated system that integrates with DTR/biometrics to streamline
-          payroll and boost efficiency.
-        </h6>
-      </div>
-      <div className="absolute top-4 right-0 flex flex-row items-center justify-center">
-        <MdOutlineAdminPanelSettings className="text-4xl text-[#333333]" />
-        <div className="hidden sm:block flex-col pt-1 px-2 text-[#333333]">
+    <div className="w-full flex flex-row items-center justify-between text-[#333333] py-4">
+      <PageInfo title={""} info={""} />
+      <div className="relative flex flex-row items-center justify-center">
+        <MdOutlineAdminPanelSettings className="text-4xl" />
+        <div className="hidden sm:block flex-col pt-1 px-2">
           <p className="font-semibold text-sm">HRMO - OIC</p>
           <p className="text-xs">Super Administrator</p>
         </div>
         <div
-          className="rounded-full hover:bg-blue-100 active:bg-blue-200 active:text-[#0000ff] text-[#333333] p-1 cursor-pointer"
+          className="rounded-full hover:bg-blue-100 active:bg-blue-200 active:text-[#0000ff] p-1 cursor-pointer"
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         >
           {isDropdownOpen ? (
@@ -43,7 +36,7 @@ const Navbar = () => {
           )}
         </div>
         {isDropdownOpen && (
-          <div className="absolute top-12 right-0 w-42 bg-white border border-[#333333] rounded-md shadow-lg text-sm text-[#333333]">
+          <div className="absolute top-12 right-0 w-46 bg-white border border-[#333333] rounded-md shadow-lg text-sm">
             <button
               onClick={handleLogout}
               className="w-full text-left px-4 py-2 hover:bg-gray-100 active:text-black cursor-pointer"

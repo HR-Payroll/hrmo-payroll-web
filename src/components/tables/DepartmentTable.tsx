@@ -12,7 +12,6 @@ import {
   GridEditInputCell,
   GridPreProcessEditCellProps,
   GridRenderEditCellParams,
-  GridToolbar,
 } from "@mui/x-data-grid";
 
 function DepartmentTable({
@@ -36,7 +35,7 @@ function DepartmentTable({
       field: "name",
       headerName: "Department Name",
       headerClassName: "custom-header",
-      flex: 1,
+      flex: 1.5,
       align: "center",
       headerAlign: "center",
       editable: true,
@@ -91,7 +90,7 @@ function DepartmentTable({
       field: "employees",
       headerName: "Total Employees",
       headerClassName: "custom-header",
-      flex: 0.5,
+      flex: 1,
       align: "center",
       headerAlign: "center",
       editable: false,
@@ -175,7 +174,7 @@ function DepartmentTable({
               >
                 <MdDeleteOutline
                   size={25}
-                  className="w-fit rounded-full bg-slate-200 hover:bg-slate-300 active:bg-slate-400 active:text-white text-[#333333] p-1"
+                  className="w-fit rounded-full bg-[#ECEEF6] hover:bg-blue-200 active:bg-blue-300 active:text-[#0000ff] text-[#333333] p-1"
                 />
               </div>
             )}
@@ -304,17 +303,8 @@ function DepartmentTable({
             },
           },
         }}
-        slots={{ toolbar: GridToolbar }}
-        slotProps={{
-          toolbar: {
-            showQuickFilter: true,
-            quickFilterProps: { debounceMs: 500 },
-          },
-        }}
         pageSizeOptions={[5, 10, 20]}
         disableRowSelectionOnClick
-        disableColumnSelector
-        disableDensitySelector
         sx={tableStyle}
         processRowUpdate={processUpdate}
       />

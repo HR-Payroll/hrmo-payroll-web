@@ -66,7 +66,7 @@ const AddButton = ({
         className="flex flex-row items-center justify-center rounded-md bg-blue-200 hover:bg-blue-300 active:bg-blue-400 active:text-white gap-1 py-2 px-6 text-[#0000ff] cursor-pointer"
       >
         <MdOutlineAdd size={18} />
-        <span className="hidden lg:block text-sm">{title}</span>
+        <span className="hidden md:block text-sm">{title}</span>
       </button>
 
       {open && (

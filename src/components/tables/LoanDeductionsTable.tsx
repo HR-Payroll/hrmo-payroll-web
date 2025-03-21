@@ -10,7 +10,6 @@ import {
   GridEditInputCell,
   GridPreProcessEditCellProps,
   GridRenderEditCellParams,
-  GridToolbar,
 } from "@mui/x-data-grid";
 
 function LoanDeductionsTable({
@@ -35,7 +34,7 @@ function LoanDeductionsTable({
       field: "name",
       headerName: "Employee Name",
       headerClassName: "custom-header",
-      flex: 1,
+      flex: 0.8,
       align: "center",
       headerAlign: "center",
       editable: false,
@@ -44,7 +43,7 @@ function LoanDeductionsTable({
       field: "department",
       headerName: "Department",
       headerClassName: "custom-header",
-      flex: 0.5,
+      flex: 0.7,
       align: "center",
       headerAlign: "center",
       editable: false,
@@ -303,6 +302,7 @@ function LoanDeductionsTable({
       },
     },
   ];
+
   const StyledTooltip = styled(({ className, ...props }: TooltipProps) => (
     <Tooltip {...props} classes={{ popper: className }} />
   ))(({ theme }) => ({
@@ -394,17 +394,8 @@ function LoanDeductionsTable({
           },
         },
       }}
-      slots={{ toolbar: GridToolbar }}
-      slotProps={{
-        toolbar: {
-          showQuickFilter: true,
-          quickFilterProps: { debounceMs: 500 },
-        },
-      }}
       pageSizeOptions={[5, 10, 20]}
       disableRowSelectionOnClick
-      disableColumnSelector
-      disableDensitySelector
       sx={tableStyle}
       processRowUpdate={processUpdate}
     />

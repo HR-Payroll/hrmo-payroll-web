@@ -2,8 +2,11 @@ import React from "react";
 import { revalidatePath } from "next/cache";
 import { getAllEmployee } from "@/data/employee";
 import { getAllDepartment } from "@/data/department";
-import AddButton from "@/components/AddButton";
+import PageInfo from "@/components/PageInfo";
+import TableSearch from "@/components/TableSearch";
+import TableFilters from "@/components/TableFilters";
 import UploadButton from "@/components/UploadButton";
+import AddButton from "@/components/AddButton";
 import MandatoryDeductionsTable from "@/components/tables/MandatoryDeductionsTable";
 
 const MandatoryDeductions = async () => {
@@ -15,15 +18,26 @@ const MandatoryDeductions = async () => {
     revalidatePath("/dashboard/payroll/mandatory-deduction");
   }
   return (
-    <div className="flex-1 rounded-md bg-white border-2 border-[#ECEEF6] gap-4 mt-10 sm:mt-0 p-4 text-[#333333]">
-      <div className="flex flex-row items-center justify-between gap-4">
-        <h1 className="text-base font-semibold">Mandatory Deductions</h1>
-        <div className="flex flex-row items-center justify-end gap-4 sm:gap-4 cursor-pointer">
-          <UploadButton />
-          <AddButton table="deduction" title="Add Deductions" />
+    <div className="w-full bg-white rounded-md border-2 border-[#ECEEF6] p-4 text-[#333333]">
+      <div className="absolute top-4 -ml-4">
+        <PageInfo
+          title="Payroll Register"
+          info="Manage your employee's mandatory deductions for the payroll register in this page."
+        />
+      </div>
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-y-4">
+        <div>
+          <TableSearch />
+        </div>
+        <div className="flex flex-col md:flex-row items-center justify-center gap-4 cursor-pointer">
+          <TableFilters />
+          <div className="flex flex-row items-center justify-center gap-4 cursor-pointer">
+            <UploadButton />
+            <AddButton table="deduction" title="Add Deductions" />
+          </div>
         </div>
       </div>
-      <div className="mt-4">
+      <div className="w-full mt-4">
         <MandatoryDeductionsTable
           employees={employees}
           departments={departments}
