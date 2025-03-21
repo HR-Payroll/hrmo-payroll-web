@@ -59,3 +59,13 @@ model Employee {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
+
+model Report {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  index     String    @unique
+  recordNo  String
+  name      String
+  timestamp DateTime
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+}

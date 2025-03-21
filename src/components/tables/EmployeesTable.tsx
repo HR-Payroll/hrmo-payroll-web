@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Alert from "../ui/Alert";
 import { tableStyle } from "@/lib/themes";
 import SnackbarInfo, { initialSnackbar } from "../ui/SnackbarInfo";
@@ -12,7 +13,13 @@ import {
   GridPreProcessEditCellProps,
   GridRenderEditCellParams,
 } from "@mui/x-data-grid";
-import { MdDeleteOutline, MdCheck, MdClose } from "react-icons/md";
+import {
+  MdDeleteOutline,
+  MdCheckCircle,
+  MdCheck,
+  MdClose,
+} from "react-icons/md";
+import { GoXCircleFill } from "react-icons/go";
 
 function EmployeesTable({
   employees,
