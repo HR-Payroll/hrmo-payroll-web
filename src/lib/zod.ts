@@ -1,4 +1,4 @@
-import { object, string } from "zod";
+import { date, object, string } from "zod";
 
 export const LoginSchema = object({
   email: string({ required_error: "Email is required" })
@@ -62,4 +62,11 @@ export const LoanSchema = object({
   ucpb: string().min(1, "UCPB is required"),
   mpllite: string().min(1, "MPL-LITE is required"),
   sb: string().min(1, "SB is required"),
+});
+
+export const ReportSchema = object({
+  recordNo: string().min(1, "Record Number is required"),
+  name: string().min(1, "Employee name is required"),
+  timestamp: date(),
+  index: string().min(1, "Index is required"),
 });

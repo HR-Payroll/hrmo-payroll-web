@@ -18,6 +18,9 @@ export const getAllDepartment = async () => {
     const departments = await prisma.department.aggregateRaw({
       pipeline: [
         {
+          $match: { name: "KIMAYA" },
+        },
+        {
           $lookup: {
             from: "Employee",
             localField: "_id",
@@ -34,6 +37,9 @@ export const getAllDepartment = async () => {
             createdAt: 1,
             updatedAt: 1,
           },
+        },
+        {
+          $limit: 10,
         },
       ],
     });

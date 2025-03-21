@@ -3,69 +3,28 @@ import UploadButton from "@/components/UploadButton";
 import ReportTable from "@/components/tables/ReportTable";
 import { GridColDef } from "@mui/x-data-grid";
 import { reportData } from "@/lib/data";
+import UploadReports from "@/components/Uploads/UploadReports";
+import { getAllReport } from "@/data/report";
+import { revalidatePath } from "next/cache";
 
-const columns: GridColDef[] = [
-  {
-    field: "employeeId",
-    headerName: "ID Number",
-    headerClassName: "custom-header",
-    flex: 1,
-    align: "center",
-    headerAlign: "center",
-  },
-  {
-    field: "employee",
-    headerName: "Employee Name",
-    headerClassName: "custom-header",
-    flex: 1.5,
-    align: "center",
-    headerAlign: "center",
-  },
-  {
-    field: "department",
-    headerName: "Department",
-    headerClassName: "custom-header",
-    flex: 1,
-    align: "center",
-    headerAlign: "center",
-  },
-  {
-    field: "category",
-    headerName: "Category",
-    headerClassName: "custom-header",
-    flex: 1,
-    align: "center",
-    headerAlign: "center",
-  },
-  {
-    field: "numDays",
-    headerName: "Number of Days",
-    headerClassName: "custom-header",
-    flex: 1,
-    align: "center",
-    headerAlign: "center",
-  },
-  {
-    field: "minsLate",
-    headerName: "Minutes Late",
-    headerClassName: "custom-header",
-    flex: 1,
-    align: "center",
-    headerAlign: "center",
-  },
-];
+const Reports = async () => {
+  const reports = (await getAllReport()) as any;
 
-const Reports = () => {
+  async function reload() {
+    "use server";
+    revalidatePath("/dashboard/reports");
+  }
+
   return (
     <div className="flex-1 rounded-md bg-white border-2 border-[#ECEEF6] gap-4 mt-10 sm:mt-0 p-4 text-[#333333]">
       <div className="flex flex-row items-center justify-between gap-4">
         <h1 className="hidden sm:block text-base font-semibold">Reports</h1>
         <div className="flex flex-row items-center justify-end gap-4 sm:gap-4 cursor-pointer">
-          <UploadButton />
+          <UploadReports reload={reload} />
         </div>
       </div>
       <div className="mt-4">
-        <ReportTable columns={columns} rows={reportData} slug="reports" />
+        <ReportTable reports={reports} />
       </div>
     </div>
   );
