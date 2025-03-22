@@ -9,14 +9,42 @@ import UploadButton from "@/components/UploadButton";
 import DateFilter from "@/components/DateFilter";
 import TableFilters from "@/components/TableFilters";
 import ReportTable from "@/components/tables/ReportTable";
+import { getAllReport, getPaginatedReport } from "@/data/report";
 
-const Reports = async () => {
+const Reports = async (props: {
+  searchParams?: Promise<{
+    search?: string;
+    page?: string;
+    limit?: string;
+    from?: string;
+    to?: string;
+  }>;
+}) => {
   const departments = (await getAllDepartment()) as any;
   const employees = (await getAllEmployee()) as any;
 
+  const params = await props.searchParams;
+  const search = params?.search;
+  const page = params?.page;
+  const limit = params?.limit;
+  const from = params?.from;
+  const to = params?.to;
+
+  const currentDate = new Date();
+  const day1 = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+  const day15 = new Date(currentDate.getFullYear(), currentDate.getMonth(), 15);
+  const dateFrom = from
+    ? new Date(from)
+    : currentDate.getDate() >= 15
+    ? day15
+    : day1;
+  const dateTo = to ? new Date(to) : currentDate;
+
+  const reports = (await getPaginatedReport(dateFrom, dateTo, search)) as any;
+
   async function reload() {
     "use server";
-    revalidatePath("/dashboard/payroll/loan-deduction");
+    revalidatePath("/dashboard/reports");
   }
 
   return (
@@ -38,7 +66,7 @@ const Reports = async () => {
           </div>
         </div>
         <div className="flex flex-col lg:flex-row items-center justify-between gap-y-4">
-          <DateFilter />
+          <DateFilter from={dateFrom} />
           <div className="flex flex-col sm:flex-row items-center justify-center">
             <span className="hidden sm:block text-sm font-medium pr-4">
               Filters
@@ -52,6 +80,9 @@ const Reports = async () => {
           employees={employees}
           departments={departments}
           reload={reload}
+          reports={reports}
+          from={dateFrom}
+          to={dateTo}
         />
       </div>
     </div>

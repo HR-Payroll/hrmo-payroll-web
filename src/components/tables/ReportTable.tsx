@@ -1,20 +1,31 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { tableStyle } from "@/lib/themes";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { MdDeleteOutline, MdOutlineRemoveRedEye } from "react-icons/md";
 import Link from "next/link";
+import { format } from "date-fns";
 
 function ReportTable({
   employees,
   departments,
   reload,
+  reports,
+  from,
+  to,
 }: {
   employees: any[];
   departments: any[];
+  reports: any[];
   reload?: VoidFunction;
+  from: Date;
+  to: Date;
 }) {
-  const [data, setData] = useState(employees);
+  const [data, setData] = useState(reports);
+
+  useEffect(() => {
+    setData(reports);
+  }, [reports]);
 
   const columns: GridColDef[] = [
     {
@@ -65,7 +76,7 @@ function ReportTable({
           JOB_ORDER: "Job Order",
         };
 
-        return dept[row];
+        return row ? dept[row] : "N/A";
       },
     },
     {
@@ -78,7 +89,7 @@ function ReportTable({
       editable: false,
     },
     {
-      field: "minsLate",
+      field: "late",
       headerName: "Minutes Late",
       headerClassName: "custom-header",
       flex: 1,
@@ -97,14 +108,17 @@ function ReportTable({
         return (
           <div className="flex items-center justify-center gap-2 mt-1 text-base">
             <Link
-              href={""}
+              href={`/dashboard/reports/${params.row.recordNo}?from=${format(
+                from,
+                "yyyy-MM-dd"
+              )}&to=${format(to, "yyyy-MM-dd")}`}
               className="flex items-center justify-center rounded-full bg-[#ECEEF6] hover:bg-blue-200 active:bg-blue-300 active:text-[#0000ff] text-[#333333] p-1 cursor-pointer"
             >
               <MdOutlineRemoveRedEye size={16} />
             </Link>
-            <div className="flex items-center justify-center rounded-full bg-[#ECEEF6] hover:bg-blue-200 active:bg-blue-300 active:text-[#0000ff] text-[#333333] p-1 cursor-pointer">
+            {/* <div className="flex items-center justify-center rounded-full bg-[#ECEEF6] hover:bg-blue-200 active:bg-blue-300 active:text-[#0000ff] text-[#333333] p-1 cursor-pointer">
               <MdDeleteOutline size={16} />
-            </div>
+            </div> */}
           </div>
         );
       },
@@ -115,7 +129,7 @@ function ReportTable({
     <DataGrid
       rows={data}
       columns={columns}
-      getRowId={(row) => row._id.$oid.toString()}
+      getRowId={(row) => row.recordNo}
       columnHeaderHeight={40}
       rowHeight={36}
       getRowClassName={(params) => {
