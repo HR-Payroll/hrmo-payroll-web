@@ -4,10 +4,90 @@ import { stringToDate } from "@/utils/dateFormatter";
 import moment from "moment-timezone";
 import { format } from "date-fns";
 
-export const getAllReport = async () => {
+export const getAllReport = async (
+  from: Date,
+  to?: Date,
+  filters?: { category?: string; department?: string }
+) => {
   try {
+    console.log(from, to);
     const reports = await prisma.report.aggregateRaw({
       pipeline: [
+        {
+          $match: { timestamp: { $gte: { $date: from }, $lte: { $date: to } } },
+        },
+        {
+          $group: {
+            _id: { recordNo: "$recordNo", name: "$name" },
+            count: { $sum: 1 },
+            items: { $push: "$$ROOT" },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            recordNo: "$_id.recordNo",
+            name: "$_id.name",
+            count: 1,
+            items: 1,
+          },
+        },
+        {
+          $sort: { recordNo: 1 },
+        },
+      ],
+    });
+
+    const temp = Array.isArray(reports)
+      ? reports.map((report: any) => {
+          const { totalDays, late } = computeTotalDaysAndLate(report.items);
+          return {
+            ...report,
+            numDays: totalDays,
+            late,
+          };
+        })
+      : [];
+
+    console.log(temp);
+    return temp;
+  } catch (error: any) {
+    return null;
+  }
+};
+
+export const getPaginatedReport = async (
+  from: Date,
+  to?: Date,
+  search?: string,
+  page = 0,
+  limit = 10,
+  filters?: { category?: string; department?: string }
+) => {
+  try {
+    let searchQuery = {};
+
+    if (search) {
+      searchQuery = {
+        $or: [
+          {
+            name: { $regex: search, $options: "i" },
+          },
+          {
+            recordNo: { $regex: search, $options: "i" },
+          },
+        ],
+      };
+    }
+
+    const reports = await prisma.report.aggregateRaw({
+      pipeline: [
+        {
+          $match: {
+            ...searchQuery,
+            timestamp: { $gte: { $date: from }, $lte: { $date: to } },
+          },
+        },
         {
           $group: {
             _id: { recordNo: "$recordNo", name: "$name" },
@@ -47,12 +127,15 @@ export const getAllReport = async () => {
   }
 };
 
-export const getReportById = async (id: string) => {
+export const getReportById = async (id: string, from: Date, to: Date) => {
   try {
     const report = await prisma.report.aggregateRaw({
       pipeline: [
         {
-          $match: { recordNo: id },
+          $match: {
+            recordNo: id,
+            timestamp: { $gte: { $date: from }, $lte: { $date: to } },
+          },
         },
         {
           $group: {
