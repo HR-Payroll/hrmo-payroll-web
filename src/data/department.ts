@@ -14,7 +14,39 @@ export const getDepartmentById = async (id: string) => {
   }
 };
 
-export const getAllDepartment = async (
+export const getAllDepartment = async () => {
+  try {
+    const departments = await prisma.department.aggregateRaw({
+      pipeline: [
+        {
+          $lookup: {
+            from: "Employee",
+            localField: "_id",
+            foreignField: "department",
+            as: "employees",
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            name: 1,
+            employees: { $size: "$employees" },
+            category: 1,
+            createdAt: 1,
+            updatedAt: 1,
+          },
+        },
+        { $sort: { name: 1 } },
+      ],
+    });
+
+    return departments;
+  } catch (error: any) {
+    return null;
+  }
+};
+
+export const getPaginatedDepartment = async (
   search?: string,
   page = 0,
   limit = 10
@@ -55,7 +87,7 @@ export const getAllDepartment = async (
           $facet: {
             totalCount: [{ $count: "count" }],
             items: [
-              { $sort: { name: -1 } },
+              { $sort: { name: 1 } },
               { $skip: page * limit },
               { $limit: limit },
             ],

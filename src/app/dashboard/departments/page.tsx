@@ -1,6 +1,6 @@
 import React from "react";
 import { revalidatePath } from "next/cache";
-import { getAllDepartment } from "@/data/department";
+import { getPaginatedDepartment } from "@/data/department";
 import PageInfo from "@/components/PageInfo";
 import TableSearch from "@/components/TableSearch";
 import UploadButton from "@/components/UploadButton";
@@ -20,7 +20,7 @@ const Departments = async (props: {
   const limit = params?.limit;
 
   let isLoading = true;
-  const departments = (await getAllDepartment(
+  const departments = (await getPaginatedDepartment(
     search,
     Number(page || 0),
     Number(limit || 10)
