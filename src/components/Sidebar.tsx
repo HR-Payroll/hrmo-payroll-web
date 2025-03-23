@@ -25,7 +25,7 @@ const SidebarItem = ({ href, icon, label, isCollapsed }: SidebarItemProps) => {
   return (
     <Link
       href={href}
-      className="flex items-center gap-4 px-4 min-h-11 hover:bg-blue-100 border-l-[10px] border-l-transparent hover:border-blue-500 focus:border-blue-500 focus:bg-blue-100 focus:border-l-[10px] focus:text-[#0000ff] transition-all ease-in-out duration-700"
+      className="flex items-center gap-4 px-4 min-h-11 hover:bg-blue-100 border-l-[10px] border-l-transparent hover:border-blue-500 focus:border-blue-500 focus:bg-blue-100 focus:border-l-[10px] focus:text-[var(--accent)] transition-all ease-in-out duration-700"
     >
       {icon}
       {!isCollapsed && <span className="text-sm font-medium">{label}</span>}
@@ -71,11 +71,11 @@ const Sidebar = () => {
 
   return (
     <div
-      className={`h-screen left-0 top-0 z-50 bg-white text-[#333333] drop-shadow-2xl font-[family-name:var(--font-arimo)] selection:bg-blue-200 selection:text-[#0000ff] transition-all ${
+      className={`h-screen left-0 top-0 z-50 bg-white text-[var(--text)] drop-shadow-2xl font-[family-name:var(--font-arimo)] selection:bg-blue-200 selection:text-[var(--accent)] transition-all ${
         isCollapsed ? "min-w-16" : "min-w-[12%]"
       }`}
     >
-      <div className="flex items-center justify-between border-b-2 border-[#ECEEF6] p-3">
+      <div className="flex items-center justify-between border-b-2 border-[var(--border)] p-3">
         {!isCollapsed && (
           <Link href="/dashboard" className="flex items-center justify-center">
             <Image
@@ -88,7 +88,7 @@ const Sidebar = () => {
         )}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="rounded-full hover:bg-blue-100 active:bg-blue-200 active:text-[#0000ff] text-[#333333] p-2 cursor-pointer"
+          className="rounded-full hover:bg-blue-100 active:bg-blue-200 active:text-[var(--accent)] p-2 cursor-pointer"
         >
           <MdOutlineMenu size={24} />
         </button>
@@ -123,7 +123,7 @@ const Sidebar = () => {
         <div>
           <button
             onClick={() => setIsPayrollExpanded(!isPayrollExpanded)}
-            className="flex items-center gap-4 px-4 py-2 w-full hover:bg-blue-100 border-l-[10px] border-l-transparent hover:border-blue-500 focus:text-[#0000ff] cursor-pointer transition-all ease-in-out duration-700"
+            className="flex items-center gap-4 px-4 py-2 w-full hover:bg-blue-100 border-l-[10px] border-l-transparent hover:border-blue-500 focus:text-[var(--accent)] cursor-pointer transition-all ease-in-out duration-700"
           >
             <MdOutlinePayment size={20} />
             {!isCollapsed && (
@@ -150,7 +150,7 @@ const Sidebar = () => {
                   <Link
                     key={item.label}
                     href={`/dashboard/payroll${item.link}`}
-                    className="flex items-center gap-4 px-4 min-h-10 hover:bg-blue-100 border-l-[10px] border-l-transparent hover:border-blue-500 focus:border-blue-500 focus:bg-blue-100 focus:border-l-[10px] focus:text-[#0000ff] transition-all ease-in-out duration-700"
+                    className="flex items-center gap-4 px-4 min-h-10 hover:bg-blue-100 border-l-[10px] border-l-transparent hover:border-blue-500 focus:border-blue-500 focus:bg-blue-100 focus:border-l-[10px] focus:text-[var(--accent)] transition-all ease-in-out duration-700"
                   >
                     <MdOutlineHorizontalRule size={16} />
                     {!isCollapsed && (

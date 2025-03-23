@@ -17,7 +17,7 @@ const HomePage = async () => {
 
   console.log(userSession);
   return (
-    <div className="w-full h-full flex flex-col md:flex-row gap-4 px-2 pb-4">
+    <div className="w-full h-full flex flex-col md:flex-row gap-4 pb-4">
       <div className="absolute top-4">
         <PageInfo
           title="LGU Jasaan HRMO - Payroll Management System"

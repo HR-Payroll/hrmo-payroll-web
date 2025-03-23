@@ -175,7 +175,7 @@ function DepartmentTable({
                 >
                   <MdCheck
                     size={22}
-                    className="w-fit rounded-full bg-[#66bb6a] hover:bg-[#388e3c] text-white p-[2px]"
+                    className="w-fit rounded-full bg-[var(--lightcheck)] hover:bg-[var(--check)] text-white p-[2px]"
                   />
                 </div>
                 <div
@@ -193,7 +193,7 @@ function DepartmentTable({
                 >
                   <MdClose
                     size={22}
-                    className="w-fit rounded-full bg-[#f44336] hover:bg-[#d32f2f] text-white p-[2px]"
+                    className="w-fit rounded-full bg-[var(--lightwrong)] hover:bg-[var(--wrong)] text-white p-[2px]"
                   />
                 </div>
               </div>
@@ -206,7 +206,7 @@ function DepartmentTable({
               >
                 <MdDeleteOutline
                   size={25}
-                  className="w-fit rounded-full bg-[#ECEEF6] hover:bg-blue-200 active:bg-blue-300 active:text-[#0000ff] text-[#333333] p-1"
+                  className="w-fit rounded-full bg-[var(--border)] hover:bg-blue-200 active:bg-blue-300 active:text-[var(--accent)] text-[var(--text)] p-1"
                 />
               </div>
             )}

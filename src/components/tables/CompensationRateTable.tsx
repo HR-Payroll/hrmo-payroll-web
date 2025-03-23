@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { styled } from "@mui/material";
 import { tableStyle } from "@/lib/themes";
 import { updateRate } from "@/actions/rate";
@@ -11,25 +11,32 @@ import {
   GridPreProcessEditCellProps,
   GridRenderEditCellParams,
 } from "@mui/x-data-grid";
+import { MdCheck, MdClose, MdOutlineCreate } from "react-icons/md";
 
 function CompensationRateTable({
+  type,
   rates,
   employees,
   departments,
   reload,
 }: {
+  type?: any[];
   rates?: any[];
   employees: any[];
   departments: any[];
   reload?: VoidFunction;
 }) {
+  const [data, setData] = useState(rates);
   const [isEditing, setEditing] = useState<any>();
-  const [data, setData] = useState(employees);
   const [snackbar, setSnackbar] = useState({
     message: "",
     type: "info",
     modal: false,
   });
+
+  useEffect(() => {
+    setData(rates);
+  }, [rates]);
 
   const columns: GridColDef[] = [
     {
@@ -91,12 +98,11 @@ function CompensationRateTable({
       align: "center",
       headerAlign: "center",
       editable: true,
-      type: "number",
       preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
-        console.log(params.props.value);
+        const value = params.props.value;
         const hasError =
-          params.props.value < 1
-            ? "Please input a valid compensation rate."
+          value.length < 1 || value === ""
+            ? "Please input a valid rate."
             : null;
         return { ...params.props, error: hasError };
       },
@@ -118,29 +124,88 @@ function CompensationRateTable({
       align: "center",
       headerAlign: "center",
       type: "singleSelect",
-      valueOptions: ["Daily", "Weekly", "Bi-weekly", "Monthly", "Contractual"],
+      valueOptions: ["Daily", "Monthly"],
       editable: true,
       valueSetter: (value, row) => {
-        const type = {
+        const dept = {
           Daily: "DAILY",
-          Weekly: "WEEKLY",
-          "Bi-weekly": "BI_WEEKLY",
           Monthly: "MONTHLY",
-          Contractual: "CONTRACTUAL",
         } as any;
 
-        return { ...row, category: type[value] };
+        return { ...row, type: dept[value] };
       },
       valueGetter: (row) => {
-        const type = {
+        const dept = {
           DAILY: "Daily",
-          WEEKLY: "Weekly",
-          BI_WEEKLY: "Bi-weekly",
           MONTHLY: "Monthly",
-          CONTRACTUAL: "Contractual",
         };
 
-        return type[row];
+        return dept[row];
+      },
+    },
+    {
+      field: "action",
+      headerName: "Action",
+      headerClassName: "custom-header",
+      flex: 0.5,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params: any) => {
+        return (
+          <>
+            {isEditing && Object.keys(isEditing).includes(params.id) ? (
+              <div className="flex flex-row">
+                <div
+                  onClick={() => {
+                    const row = data?.find(
+                      (row: any) => row._id.$oid === params.id
+                    );
+
+                    onUpdate(params.id, {
+                      recordNo: row.recordNo,
+                      name: row.name,
+                      category: row.category,
+                      department: row.department._id.$oid,
+                      rate: row.rate,
+                      type: row.type,
+                    });
+                  }}
+                  className="w-full flex items-center justify-center p-1 cursor-pointer"
+                >
+                  <MdCheck
+                    size={22}
+                    className="w-fit rounded-full bg-[var(--lightcheck)] hover:bg-[var(--check)] text-white p-[2px]"
+                  />
+                </div>
+                <div
+                  onClick={() => {
+                    const temp = { ...isEditing };
+                    setData((prev: any) =>
+                      prev.map((row: any) =>
+                        row._id.$oid === params.id ? temp[params.id] : row
+                      )
+                    );
+                    delete temp[params.id];
+                    setEditing(temp);
+                  }}
+                  className="w-full flex items-center justify-center p-1 cursor-pointer"
+                >
+                  <MdClose
+                    size={22}
+                    className="w-fit rounded-full bg-[var(--lightwrong)] hover:bg-[var(--wrong)] text-white p-[2px]"
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="w-full flex items-center justify-center p-1 cursor-pointer">
+                <MdOutlineCreate
+                  size={25}
+                  className="w-fit rounded-full bg-[var(--border)] hover:bg-accent-200 active:bg-accent-300 active:text-[var(--accent)] text-[var(--text)] p-1"
+                />
+              </div>
+            )}
+          </>
+        );
       },
     },
   ];
@@ -166,6 +231,7 @@ function CompensationRateTable({
     }
   ) => {
     try {
+      console.log(id, payload);
       await updateRate(id, payload);
       setSnackbar({
         message: "Employee compensation rate info successfully updated!",

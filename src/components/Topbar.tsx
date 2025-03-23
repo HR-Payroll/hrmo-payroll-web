@@ -17,7 +17,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="w-full flex flex-row items-center justify-between text-[#333333] py-4">
+    <div className="w-full flex flex-row items-center justify-between text-[var(--text)] py-4">
       <PageInfo title={""} info={""} />
       <div className="relative flex flex-row items-center justify-center">
         <MdOutlineAdminPanelSettings className="text-4xl" />
@@ -26,7 +26,7 @@ const Navbar = () => {
           <p className="text-xs">Super Administrator</p>
         </div>
         <div
-          className="rounded-full hover:bg-blue-100 active:bg-blue-200 active:text-[#0000ff] p-1 cursor-pointer"
+          className="rounded-full hover:bg-blue-100 active:bg-blue-200 active:text-[var(--accent)] p-1 cursor-pointer"
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         >
           {isDropdownOpen ? (
@@ -36,7 +36,7 @@ const Navbar = () => {
           )}
         </div>
         {isDropdownOpen && (
-          <div className="absolute top-12 right-0 w-46 bg-white border border-[#333333] rounded-md shadow-lg text-sm">
+          <div className="absolute sm:top-12 sm:right-0 sm:left-0 top-0 right-0 left-18 w-46 bg-white border border-[var(--text)] rounded-md shadow-lg text-sm">
             <button
               onClick={handleLogout}
               className="w-full text-left px-4 py-2 hover:bg-gray-100 active:text-black cursor-pointer"

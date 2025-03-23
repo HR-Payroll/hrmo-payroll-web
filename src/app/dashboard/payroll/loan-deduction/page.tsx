@@ -19,7 +19,7 @@ const LoanDeductions = async () => {
   }
 
   return (
-    <div className="w-full bg-white rounded-md border-2 border-[#ECEEF6] p-4 text-[#333333]">
+    <div className="w-full bg-white rounded-md border-2 border-[var(--border)] text-[var(--text)] p-4">
       <div className="absolute top-4 -ml-4">
         <PageInfo
           title="Payroll Register"
@@ -31,7 +31,7 @@ const LoanDeductions = async () => {
           <TableSearch />
         </div>
         <div className="flex flex-col md:flex-row items-center justify-center gap-4 cursor-pointer">
-          <TableFilters />
+          <TableFilters departments={departments} />
           <div className="flex flex-row items-center justify-center gap-4 cursor-pointer">
             <UploadButton />
             <AddButton table="deduction" title="Add Deductions" />

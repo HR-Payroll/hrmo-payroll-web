@@ -27,7 +27,7 @@ const CompensationRateForm = ({
       category: "",
       department: "",
       employee: "",
-      rate: "",
+      rate: 0,
       type: "",
     },
   });
@@ -47,14 +47,14 @@ const CompensationRateForm = ({
   };
 
   return (
-    <form className="flex flex-col gap-4 text-[#333333] p-4">
+    <form className="flex flex-col gap-4 p-4 text-[var(--text)]">
       <h1 className="text-center text-base font-semibold">
         Add Employee Compensation Rate
       </h1>
-      <div className="flex flex-col text-sm gap-2 text-[#333333]">
+      <div className="flex flex-col text-sm gap-2">
         <label className="text-left">Category</label>
         <select
-          className="w-full bg-transparent rounded-md ring-2 ring-[#ECEEF6] focus:outline-2 focus:outline-blue-200 p-2"
+          className="w-full bg-transparent rounded-md ring-2 ring-[var(--border)] focus:outline-2 focus:outline-blue-200 p-2"
           {...register("category")}
           defaultValue={data?.category}
         >
@@ -67,37 +67,37 @@ const CompensationRateForm = ({
           })}
         </select>
         {errors.category?.message && (
-          <p className="text-[#ff0000] text-xs">
+          <p className="text-[var(--error)] text-xs">
             {errors.category.message.toString()}
           </p>
         )}
       </div>
-      <div className="flex flex-col text-sm gap-2 text-[#333333]">
+      <div className="flex flex-col text-sm gap-2">
         <label className="text-left">Department</label>
         <select
-          className="w-full bg-transparent rounded-md ring-2 ring-[#ECEEF6] focus:outline-2 focus:outline-blue-200 p-2"
+          className="w-full bg-transparent rounded-md ring-2 ring-[var(--border)] focus:outline-2 focus:outline-blue-200 p-2"
           {...register("department")}
           defaultValue={data?.department}
         >
           {/* ADD OPTIONS */}
         </select>
         {errors.department?.message && (
-          <p className="text-[#ff0000] text-xs">
+          <p className="text-[var(--error)] text-xs">
             {errors.department.message.toString()}
           </p>
         )}
       </div>
-      <div className="flex flex-col text-sm gap-2 text-[#333333]">
+      <div className="flex flex-col text-sm gap-2">
         <label className="text-left">Employee</label>
         <select
-          className="w-full bg-transparent rounded-md ring-2 ring-[#ECEEF6] focus:outline-2 focus:outline-blue-200 p-2"
+          className="w-full bg-transparent rounded-md ring-2 ring-[var(--border)] focus:outline-2 focus:outline-blue-200 p-2"
           {...register("employee")}
           defaultValue={data?.employee}
         >
           {/* ADD OPTIONS */}
         </select>
         {errors.employee?.message && (
-          <p className="text-[#ff0000] text-xs">
+          <p className="text-[var(--error)] text-xs">
             {errors.employee.message.toString()}
           </p>
         )}
@@ -109,10 +109,10 @@ const CompensationRateForm = ({
         register={register}
         error={errors?.rate}
       />
-      <div className="flex flex-col text-sm gap-2 text-[#333333]">
+      <div className="flex flex-col text-sm gap-2">
         <label className="text-left">Type</label>
         <select
-          className="w-full bg-transparent rounded-md ring-2 ring-[#ECEEF6] focus:outline-2 focus:outline-blue-200 p-2"
+          className="w-full bg-transparent rounded-md ring-2 ring-[var(--border)] focus:outline-2 focus:outline-blue-200 p-2"
           {...register("type")}
           defaultValue={data?.type}
         >
@@ -125,7 +125,7 @@ const CompensationRateForm = ({
           })}
         </select>
         {errors.type?.message && (
-          <p className="text-[#ff0000] text-xs">
+          <p className="text-[var(--error)] text-xs">
             {errors.type.message.toString()}
           </p>
         )}

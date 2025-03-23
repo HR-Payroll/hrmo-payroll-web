@@ -28,7 +28,7 @@ const data = [
 
 const EmployeeStatsChart = () => {
   return (
-    <div className="rounded-md bg-white border-2 border-[#ECEEF6] p-4 text-xs text-[#333333]">
+    <div className="rounded-md bg-white border-2 border-[var(--border)] p-4 text-xs text-[var(--text)]">
       <div>
         <h1 className="text-base font-medium">Employee Statistics</h1>
       </div>

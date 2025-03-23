@@ -22,7 +22,7 @@ const InputField = ({
   inputProps,
 }: InputFieldProps) => {
   return (
-    <div className="flex flex-col text-sm gap-2 text-[#333333]">
+    <div className="flex flex-col text-sm gap-2 text-[var(--text)]">
       <label className="text-left">{label}</label>
       <input
         name={name}
@@ -31,10 +31,10 @@ const InputField = ({
         {...register(name)}
         {...inputProps}
         defaultValue={defaultValue}
-        className="w-full bg-transparent rounded-md ring-2 ring-[#ECEEF6] focus:outline-2 focus:outline-blue-200 p-2"
+        className="w-full bg-transparent rounded-md ring-2 ring-[var(--border)] focus:outline-2 focus:outline-blue-200 p-2"
       />
       {error?.message && (
-        <p className="text-[#ff0000] text-xs">{error?.message.toString()}</p>
+        <p className="text-[var(--red)] text-xs">{error?.message.toString()}</p>
       )}
     </div>
   );

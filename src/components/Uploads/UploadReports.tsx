@@ -82,10 +82,10 @@ const UploadReports = ({ reload }: { reload?: VoidFunction }) => {
       <div
         className={`${
           isUploading ? "opacity-60" : "opacity-100"
-        } flex flex-row items-center justify-center rounded-md bg-[#ECEEF6] hover:bg-slate-300 active:bg-slate-400 active:text-white py-2 px-6`}
+        } flex flex-row items-center justify-center rounded-md bg-[var(--border)] hover:bg-slate-300 active:bg-slate-400 active:text-white py-2 px-6`}
       >
         <label
-          className="flex items-center text-xs text-[#333333] gap-2 cursor-pointer"
+          className="flex items-center text-xs text-[var(--text)] gap-2 cursor-pointer"
           htmlFor="upload"
         >
           <MdOutlineUploadFile size={18} />
@@ -119,7 +119,7 @@ const UploadReports = ({ reload }: { reload?: VoidFunction }) => {
           if (!isUploading) setUpload([]);
         }}
       >
-        <div className="w-full max-w-[300px] h-max-[200px] bg-white p-4 rounded-md text-[#333333] cursor-default ">
+        <div className="w-full max-w-[300px] h-max-[200px] bg-white p-4 rounded-md text-[var(--text)] cursor-default ">
           {!isUploading ? (
             <div className="gap-4 flex flex-col">
               <h1 className=" font-semibold">Upload Reports</h1>
@@ -145,7 +145,7 @@ const UploadReports = ({ reload }: { reload?: VoidFunction }) => {
               <CircularProgress
                 color="inherit"
                 size={32}
-                className="text-[#4F73DF]"
+                className="text-[var(--bluetext)]"
               />
               <p>Uploading, please wait...</p>
             </div>

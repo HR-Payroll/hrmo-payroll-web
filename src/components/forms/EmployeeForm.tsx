@@ -83,7 +83,7 @@ const EmployeeForm = ({
 
   return (
     <form
-      className="flex flex-col gap-4 text-[#333333] p-4"
+      className="flex flex-col gap-4 -[var(--text)]text p-4"
       onSubmit={handleSubmit(onSubmit)}
     >
       <h1 className="text-center text-base font-semibold">Add Employee</h1>
@@ -101,10 +101,10 @@ const EmployeeForm = ({
         register={register}
         error={errors?.name}
       />
-      <div className="flex flex-col text-sm gap-2 text-[#333333]">
+      <div className="flex flex-col text-sm gap-2">
         <label className="text-left">Category</label>
         <select
-          className="w-full bg-transparent rounded-md ring-2 ring-[#ECEEF6] focus:outline-2 focus:outline-blue-200 p-2"
+          className="w-full bg-transparent rounded-md ring-2 ring-[var(--border)] focus:outline-2 focus:outline-blue-200 p-2"
           {...register("category")}
           defaultValue={data?.category}
         >
@@ -117,15 +117,15 @@ const EmployeeForm = ({
           })}
         </select>
         {errors.category?.message && (
-          <p className="text-[#ff0000] text-xs">
+          <p className="text-[var(--error)] text-xs">
             {errors.category.message.toString()}
           </p>
         )}
       </div>
-      <div className="flex flex-col text-sm gap-2 text-[#333333]">
+      <div className="flex flex-col text-sm gap-2">
         <label className="text-left">Department</label>
         <select
-          className="w-full bg-transparent rounded-md ring-2 ring-[#ECEEF6] focus:outline-2 focus:outline-blue-200 p-2"
+          className="w-full bg-transparent rounded-md ring-2 ring-[var(--border)] focus:outline-2 focus:outline-blue-200 p-2"
           {...register("department")}
           defaultValue={data?.department}
         >
@@ -140,7 +140,7 @@ const EmployeeForm = ({
             })}
         </select>
         {errors.department?.message && (
-          <p className="text-[#ff0000] text-xs">
+          <p className="text-[var(--error)] text-xs">
             {errors.department.message.toString()}
           </p>
         )}

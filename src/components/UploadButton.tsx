@@ -69,10 +69,10 @@ const UploadButton = ({ reload }: { reload?: VoidFunction }) => {
     <div
       className={`${
         isUploading ? "opacity-60" : "opacity-100"
-      } flex flex-row items-center justify-center rounded-md bg-[#ECEEF6] hover:bg-slate-300 active:bg-slate-400 active:text-white py-2 px-7`}
+      } flex flex-row items-center justify-center rounded-md bg-[var(--border)] hover:bg-slate-300 active:bg-slate-400 active:text-white py-2 px-7`}
     >
       <label
-        className="flex items-center text-xs text-[#333333] active:text-white gap-2 cursor-pointer"
+        className="flex items-center text-xs text-[var(--text)] active:text-white gap-2 cursor-pointer"
         htmlFor="upload"
       >
         <MdOutlineUploadFile size={18} />
