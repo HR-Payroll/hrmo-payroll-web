@@ -3,9 +3,9 @@ import { revalidatePath } from "next/cache";
 import { getPaginatedDepartment } from "@/data/department";
 import PageInfo from "@/components/PageInfo";
 import TableSearch from "@/components/TableSearch";
-import UploadButton from "@/components/UploadButton";
 import AddButton from "@/components/AddButton";
 import DepartmentTable from "@/components/tables/DepartmentTable";
+import UploadDepartments from "@/components/Uploads/UploadDepartments";
 
 const Departments = async (props: {
   searchParams?: Promise<{
@@ -46,7 +46,7 @@ const Departments = async (props: {
           <TableSearch />
         </div>
         <div className="flex flex-row items-center gap-4 cursor-pointer">
-          <UploadButton reload={reload} />
+          <UploadDepartments reload={reload} />
           <AddButton
             table="department"
             title="Add Department"

@@ -1,6 +1,7 @@
-import React from "react";
+import React, { Suspense } from "react";
 import Sidebar from "@/components/Sidebar";
 import Topbar from "@/components/Topbar";
+import Loading from "./loading";
 
 export default function DashboardLayout({
   children,
@@ -15,7 +16,7 @@ export default function DashboardLayout({
         className="w-full h-full flex flex-col px-4"
       >
         <Topbar />
-        {children}
+        <Suspense fallback={<Loading />}>{children}</Suspense>
       </div>
     </div>
   );
