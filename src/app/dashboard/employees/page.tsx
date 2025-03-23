@@ -31,7 +31,7 @@ const Employees = async () => {
           <TableSearch />
         </div>
         <div className="flex flex-col md:flex-row items-center justify-center gap-4 cursor-pointer">
-          <TableFilters />
+          <TableFilters departments={departments} />
           <div className="flex flex-row items-center justify-center gap-4 cursor-pointer">
             <UploadButton />
             <AddButton
@@ -39,14 +39,16 @@ const Employees = async () => {
               table="employee"
               title="Add Employee"
               reload={reload}
+              departments={departments}
+              employees={employees}
             />
           </div>
         </div>
       </div>
       <div className="w-full mt-4">
         <EmployeesTable
-          employees={employees}
           departments={departments}
+          employees={employees}
           reload={reload}
         />
       </div>

@@ -1,10 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { tableStyle } from "@/lib/themes";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { MdDeleteOutline, MdOutlineRemoveRedEye } from "react-icons/md";
 import Link from "next/link";
 import { format } from "date-fns";
+import { tableStyle } from "@/lib/themes";
+import { MdOutlineRemoveRedEye } from "react-icons/md";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 
 function ReportTable({
   employees,
@@ -116,9 +116,6 @@ function ReportTable({
             >
               <MdOutlineRemoveRedEye size={16} />
             </Link>
-            {/* <div className="flex items-center justify-center rounded-full bg-[#ECEEF6] hover:bg-blue-200 active:bg-blue-300 active:text-[#0000ff] text-[#333333] p-1 cursor-pointer">
-              <MdDeleteOutline size={16} />
-            </div> */}
           </div>
         );
       },

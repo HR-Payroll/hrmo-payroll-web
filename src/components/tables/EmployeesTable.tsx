@@ -12,13 +12,7 @@ import {
   GridPreProcessEditCellProps,
   GridRenderEditCellParams,
 } from "@mui/x-data-grid";
-import {
-  MdDeleteOutline,
-  MdCheckCircle,
-  MdCheck,
-  MdClose,
-} from "react-icons/md";
-import { GoXCircleFill } from "react-icons/go";
+import { MdDeleteOutline, MdCheck, MdClose } from "react-icons/md";
 
 function EmployeesTable({
   employees,
@@ -29,9 +23,9 @@ function EmployeesTable({
   departments: any[];
   reload?: VoidFunction;
 }) {
+  const [data, setData] = useState(employees);
   const [isDelete, setDelete] = useState(null);
   const [isEditing, setEditing] = useState<any>();
-  const [data, setData] = useState(employees);
   const [snackbar, setSnackbar] = useState({
     message: "",
     type: "info",

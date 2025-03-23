@@ -24,11 +24,31 @@ const AddButton = ({
   title,
   table,
   data,
+  departments,
+  employees,
   reload,
 }: {
   title: string;
   table: string;
   data?: any;
+  departments: {
+    name: string;
+    category: string;
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
+  }[];
+  employees: {
+    recordNo?: string;
+    name?: string;
+    department?: any;
+    category?: string;
+    rate?: number;
+    type?: string;
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
+  }[];
   reload?: VoidFunction;
 }) => {
   const [open, setOpen] = useState(false);
@@ -49,7 +69,14 @@ const AddButton = ({
         onClose={onClose}
       />
     ),
-    rate: () => <CompRateForm onClose={() => {}} />,
+    rate: () => (
+      <CompRateForm
+        onClose={() => {}}
+        departments={departments}
+        employees={employees}
+        setSnackbar={setSnackbar}
+      />
+    ),
     deduction: () => <MandDeducForm onClose={() => {}} />,
     loan: () => <LoanDeducForm onClose={() => {}} />,
   };

@@ -1,4 +1,4 @@
-import { date, object, string } from "zod";
+import { z, date, number, object, string } from "zod";
 
 export const LoginSchema = object({
   email: string({ required_error: "Email is required" })
@@ -30,7 +30,7 @@ export const RateSchema = object({
   category: string().min(1, "Category is required"),
   department: string().min(1, "Department is required"),
   employee: string().min(1, "Employee is required"),
-  rate: string().min(1, "Rate is required"),
+  rate: z.coerce.number().min(1, "Rate is required"),
   type: string().min(1, "Type is required"),
 });
 
@@ -38,30 +38,30 @@ export const MandatorySchema = object({
   category: string().min(1, "Category is required"),
   department: string().min(1, "Department is required"),
   employee: string().min(1, "Employee is required"),
-  gsisgs: string().min(1, "GSIS-GS is required"),
-  ec: string().min(1, "EC is required"),
-  gsisps: string().min(1, "GSIS-PS is required"),
-  phic: string().min(1, "PHIC is required"),
-  hdmfgs: string().min(1, "HDMF-GS is required"),
-  hdmfps: string().min(1, "HDMF-PS is required"),
-  wtax: string().min(1, "WTax is required"),
-  sss: string().min(1, "SSS is required"),
+  gsisgs: number().min(1, "GSIS-GS is required"),
+  ec: number().min(1, "EC is required"),
+  gsisps: number().min(1, "GSIS-PS is required"),
+  phic: number().min(1, "PHIC is required"),
+  hdmfgs: number().min(1, "HDMF-GS is required"),
+  hdmfps: number().min(1, "HDMF-PS is required"),
+  wtax: number().min(1, "WTax is required"),
+  sss: number().min(1, "SSS is required"),
 });
 
 export const LoanSchema = object({
   category: string().min(1, "Category is required"),
   department: string().min(1, "Department is required"),
   employee: string().min(1, "Employee is required"),
-  mplhdmf: string().min(1, "MPL-HDMF is required"),
-  gfal: string().min(1, "GFAL is required"),
-  landbank: string().min(1, "Landbank is required"),
-  cb: string().min(1, "CB is required"),
-  eml: string().min(1, "EML is required"),
-  mplgsis: string().min(1, "MPL-GSIS is required"),
-  tagum: string().min(1, "Tagum Bank is required"),
-  ucpb: string().min(1, "UCPB is required"),
-  mpllite: string().min(1, "MPL-LITE is required"),
-  sb: string().min(1, "SB is required"),
+  mplhdmf: number().min(1, "MPL-HDMF is required"),
+  gfal: number().min(1, "GFAL is required"),
+  landbank: number().min(1, "Landbank is required"),
+  cb: number().min(1, "CB is required"),
+  eml: number().min(1, "EML is required"),
+  mplgsis: number().min(1, "MPL-GSIS is required"),
+  tagum: number().min(1, "Tagum Bank is required"),
+  ucpb: number().min(1, "UCPB is required"),
+  mpllite: number().min(1, "MPL-LITE is required"),
+  sb: number().min(1, "SB is required"),
 });
 
 export const ReportSchema = object({

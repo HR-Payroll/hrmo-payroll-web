@@ -32,10 +32,17 @@ const CompensationRate = async () => {
           <TableSearch />
         </div>
         <div className="flex flex-col md:flex-row items-center justify-center gap-4 cursor-pointer">
-          <TableFilters />
+          <TableFilters departments={departments} />
           <div className="flex flex-row items-center justify-center gap-4 cursor-pointer">
             <UploadButton />
-            <AddButton table="rate" title="Add Employee Rate" reload={reload} />
+            <AddButton
+              data={employee}
+              table="rate"
+              title="Update Rate"
+              reload={reload}
+              departments={departments}
+              employees={employee}
+            />
           </div>
         </div>
       </div>

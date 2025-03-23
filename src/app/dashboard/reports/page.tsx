@@ -71,7 +71,7 @@ const Reports = async (props: {
             <span className="hidden sm:block text-sm font-medium pr-4">
               Filters
             </span>
-            <TableFilters />
+            <TableFilters departments={departments} />
           </div>
         </div>
       </div>

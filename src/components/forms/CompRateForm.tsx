@@ -1,8 +1,9 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { updateRate } from "@/actions/rate";
 import { RateSchema } from "@/lib/zod";
+import { useForm, useWatch } from "react-hook-form";
 import InputField from "../InputField";
 import Button from "../ui/Button";
 import { z } from "zod";
@@ -10,16 +11,39 @@ import { z } from "zod";
 const CompensationRateForm = ({
   data,
   onClose,
+  departments,
+  employees,
+  setSnackbar,
 }: {
   data?: any;
   onClose: Function;
+  setSnackbar: Function;
+  departments: {
+    name: string;
+    category: string;
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
+  }[];
+  employees: {
+    recordNo?: string;
+    name?: string;
+    department?: any;
+    category?: string;
+    rate?: number;
+    type?: string;
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
+  }[];
 }) => {
+  const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [serverError, setServerError] = useState<string | null>(null);
-  const [isAdding, setIsAdding] = useState<boolean>(false);
-
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<z.infer<typeof RateSchema>>({
     resolver: zodResolver(RateSchema),
@@ -27,10 +51,23 @@ const CompensationRateForm = ({
       category: "",
       department: "",
       employee: "",
-      rate: "",
+      rate: 0,
       type: "",
     },
   });
+
+  const selectedEmployeeId = watch("employee");
+
+  useEffect(() => {
+    const selectedEmployee = employees.find(
+      (emp: any) => emp._id.$oid === selectedEmployeeId
+    );
+
+    if (selectedEmployee) {
+      setValue("department", selectedEmployee.department?._id.$oid || "");
+      setValue("category", selectedEmployee.category || "");
+    }
+  }, [selectedEmployeeId, employees, setValue]);
 
   const CATEGORY_OPTIONS: Record<string, string> = {
     Regular: "REGULAR",
@@ -40,23 +77,122 @@ const CompensationRateForm = ({
 
   const TYPE_OPTIONS: Record<string, string> = {
     Daily: "DAILY",
-    Weekly: "WEEKLY",
-    "Bi-weekly": "BI-WEEKLY",
     Monthly: "MONTHLY",
-    Contractual: "CONTRACTUAL",
+  };
+
+  const onSubmit = async (data: z.infer<typeof RateSchema>) => {
+    setServerError(null);
+    setIsUpdating(true);
+
+    try {
+      const selectedEmployee = employees.find(
+        (emp: any) => emp._id.$oid === data.employee
+      );
+
+      if (!selectedEmployee) {
+        setIsUpdating(false);
+        return setSnackbar({
+          message: "Selected employee not found.",
+          type: "error",
+          modal: true,
+        });
+      }
+
+      const updatedRateData = {
+        ...data,
+        category: selectedEmployee.category || "",
+        department: selectedEmployee.department?._id.$oid || "",
+      };
+
+      const result = await updateRate(data.employee, updatedRateData);
+
+      if (result?.error) {
+        setIsUpdating(false);
+        return setSnackbar({
+          message: result.error,
+          type: "error",
+          modal: true,
+        });
+      }
+
+      setSnackbar({
+        message: result.success,
+        type: "success",
+        modal: true,
+      });
+
+      setIsUpdating(false);
+      onClose();
+    } catch (error: any) {
+      setSnackbar({
+        message: error.message,
+        type: "error",
+        modal: true,
+      });
+      setIsUpdating(false);
+    }
   };
 
   return (
-    <form className="flex flex-col gap-4 text-[#333333] p-4">
+    <form
+      className="flex flex-col gap-4 text-[#333333] p-4"
+      onSubmit={handleSubmit(onSubmit)}
+    >
       <h1 className="text-center text-base font-semibold">
-        Add Employee Compensation Rate
+        Update Employee Compensation Rate
       </h1>
-      <div className="flex flex-col text-sm gap-2 text-[#333333]">
-        <label className="text-left">Category</label>
+      <div className="flex flex-col text-sm gap-2 ">
+        <label className="text-left">Employee</label>
         <select
           className="w-full bg-transparent rounded-md ring-2 ring-[#ECEEF6] focus:outline-2 focus:outline-blue-200 p-2"
+          {...register("employee")}
+          defaultValue=""
+        >
+          {employees &&
+            employees.length > 0 &&
+            employees.map((item: any) => {
+              return (
+                <option key={item._id.$oid} value={item._id.$oid}>
+                  {item.name}
+                </option>
+              );
+            })}
+        </select>
+        {errors.employee?.message && (
+          <p className="text-[#ff0000] text-xs">
+            {errors.employee.message.toString()}
+          </p>
+        )}
+      </div>
+      <div className="flex flex-col text-sm gap-2 ">
+        <label className="text-left">Department</label>
+        <select
+          className="appearance-none w-full bg-transparent rounded-md ring-2 ring-[#ECEEF6] text-gray-500 p-2"
+          {...register("department")}
+          disabled
+        >
+          {departments &&
+            departments.length > 0 &&
+            departments.map((item: any) => {
+              return (
+                <option key={item._id.$oid} value={item._id.$oid}>
+                  {item.name}
+                </option>
+              );
+            })}
+        </select>
+        {errors.department?.message && (
+          <p className="text-[#ff0000] text-xs">
+            {errors.department.message.toString()}
+          </p>
+        )}
+      </div>
+      <div className="flex flex-col text-sm gap-2 ">
+        <label className="text-left">Category</label>
+        <select
+          className="appearance-none w-full bg-transparent rounded-md ring-2 ring-[#ECEEF6] text-gray-500 p-2"
           {...register("category")}
-          defaultValue={data?.category}
+          disabled
         >
           {Object.keys(CATEGORY_OPTIONS).map((key: string) => {
             return (
@@ -72,36 +208,6 @@ const CompensationRateForm = ({
           </p>
         )}
       </div>
-      <div className="flex flex-col text-sm gap-2 text-[#333333]">
-        <label className="text-left">Department</label>
-        <select
-          className="w-full bg-transparent rounded-md ring-2 ring-[#ECEEF6] focus:outline-2 focus:outline-blue-200 p-2"
-          {...register("department")}
-          defaultValue={data?.department}
-        >
-          {/* ADD OPTIONS */}
-        </select>
-        {errors.department?.message && (
-          <p className="text-[#ff0000] text-xs">
-            {errors.department.message.toString()}
-          </p>
-        )}
-      </div>
-      <div className="flex flex-col text-sm gap-2 text-[#333333]">
-        <label className="text-left">Employee</label>
-        <select
-          className="w-full bg-transparent rounded-md ring-2 ring-[#ECEEF6] focus:outline-2 focus:outline-blue-200 p-2"
-          {...register("employee")}
-          defaultValue={data?.employee}
-        >
-          {/* ADD OPTIONS */}
-        </select>
-        {errors.employee?.message && (
-          <p className="text-[#ff0000] text-xs">
-            {errors.employee.message.toString()}
-          </p>
-        )}
-      </div>
       <InputField
         label="Rate"
         name="rate"
@@ -109,7 +215,7 @@ const CompensationRateForm = ({
         register={register}
         error={errors?.rate}
       />
-      <div className="flex flex-col text-sm gap-2 text-[#333333]">
+      <div className="flex flex-col text-sm gap-2 ">
         <label className="text-left">Type</label>
         <select
           className="w-full bg-transparent rounded-md ring-2 ring-[#ECEEF6] focus:outline-2 focus:outline-blue-200 p-2"
@@ -132,9 +238,9 @@ const CompensationRateForm = ({
       </div>
       <div className="mt-4">
         <Button
-          label={isAdding ? "Creating..." : "Create"}
+          label={isUpdating ? "Updating..." : "Update"}
           type="submit"
-          isLoading={isAdding}
+          isLoading={isUpdating}
         />
       </div>
       {serverError && <p style={{ color: "red" }}>{serverError}</p>}

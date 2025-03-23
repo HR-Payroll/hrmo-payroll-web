@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { styled } from "@mui/material";
 import { tableStyle } from "@/lib/themes";
 import { updateRate } from "@/actions/rate";
@@ -11,6 +11,7 @@ import {
   GridPreProcessEditCellProps,
   GridRenderEditCellParams,
 } from "@mui/x-data-grid";
+import { MdCheck, MdClose, MdOutlineCreate } from "react-icons/md";
 
 function CompensationRateTable({
   rates,
@@ -23,13 +24,17 @@ function CompensationRateTable({
   departments: any[];
   reload?: VoidFunction;
 }) {
-  const [isEditing, setEditing] = useState<any>();
   const [data, setData] = useState(employees);
+  const [isEditing, setEditing] = useState<any>();
   const [snackbar, setSnackbar] = useState({
     message: "",
     type: "info",
     modal: false,
   });
+
+  useEffect(() => {
+    setData(employees);
+  }, [employees]);
 
   const columns: GridColDef[] = [
     {
@@ -118,29 +123,89 @@ function CompensationRateTable({
       align: "center",
       headerAlign: "center",
       type: "singleSelect",
-      valueOptions: ["Daily", "Weekly", "Bi-weekly", "Monthly", "Contractual"],
+      valueOptions: ["Daily", "Monthly"],
       editable: true,
       valueSetter: (value, row) => {
-        const type = {
+        const dept = {
           Daily: "DAILY",
-          Weekly: "WEEKLY",
-          "Bi-weekly": "BI_WEEKLY",
           Monthly: "MONTHLY",
-          Contractual: "CONTRACTUAL",
         } as any;
 
-        return { ...row, category: type[value] };
+        return { ...row, type: dept[value] };
       },
       valueGetter: (row) => {
-        const type = {
+        const dept = {
           DAILY: "Daily",
-          WEEKLY: "Weekly",
-          BI_WEEKLY: "Bi-weekly",
           MONTHLY: "Monthly",
-          CONTRACTUAL: "Contractual",
         };
 
-        return type[row];
+        return dept[row];
+      },
+    },
+    {
+      field: "action",
+      headerName: "Action",
+      headerClassName: "custom-header",
+      flex: 0.5,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params: any) => {
+        return (
+          <>
+            {isEditing && Object.keys(isEditing).includes(params.id) ? (
+              <div className="flex flex-row">
+                <div
+                  onClick={() => {
+                    const row = data?.find(
+                      (row: any) => row._id.$oid === params.id
+                    );
+
+                    onUpdate(params.id, {
+                      recordNo: row.recordNo,
+                      name: row.name,
+                      category: row.category,
+                      department: row.department._id.$oid,
+                    });
+                  }}
+                  className="w-full flex items-center justify-center p-1 cursor-pointer"
+                >
+                  <MdCheck
+                    size={22}
+                    className="w-fit rounded-full bg-[#66bb6a] hover:bg-[#388e3c] text-white p-[2px]"
+                  />
+                </div>
+                <div
+                  onClick={() => {
+                    const temp = { ...isEditing };
+                    setData((prev: any) =>
+                      prev.map((row: any) =>
+                        row._id.$oid === params.id ? temp[params.id] : row
+                      )
+                    );
+                    delete temp[params.id];
+                    setEditing(temp);
+                  }}
+                  className="w-full flex items-center justify-center p-1 cursor-pointer"
+                >
+                  <MdClose
+                    size={22}
+                    className="w-fit rounded-full bg-[#f44336] hover:bg-[#d32f2f] text-white p-[2px]"
+                  />
+                </div>
+              </div>
+            ) : (
+              <div
+                onClick={() => {}}
+                className="w-full flex items-center justify-center p-1 cursor-pointer"
+              >
+                <MdOutlineCreate
+                  size={25}
+                  className="w-fit rounded-full bg-[#ECEEF6] hover:bg-blue-200 active:bg-blue-300 active:text-[#0000ff] text-[#333333] p-1"
+                />
+              </div>
+            )}
+          </>
+        );
       },
     },
   ];

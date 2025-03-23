@@ -31,7 +31,7 @@ const LoanDeductions = async () => {
           <TableSearch />
         </div>
         <div className="flex flex-col md:flex-row items-center justify-center gap-4 cursor-pointer">
-          <TableFilters />
+          <TableFilters departments={departments} />
           <div className="flex flex-row items-center justify-center gap-4 cursor-pointer">
             <UploadButton />
             <AddButton table="deduction" title="Add Deductions" />

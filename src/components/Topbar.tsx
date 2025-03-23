@@ -36,7 +36,7 @@ const Navbar = () => {
           )}
         </div>
         {isDropdownOpen && (
-          <div className="absolute top-12 right-0 w-46 bg-white border border-[#333333] rounded-md shadow-lg text-sm">
+          <div className="absolute sm:top-12 sm:right-0 sm:left-0 top-0 right-0 left-18 w-46 bg-white border border-[#333333] rounded-md shadow-lg text-sm">
             <button
               onClick={handleLogout}
               className="w-full text-left px-4 py-2 hover:bg-gray-100 active:text-black cursor-pointer"
