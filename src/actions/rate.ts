@@ -13,9 +13,10 @@ export const updateRate = async (
   }
 ) => {
   try {
+    console.log(id, payload)
     await prisma.employee.update({
       where: { id },
-      data: { ...payload },
+      data: { ...payload, rate: parseFloat(payload.rate ? payload.rate.toString() : "0.00") },
     });
 
     return { success: "Employee Compensation Rate has been successfully updated!" };

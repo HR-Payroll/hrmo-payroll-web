@@ -8,7 +8,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="w-full h-screen flex flex-row font-[family-name:var(--font-arimo)] selection:bg-blue-200 selection:text-[#0000ff]">
+    <div className="w-full h-screen flex flex-row font-[family-name:var(--font-arimo)] selection:bg-blue-200 selection:text-[var(--accent)]">
       <Sidebar />
       <div
         style={{ flex: 1, overflow: "hidden" }}

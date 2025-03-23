@@ -4,7 +4,7 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <main className="w-full h-screen flex flex-row items-center justify-center gap-10 text-[#333] font-[family-name:var(--font-arimo)] selection:bg-blue-200 selection:text-[#0000ff]">
+    <main className="w-full h-screen flex flex-row items-center justify-center gap-10 text-[var(--text)] font-[family-name:var(--font-arimo)] selection:bg-blue-200 selection:text-[var(--blue)]">
       <Image src="/logo.png" alt="logo" width={200} height={200}></Image>
       <div className="flex flex-col">
         <h1 className="text-2xl font-bold">Welcome to</h1>

@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
+:root {
+  --slate: #F8FAFB;
+  --accent: #0000ff;
+  --border: #ECEEF6;
+  --text: #333333;
+  --error: #ff0000;
+  --success: #008000;
+  --check: #388e3c;
+  --lightcheck: #66bb6a;
+  --wrong: #d32f2f;
+  --lightwrong: #f44336;
+  --bluetext: #4F73DF;
+}
+
 .react-calendar {
   width: 100% !important;
   border: none !important;

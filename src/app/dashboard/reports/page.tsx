@@ -1,5 +1,6 @@
 import React from "react";
 import { revalidatePath } from "next/cache";
+import { getPaginatedReport } from "@/data/report";
 import { getAllEmployee } from "@/data/employee";
 import { getAllDepartment } from "@/data/department";
 import PageInfo from "@/components/PageInfo";
@@ -9,7 +10,6 @@ import UploadButton from "@/components/UploadButton";
 import DateFilter from "@/components/DateFilter";
 import TableFilters from "@/components/TableFilters";
 import ReportTable from "@/components/tables/ReportTable";
-import { getAllReport, getPaginatedReport } from "@/data/report";
 
 const Reports = async (props: {
   searchParams?: Promise<{
@@ -48,7 +48,7 @@ const Reports = async (props: {
   }
 
   return (
-    <div className="w-full bg-white rounded-md border-2 border-[#ECEEF6] gap-y-4 p-4 text-[#333333]">
+    <div className="w-full bg-white rounded-md border-2 border-[var(--border)] text-[var(--text)] p-4">
       <div className="absolute top-4 -ml-4">
         <PageInfo
           title="Reports"
@@ -60,7 +60,7 @@ const Reports = async (props: {
           <div>
             <TableSearch />
           </div>
-          <div className="flex flex-row gap-x-5">
+          <div className="flex flex-row gap-x-4">
             <UploadButton />
             <DownloadButton />
           </div>

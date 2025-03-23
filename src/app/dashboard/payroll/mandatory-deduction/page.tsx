@@ -18,7 +18,7 @@ const MandatoryDeductions = async () => {
     revalidatePath("/dashboard/payroll/mandatory-deduction");
   }
   return (
-    <div className="w-full bg-white rounded-md border-2 border-[#ECEEF6] p-4 text-[#333333]">
+    <div className="w-full bg-white rounded-md border-2 border-[var(--border)] text-[var(--text)] p-4">
       <div className="absolute top-4 -ml-4">
         <PageInfo
           title="Payroll Register"

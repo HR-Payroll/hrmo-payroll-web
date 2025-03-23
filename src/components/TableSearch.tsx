@@ -48,7 +48,7 @@ const TableSearch = () => {
   }, [searchParams]);
 
   return (
-    <div className="w-full md:auto flex items-center rounded-md ring-[2px] ring-[#ECEEF6] gap-2 text-sm">
+    <div className="w-full md:auto flex items-center rounded-md ring-[2px] ring-[var(--border)] gap-2 text-sm">
       <input
         placeholder="Search"
         className="w-full bg-transparent pl-2 py-1.5 outline-none"

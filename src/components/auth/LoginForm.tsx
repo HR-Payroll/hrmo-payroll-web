@@ -52,7 +52,7 @@ function LoginForm() {
       <input
         type="email"
         placeholder="Email"
-        className="py-2 pl-4 bg-transparent border-2 border-[#ECEEF6] rounded-md focus:outline focus:outline-blue-500"
+        className="py-2 pl-4 bg-transparent border-2 border-[var(--border)] rounded-md focus:outline focus:outline-blue-500"
         {...register("email")}
       ></input>
       {errors.email && <p style={{ color: "red" }}>{errors.email.message}</p>}
@@ -60,7 +60,7 @@ function LoginForm() {
       <input
         type="password"
         placeholder="Password"
-        className="py-2 pl-4 bg-transparent border-2 border-[#ECEEF6] rounded-md focus:outline focus:outline-blue-500"
+        className="py-2 pl-4 bg-transparent border-2 border-[var(--border)] rounded-md focus:outline focus:outline-blue-500"
         {...register("password")}
       ></input>
       {errors.password && (
@@ -69,7 +69,7 @@ function LoginForm() {
       <div className="w-full flex flex-col gap-4">
         <Link
           href={"#"}
-          className="text-blue-600 hover:text-[#0000ff] cursor-pointer"
+          className="text-blue-600 hover:text-[var(--blue)] cursor-pointer"
         >
           Forgot password?
         </Link>

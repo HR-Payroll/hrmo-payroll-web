@@ -36,7 +36,7 @@ const SingleReportPage = async ({
   const report = (await getReportById(id, dateFrom, dateTo)) as any;
 
   return (
-    <div className="flex-1 rounded-md bg-white border-2 border-[#ECEEF6] gap-4 m-4 mt-10 sm:mt-0 p-4 text-[#333333]">
+    <div className="flex-1 rounded-md bg-white border-2 border-[var(--border)] gap-4 m-4 mt-10 sm:mt-0 p-4 text-[var(--text)]">
       <div className="flex flex-row items-center justify-between gap-4">
         <DynamicHeader label={report ? report.name : "N/A"} />
         <div className="flex flex-row items-center justify-end gap-4 sm:gap-4 cursor-pointer">

@@ -112,7 +112,7 @@ function ReportTable({
                 from,
                 "yyyy-MM-dd"
               )}&to=${format(to, "yyyy-MM-dd")}`}
-              className="flex items-center justify-center rounded-full bg-[#ECEEF6] hover:bg-blue-200 active:bg-blue-300 active:text-[#0000ff] text-[#333333] p-1 cursor-pointer"
+              className="flex items-center justify-center rounded-full bg-[var(--border)] hover:bg-blue-200 active:bg-blue-300 active:text-[var(--accent)] text-[var(--text)] p-1 cursor-pointer"
             >
               <MdOutlineRemoveRedEye size={16} />
             </Link>
