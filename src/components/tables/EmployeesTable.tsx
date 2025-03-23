@@ -9,6 +9,7 @@ import {
   DataGrid,
   GridColDef,
   GridEditInputCell,
+  GridPaginationModel,
   GridPreProcessEditCellProps,
   GridRenderEditCellParams,
 } from "@mui/x-data-grid";
@@ -19,19 +20,32 @@ import {
   MdClose,
 } from "react-icons/md";
 import { GoXCircleFill } from "react-icons/go";
+import { usePathname, useRouter } from "next/navigation";
 
 function EmployeesTable({
   employees,
   departments,
   reload,
+  page = 0,
+  limit = 10,
+  rowCount = 0,
+  loading,
 }: {
   employees?: any[];
   departments: any[];
   reload?: VoidFunction;
+  page?: number;
+  limit?: number;
+  rowCount?: number;
+  loading?: boolean;
 }) {
+  const router = useRouter();
+  const pathname = usePathname();
   const [isDelete, setDelete] = useState(null);
   const [isEditing, setEditing] = useState<any>();
   const [data, setData] = useState(employees);
+  const [pageSize, setPageSize] = useState(limit);
+  const [isLoading, setLoading] = useState(loading);
   const [snackbar, setSnackbar] = useState({
     message: "",
     type: "info",
@@ -40,7 +54,27 @@ function EmployeesTable({
 
   useEffect(() => {
     setData(employees);
+    setLoading(false);
   }, [employees]);
+
+  useEffect(() => {
+    setLoading(loading);
+  }, [loading]);
+
+  const onPageChange = (model: GridPaginationModel) => {
+    let query = pathname;
+
+    if (model.page !== 0 && model.pageSize !== 10) {
+      query = `${pathname}?page=${model.page}&limit=${model.pageSize}`;
+    } else if (model.page !== 0) {
+      query = `${pathname}?page=${model.page}`;
+    } else if (model.pageSize !== 10) {
+      query = `${pathname}?limit=${model.pageSize}`;
+    }
+
+    setLoading(true);
+    router.push(query);
+  };
 
   const columns: GridColDef[] = [
     {
@@ -323,24 +357,26 @@ function EmployeesTable({
       />
       <DataGrid
         rows={data}
+        loading={isLoading}
         columns={columns}
         getRowId={(row) => row._id.$oid.toString()}
         columnHeaderHeight={40}
         rowHeight={36}
+        rowCount={rowCount}
         getRowClassName={(params) => {
           if (isEditing && Object.keys(isEditing).includes(params.id as string))
             return "edited-row";
 
           return params.indexRelativeToCurrentPage % 2 !== 0 ? "odd-row" : "";
         }}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 10,
-            },
-          },
-        }}
         pageSizeOptions={[5, 10, 20]}
+        paginationMode="server"
+        paginationModel={{ page, pageSize }}
+        onPaginationModelChange={(model) => {
+          page = model.page;
+          setPageSize(model.pageSize);
+          onPageChange(model);
+        }}
         disableRowSelectionOnClick
         sx={tableStyle}
         processRowUpdate={processUpdate}
