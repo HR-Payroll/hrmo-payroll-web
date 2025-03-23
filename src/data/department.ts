@@ -30,6 +30,7 @@ export const getAllDepartment = async () => {
           $project: {
             _id: 1,
             name: 1,
+            index: 1,
             employees: { $size: "$employees" },
             category: 1,
             createdAt: 1,
@@ -77,6 +78,7 @@ export const getPaginatedDepartment = async (
           $project: {
             _id: 1,
             name: 1,
+            index: 1,
             employees: { $size: "$employees" },
             category: 1,
             createdAt: 1,

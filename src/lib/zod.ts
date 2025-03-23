@@ -13,6 +13,7 @@ export const LoginSchema = object({
 export const DepartmentSchema = object({
   name: string().min(1, "Department name is required"),
   category: string().min(1, "Category is required"),
+  index: string(),
 });
 
 export const EmployeeSchema = object({
@@ -23,7 +24,7 @@ export const EmployeeSchema = object({
       message: "Employee name must be at most 20 characters long!",
     }),
   category: string().min(1, "Category is required"),
-  department: string().min(1, "Department is required"),
+  department: string().optional(),
 });
 
 export const RateSchema = object({

@@ -1,17 +1,32 @@
 import React from "react";
 import { revalidatePath } from "next/cache";
-import { getAllEmployee } from "@/data/employee";
+import { getAllEmployee, getPaginatedEmployee } from "@/data/employee";
 import { getAllDepartment } from "@/data/department";
 import PageInfo from "@/components/PageInfo";
 import TableSearch from "@/components/TableSearch";
 import TableFilters from "@/components/TableFilters";
-import UploadButton from "@/components/UploadButton";
 import AddButton from "@/components/AddButton";
 import EmployeesTable from "@/components/tables/EmployeesTable";
+import UploadEmployees from "@/components/Uploads/UploadEmployees";
 
-const Employees = async () => {
+const Employees = async (props: {
+  searchParams?: Promise<{
+    search?: string;
+    page?: string;
+    limit?: string;
+  }>;
+}) => {
+  const params = await props.searchParams;
+  const search = params?.search;
+  const page = params?.page;
+  const limit = params?.limit;
+
   const departments = (await getAllDepartment()) as any;
-  const employees = (await getAllEmployee()) as any;
+  const employees = (await getPaginatedEmployee(
+    search,
+    Number(page || 0),
+    Number(limit || 10)
+  )) as any;
 
   async function reload() {
     "use server";
@@ -33,7 +48,7 @@ const Employees = async () => {
         <div className="flex flex-col md:flex-row items-center justify-center gap-4 cursor-pointer">
           <TableFilters departments={departments} />
           <div className="flex flex-row items-center justify-center gap-4 cursor-pointer">
-            <UploadButton />
+            <UploadEmployees departments={departments} reload={reload} />
             <AddButton
               data={departments}
               table="employee"
@@ -45,9 +60,12 @@ const Employees = async () => {
       </div>
       <div className="w-full mt-4">
         <EmployeesTable
+          employees={employees.items}
           departments={departments}
-          employees={employees}
           reload={reload}
+          limit={employees.pageSize}
+          rowCount={employees.pageRange}
+          page={employees.page}
         />
       </div>
     </div>

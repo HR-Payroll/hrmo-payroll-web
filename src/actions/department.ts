@@ -12,11 +12,11 @@ export const createDepartment = async (
     return { error: "Invalid input fields" };
   }
 
-  const { name, category } = validateData;
+  const { name, category, index } = validateData;
 
   try {
     await prisma.department.create({
-      data: { name: name, category: category },
+      data: { name, category, index },
     });
 
     return { success: "Department has been successfully added!" };
@@ -70,9 +70,30 @@ export const uploadDepartment = async (
   }
 
   try {
-    await prisma.$transaction([
-      prisma.department.createMany({
-        data,
+    await prisma.$runCommandRaw({
+      insert: "Department",
+      documents: data.map((item) => ({ ...item, createdAt: new Date() })),
+      ordered: false,
+    });
+
+    await Promise.all([
+      prisma.$runCommandRaw({
+        update: "Department",
+        updates: [
+          {
+            q: {
+              createdAt: { $type: "string" },
+            },
+            u: [
+              {
+                $set: {
+                  createdAt: { $toDate: "$createdAt" },
+                },
+              },
+            ],
+            multi: true,
+          },
+        ],
       }),
     ]);
 
