@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Alert from "../ui/Alert";
 import { tableStyle } from "@/lib/themes";
+import { usePathname, useRouter } from "next/navigation";
 import SnackbarInfo, { initialSnackbar } from "../ui/SnackbarInfo";
 import { MdDeleteOutline, MdCheck, MdClose } from "react-icons/md";
 import { deleteDepartment, updateDepartment } from "@/actions/department";
@@ -14,7 +15,6 @@ import {
   GridPreProcessEditCellProps,
   GridRenderEditCellParams,
 } from "@mui/x-data-grid";
-import { usePathname, useRouter } from "next/navigation";
 
 function DepartmentTable({
   departments,
@@ -33,16 +33,19 @@ function DepartmentTable({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-
+  const [data, setData] = useState(departments);
   const [isDelete, setDelete] = useState(null);
   const [isEditing, setEditing] = useState<any>();
-  const [data, setData] = useState(departments);
   const [pageSize, setPageSize] = useState(limit);
   const [snackbar, setSnackbar] = useState({
     message: "",
     type: "info",
     modal: false,
   });
+
+  useEffect(() => {
+    setData(departments);
+  }, [departments]);
 
   const onPageChange = (model: GridPaginationModel) => {
     let query = pathname;
@@ -57,10 +60,6 @@ function DepartmentTable({
 
     router.push(query);
   };
-
-  useEffect(() => {
-    setData(departments);
-  }, [departments]);
 
   const columns: GridColDef[] = [
     {
