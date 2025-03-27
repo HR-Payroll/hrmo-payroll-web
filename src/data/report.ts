@@ -180,8 +180,7 @@ export const getPaginatedReport = async (
         })
       : [];
 
-    console.log(paginationUtil(items, page, limit, length));
-
+    // console.log(paginationUtil(items, page, limit, length));
     return paginationUtil(items, page, limit, length);
   } catch (error: any) {
     console.log(error);
