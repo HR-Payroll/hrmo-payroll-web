@@ -50,10 +50,17 @@ export const getAllEmployee = async () => {
 export const getPaginatedEmployee = async (
   search?: string,
   page = 0,
-  limit = 10
+  limit = 10,
+  category?: string,
+  department?: string
 ) => {
   try {
     let searchQuery = {};
+    let filterQuery = {};
+
+    if (category) filterQuery = { ...filterQuery, category };
+    if (department)
+      filterQuery = { ...filterQuery, department: { $oid: department } };
 
     if (search) {
       searchQuery = {
@@ -76,6 +83,7 @@ export const getPaginatedEmployee = async (
 
     const employees = await prisma.employee.aggregateRaw({
       pipeline: [
+        { $match: { ...filterQuery } },
         {
           $lookup: {
             from: "Department",
