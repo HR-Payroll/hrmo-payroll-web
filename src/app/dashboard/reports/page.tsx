@@ -18,6 +18,8 @@ const Reports = async (props: {
     limit?: string;
     from?: string;
     to?: string;
+    category?: string;
+    department?: string;
   }>;
 }) => {
   const departments = (await getAllDepartment()) as any;
@@ -29,6 +31,8 @@ const Reports = async (props: {
   const limit = params?.limit;
   const from = params?.from;
   const to = params?.to;
+  const category = params?.category;
+  const department = params?.department;
 
   const currentDate = new Date();
   const day1 = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
@@ -40,7 +44,15 @@ const Reports = async (props: {
     : day1;
   const dateTo = to ? new Date(to) : currentDate;
 
-  const reports = (await getPaginatedReport(dateFrom, dateTo, search)) as any;
+  const reports = (await getPaginatedReport(
+    dateFrom,
+    dateTo,
+    search,
+    Number(page || 0),
+    Number(limit || 10),
+    category,
+    department
+  )) as any;
 
   async function reload() {
     "use server";
@@ -80,9 +92,12 @@ const Reports = async (props: {
           employees={employees}
           departments={departments}
           reload={reload}
-          reports={reports}
+          reports={reports.items}
           from={dateFrom}
           to={dateTo}
+          limit={reports.pageSize}
+          rowCount={reports.pageRange}
+          page={reports.page}
         />
       </div>
     </div>

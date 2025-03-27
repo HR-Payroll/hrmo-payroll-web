@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { tableStyle } from "@/lib/themes";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 function ReportTable({
   employees,
@@ -13,6 +14,9 @@ function ReportTable({
   reports,
   from,
   to,
+  page = 0,
+  limit = 10,
+  rowCount = 0,
 }: {
   employees: any[];
   departments: any[];
@@ -20,12 +24,34 @@ function ReportTable({
   reload?: VoidFunction;
   from: Date;
   to: Date;
+  page?: number;
+  limit?: number;
+  rowCount?: number;
 }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [data, setData] = useState(reports);
+  const [pageSize, setPageSize] = useState(limit);
 
   useEffect(() => {
     setData(reports);
   }, [reports]);
+
+  const onChangeFilter = (key: string, value: string) => {
+    let path = "";
+    const params = Object.fromEntries(searchParams.entries());
+
+    if (params[key]) delete params[key];
+    if (value) params[key] = value;
+
+    Object.keys(params).forEach((key, index) => {
+      if (index === 0) path += `?${key}=${params[key]}`;
+      else path += `&${key}=${params[key]}`;
+    });
+
+    router.push(`${pathname}${path}`);
+  };
 
   const columns: GridColDef[] = [
     {
@@ -45,6 +71,9 @@ function ReportTable({
       align: "center",
       headerAlign: "center",
       editable: false,
+      valueGetter: (value) => {
+        return value["data"] ? value["name"] : `${value["name"]} (no ref)`;
+      },
     },
     {
       field: "department",
@@ -55,8 +84,11 @@ function ReportTable({
       headerAlign: "center",
       type: "singleSelect",
       editable: false,
-      valueGetter: (value) => {
-        return value ? value["name"] : "N/A";
+      valueGetter: (value: any) => {
+        const dept = departments.find(
+          (item: any) => value.$oid === item._id.$oid
+        );
+        return dept ? dept.name : "N/A";
       },
     },
     {
@@ -129,17 +161,20 @@ function ReportTable({
       getRowId={(row) => row.recordNo}
       columnHeaderHeight={40}
       rowHeight={36}
+      rowCount={rowCount}
       getRowClassName={(params) => {
         return params.indexRelativeToCurrentPage % 2 !== 0 ? "odd-row" : "";
       }}
-      initialState={{
-        pagination: {
-          paginationModel: {
-            pageSize: 10,
-          },
-        },
-      }}
       pageSizeOptions={[5, 10, 20]}
+      paginationMode="server"
+      paginationModel={{ page, pageSize }}
+      onPaginationModelChange={(model: any) => {
+        page = model.page;
+        setPageSize(model.pageSize);
+
+        let key = Object.keys(model)[0] as string;
+        onChangeFilter(key === "pageSize" ? "limit" : key, model[key]);
+      }}
       disableRowSelectionOnClick
       sx={tableStyle}
     />

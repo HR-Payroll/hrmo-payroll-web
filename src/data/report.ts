@@ -3,6 +3,7 @@ import { computeTotalDaysAndLate } from "@/utils/computations";
 import { stringToDate } from "@/utils/dateFormatter";
 import moment from "moment-timezone";
 import { format } from "date-fns";
+import { paginationUtil } from "@/utils/tools";
 
 export const getAllReport = async (
   from: Date,
@@ -27,9 +28,29 @@ export const getAllReport = async (
           $project: {
             _id: 0,
             recordNo: "$_id.recordNo",
-            name: "$_id.name",
-            count: 1,
+            name: { name: "$_id.name", data: null },
             items: 1,
+            count: 1,
+          },
+        },
+        {
+          $lookup: {
+            from: "Employee",
+            localField: "recordNo",
+            foreignField: "recordNo",
+            as: "employee",
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            recordNo: 1,
+            name: {
+              name: { $arrayElemAt: ["$employee.name", 0] },
+              data: { $arrayElemAt: ["$employee", 0] },
+            },
+            items: 1,
+            count: 1,
           },
         },
         {
@@ -49,7 +70,6 @@ export const getAllReport = async (
         })
       : [];
 
-    console.log(temp);
     return temp;
   } catch (error: any) {
     return null;
@@ -62,10 +82,16 @@ export const getPaginatedReport = async (
   search?: string,
   page = 0,
   limit = 10,
-  filters?: { category?: string; department?: string }
+  category?: string,
+  department?: string
 ) => {
   try {
     let searchQuery = {};
+    let filterQuery = {};
+
+    if (category) filterQuery = { ...filterQuery, category };
+    if (department)
+      filterQuery = { ...filterQuery, department: { $oid: department } };
 
     if (search) {
       searchQuery = {
@@ -84,7 +110,6 @@ export const getPaginatedReport = async (
       pipeline: [
         {
           $match: {
-            ...searchQuery,
             timestamp: { $gte: { $date: from }, $lte: { $date: to } },
           },
         },
@@ -99,19 +124,53 @@ export const getPaginatedReport = async (
           $project: {
             _id: 0,
             recordNo: "$_id.recordNo",
-            name: "$_id.name",
-            count: 1,
+            name: { name: "$_id.name", data: null },
             items: 1,
+            count: 1,
           },
         },
         {
-          $sort: { recordNo: 1 },
+          $lookup: {
+            from: "Employee",
+            localField: "recordNo",
+            foreignField: "recordNo",
+            as: "employee",
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            recordNo: 1,
+            name: {
+              name: { $arrayElemAt: ["$employee.name", 0] },
+              data: { $arrayElemAt: ["$employee", 0] },
+            },
+            category: { $arrayElemAt: ["$employee.category", 0] },
+            department: { $arrayElemAt: ["$employee.department", 0] },
+            items: 1,
+            count: 1,
+          },
+        },
+        {
+          $match: { ...searchQuery, ...filterQuery },
+        },
+        {
+          $facet: {
+            totalCount: [{ $count: "count" }],
+            items: [
+              { $sort: { recordNo: 1 } },
+              { $skip: page * limit },
+              { $limit: limit },
+            ],
+          },
         },
       ],
     });
 
-    const temp = Array.isArray(reports)
-      ? reports.map((report: any) => {
+    const result = reports as any;
+    const length = result[0].totalCount[0] ? result[0].totalCount[0].count : 0;
+    const items = Array.isArray(result[0].items)
+      ? result[0].items.map((report: any) => {
           const { totalDays, late } = computeTotalDaysAndLate(report.items);
           return {
             ...report,
@@ -121,8 +180,11 @@ export const getPaginatedReport = async (
         })
       : [];
 
-    return temp;
+    console.log(paginationUtil(items, page, limit, length));
+
+    return paginationUtil(items, page, limit, length);
   } catch (error: any) {
+    console.log(error);
     return null;
   }
 };
