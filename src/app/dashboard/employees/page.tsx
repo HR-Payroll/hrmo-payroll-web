@@ -12,12 +12,16 @@ import UploadEmployees from "@/components/Uploads/UploadEmployees";
 const Employees = async (props: {
   searchParams?: Promise<{
     search?: string;
+    category?: string;
+    department?: string;
     page?: string;
     limit?: string;
   }>;
 }) => {
   const params = await props.searchParams;
   const search = params?.search;
+  const category = params?.category;
+  const department = params?.department;
   const page = params?.page;
   const limit = params?.limit;
 
@@ -25,7 +29,9 @@ const Employees = async (props: {
   const employees = (await getPaginatedEmployee(
     search,
     Number(page || 0),
-    Number(limit || 10)
+    Number(limit || 10),
+    category,
+    department
   )) as any;
 
   async function reload() {
