@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { tableStyle } from "@/lib/themes";
-import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { format } from "date-fns";
 
 function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
@@ -69,47 +69,26 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
   ];
 
   return (
-    <>
-      <DataGrid
-        rows={reports}
-        columns={columns}
-        getRowId={(row) => row.date}
-        columnHeaderHeight={40}
-        rowHeight={36}
-        getRowClassName={(params) =>
-          params.indexRelativeToCurrentPage % 2 !== 0 ? "odd-row" : ""
-        }
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 10,
-            },
+    <DataGrid
+      rows={reports}
+      columns={columns}
+      getRowId={(row) => row.date}
+      columnHeaderHeight={40}
+      rowHeight={36}
+      getRowClassName={(params) =>
+        params.indexRelativeToCurrentPage % 2 !== 0 ? "odd-row" : ""
+      }
+      initialState={{
+        pagination: {
+          paginationModel: {
+            pageSize: 10,
           },
-        }}
-        slots={{ toolbar: GridToolbar }}
-        slotProps={{
-          toolbar: {
-            showQuickFilter: true,
-            quickFilterProps: { debounceMs: 500 },
-          },
-        }}
-        pageSizeOptions={[5, 10, 20]}
-        disableRowSelectionOnClick
-        disableColumnSelector
-        disableDensitySelector
-        sx={tableStyle}
-      />
-      {/* {snackbar.modal && (
-        <SnackbarInfo
-          isOpen={snackbar.modal}
-          type={snackbar.type as any}
-          message={snackbar.message}
-          onClose={() => {
-            setSnackbar(initialSnackbar);
-          }}
-        />
-      )} */}
-    </>
+        },
+      }}
+      pageSizeOptions={[5, 10, 20]}
+      disableRowSelectionOnClick
+      sx={tableStyle}
+    />
   );
 }
 

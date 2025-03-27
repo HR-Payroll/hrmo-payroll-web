@@ -2,7 +2,9 @@
 import React, { useEffect, useState } from "react";
 import Alert from "../ui/Alert";
 import { tableStyle } from "@/lib/themes";
+import { usePathname, useRouter } from "next/navigation";
 import SnackbarInfo, { initialSnackbar } from "../ui/SnackbarInfo";
+import { MdDeleteOutline, MdCheck, MdClose } from "react-icons/md";
 import { deleteEmployee, updateEmployee } from "@/actions/employee";
 import { styled, Tooltip, tooltipClasses, TooltipProps } from "@mui/material";
 import {
@@ -13,37 +15,29 @@ import {
   GridPreProcessEditCellProps,
   GridRenderEditCellParams,
 } from "@mui/x-data-grid";
-import {
-  MdDeleteOutline,
-  MdCheckCircle,
-  MdCheck,
-  MdClose,
-} from "react-icons/md";
-import { GoXCircleFill } from "react-icons/go";
-import { usePathname, useRouter } from "next/navigation";
 
 function EmployeesTable({
-  employees,
   departments,
+  employees,
   reload,
+  loading,
   page = 0,
   limit = 10,
   rowCount = 0,
-  loading,
 }: {
-  employees?: any[];
   departments: any[];
+  employees?: any[];
   reload?: VoidFunction;
+  loading?: boolean;
   page?: number;
   limit?: number;
   rowCount?: number;
-  loading?: boolean;
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const [data, setData] = useState(employees);
   const [isDelete, setDelete] = useState(null);
   const [isEditing, setEditing] = useState<any>();
-  const [data, setData] = useState(employees);
   const [pageSize, setPageSize] = useState(limit);
   const [isLoading, setLoading] = useState(loading);
   const [snackbar, setSnackbar] = useState({
