@@ -1,10 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { tableStyle } from "@/lib/themes";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { MdOutlineRemoveRedEye } from "react-icons/md";
 import Link from "next/link";
 import { format } from "date-fns";
-import { tableStyle } from "@/lib/themes";
-import { MdOutlineRemoveRedEye } from "react-icons/md";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
 
 function ReportTable({
   employees,
