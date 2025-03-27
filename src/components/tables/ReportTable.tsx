@@ -167,9 +167,9 @@ function ReportTable({
       }}
       pageSizeOptions={[5, 10, 20]}
       paginationMode="server"
-      paginationModel={{ page, pageSize }}
+      paginationModel={{ page: currentPage, pageSize }}
       onPaginationModelChange={(model: any) => {
-        page = model.page;
+        setCurrentPage(model.page);
         setPageSize(model.pageSize);
 
         let key = Object.keys(model)[0] as string;
