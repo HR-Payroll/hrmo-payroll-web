@@ -4,7 +4,7 @@ import { tableStyle } from "@/lib/themes";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { format } from "date-fns";
 
-function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
+function ViewSummary({ summary, name }: { summary?: any[]; name?: string }) {
   const columns: GridColDef[] = [
     {
       field: "date",
@@ -21,59 +21,36 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
       flex: 1.5,
       align: "center",
       headerAlign: "center",
-      valueGetter: (value) => {
-        return value["ref"] ? value["name"] : `${value["name"]} (no ref)`;
-      },
     },
     {
-      field: "r1",
-      headerName: "Time In",
+      field: "earnings",
+      headerName: "Gross Salary",
       headerClassName: "custom-header",
       flex: 1,
       align: "center",
       headerAlign: "center",
-      valueGetter: (params: any) => {
-        return params ? format(params, "hh:mm aa") : "";
-      },
     },
     {
-      field: "r2",
-      headerName: "Time Out",
+      field: "deductions",
+      headerName: "Late Deductions",
       headerClassName: "custom-header",
       flex: 1,
       align: "center",
       headerAlign: "center",
-      valueGetter: (params: any) => {
-        return params ? format(params, "hh:mm aa") : "";
-      },
     },
     {
-      field: "r3",
-      headerName: "Time In",
+      field: "net",
+      headerName: "Total Earnings",
       headerClassName: "custom-header",
       flex: 1,
       align: "center",
       headerAlign: "center",
-      valueGetter: (params: any) => {
-        return params ? format(params, "hh:mm aa") : "";
-      },
-    },
-    {
-      field: "r4",
-      headerName: "Time Out",
-      headerClassName: "custom-header",
-      flex: 1,
-      align: "center",
-      headerAlign: "center",
-      valueGetter: (params: any) => {
-        return params ? format(params, "hh:mm aa") : "";
-      },
     },
   ];
 
   return (
     <DataGrid
-      rows={reports}
+      rows={summary}
       columns={columns}
       getRowId={(row) => row.date}
       columnHeaderHeight={40}
@@ -95,4 +72,4 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
   );
 }
 
-export default ViewReport;
+export default ViewSummary;

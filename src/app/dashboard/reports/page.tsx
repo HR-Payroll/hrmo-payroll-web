@@ -10,6 +10,7 @@ import UploadButton from "@/components/UploadButton";
 import DateFilter from "@/components/DateFilter";
 import TableFilters from "@/components/TableFilters";
 import ReportTable from "@/components/tables/ReportTable";
+import { dateQuery } from "@/utils/dateFormatter";
 
 const Reports = async (props: {
   searchParams?: Promise<{
@@ -26,23 +27,9 @@ const Reports = async (props: {
   const employees = (await getAllEmployee()) as any;
 
   const params = await props.searchParams;
-  const search = params?.search;
-  const page = params?.page;
-  const limit = params?.limit;
-  const from = params?.from;
-  const to = params?.to;
-  const category = params?.category;
-  const department = params?.department;
+  const { search, page, limit, from, to, category, department } = params as any;
 
-  const currentDate = new Date();
-  const day1 = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-  const day15 = new Date(currentDate.getFullYear(), currentDate.getMonth(), 15);
-  const dateFrom = from
-    ? new Date(from)
-    : currentDate.getDate() >= 15
-    ? day15
-    : day1;
-  const dateTo = to ? new Date(to) : currentDate;
+  const { dateFrom, dateTo } = dateQuery(from, to);
 
   const reports = (await getPaginatedReport(
     dateFrom,

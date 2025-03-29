@@ -15,9 +15,7 @@ const Departments = async (props: {
   }>;
 }) => {
   const params = await props.searchParams;
-  const search = params?.search;
-  const page = params?.page;
-  const limit = params?.limit;
+  const { search, page, limit } = params as any;
 
   let isLoading = true;
   const departments = (await getPaginatedDepartment(

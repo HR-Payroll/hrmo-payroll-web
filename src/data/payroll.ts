@@ -1,81 +1,12 @@
-import { prisma } from "@/../prisma/prisma";
-import { computeTotalDaysAndLate } from "@/utils/computations";
-import { stringToDate } from "@/utils/dateFormatter";
-import moment from "moment-timezone";
-import { format } from "date-fns";
+import {
+  computeTotalDaysAndLate,
+  computeTotalDaysAndLateSingle,
+} from "@/utils/computations";
 import { paginationUtil } from "@/utils/tools";
+import { prisma } from "../../prisma/prisma";
+import { format } from "date-fns";
 
-export const getAllReport = async (
-  from: Date,
-  to?: Date,
-  filters?: { category?: string; department?: string }
-) => {
-  try {
-    const reports = await prisma.report.aggregateRaw({
-      pipeline: [
-        {
-          $match: { timestamp: { $gte: { $date: from }, $lte: { $date: to } } },
-        },
-        {
-          $group: {
-            _id: { recordNo: "$recordNo", name: "$name" },
-            count: { $sum: 1 },
-            items: { $push: "$$ROOT" },
-          },
-        },
-        {
-          $project: {
-            _id: 0,
-            recordNo: "$_id.recordNo",
-            name: { name: "$_id.name", data: null },
-            items: 1,
-            count: 1,
-          },
-        },
-        {
-          $lookup: {
-            from: "Employee",
-            localField: "recordNo",
-            foreignField: "recordNo",
-            as: "employee",
-          },
-        },
-        {
-          $project: {
-            _id: 0,
-            recordNo: 1,
-            name: {
-              name: { $arrayElemAt: ["$employee.name", 0] },
-              data: { $arrayElemAt: ["$employee", 0] },
-            },
-            items: 1,
-            count: 1,
-          },
-        },
-        {
-          $sort: { recordNo: 1 },
-        },
-      ],
-    });
-
-    const temp = Array.isArray(reports)
-      ? reports.map((report: any) => {
-          const { totalDays, late } = computeTotalDaysAndLate(report.items);
-          return {
-            ...report,
-            numDays: totalDays,
-            late,
-          };
-        })
-      : [];
-
-    return temp;
-  } catch (error: any) {
-    return null;
-  }
-};
-
-export const getPaginatedReport = async (
+export const getPaginatedSummary = async (
   from: Date,
   to?: Date,
   search?: string,
@@ -110,7 +41,10 @@ export const getPaginatedReport = async (
       pipeline: [
         {
           $match: {
-            timestamp: { $gte: { $date: from }, $lte: { $date: to } },
+            timestamp: {
+              $gte: { $date: from },
+              $lte: { $date: to },
+            },
           },
         },
         {
@@ -145,6 +79,7 @@ export const getPaginatedReport = async (
               name: { $arrayElemAt: ["$employee.name", 0] },
               ref: { $arrayElemAt: ["$employee._id", 0] },
             },
+            employee: { $arrayElemAt: ["$employee", 0] },
             category: { $arrayElemAt: ["$employee.category", 0] },
             department: { $arrayElemAt: ["$employee.department", 0] },
             items: 1,
@@ -171,11 +106,15 @@ export const getPaginatedReport = async (
     const length = result[0].totalCount[0] ? result[0].totalCount[0].count : 0;
     const items = Array.isArray(result[0].items)
       ? result[0].items.map((report: any) => {
-          const { totalDays, late } = computeTotalDaysAndLate(report.items);
+          const { earnings, deductions, net } = computeTotalDaysAndLate(
+            report.items,
+            report.employee
+          );
           return {
             ...report,
-            numDays: totalDays,
-            late,
+            earnings,
+            deductions,
+            net,
           };
         })
       : [];
@@ -187,14 +126,17 @@ export const getPaginatedReport = async (
   }
 };
 
-export const getReportById = async (id: string, from: Date, to: Date) => {
+export const getSummaryById = async (id: string, from: Date, to: Date) => {
   try {
     const report = await prisma.report.aggregateRaw({
       pipeline: [
         {
           $match: {
             recordNo: id,
-            timestamp: { $gte: { $date: from }, $lte: { $date: to } },
+            timestamp: {
+              $gte: { $date: from.toISOString() },
+              $lte: { $date: to.toISOString() },
+            },
           },
         },
         {
@@ -228,6 +170,7 @@ export const getReportById = async (id: string, from: Date, to: Date) => {
               name: { $arrayElemAt: ["$employee.name", 0] },
               ref: { $arrayElemAt: ["$employee._id", 0] },
             },
+            employee: { $arrayElemAt: ["$employee", 0] },
             items: 1,
           },
         },
@@ -247,26 +190,9 @@ export const getReportById = async (id: string, from: Date, to: Date) => {
         return acc;
       }, {});
 
-    reports = Object.keys(reports)
-      .sort((a: any, b: any) => new Date(b).getTime() - new Date(a).getTime())
-      .map((date) => {
-        const times = reports[date].sort(
-          (a: Date, b: Date) => a.getTime() - b.getTime()
-        );
+    reports = computeTotalDaysAndLateSingle(reports, result.employee);
 
-        const items = times
-          .slice(0, 4)
-          .reduce((acc: any, time: any, index: number) => {
-            acc[`r${index + 1}`] = time;
-            return acc;
-          }, {});
-
-        return {
-          date,
-          name: result.name,
-          ...items,
-        };
-      });
+    console.log(reports);
 
     return { ...result, items: reports };
   } catch (error: any) {
