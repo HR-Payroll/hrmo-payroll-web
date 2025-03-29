@@ -15,15 +15,15 @@ const DateFilter = ({ from }: { from: Date }) => {
     const newTo = to || dateTo;
 
     if (newTo <= newFrom) {
-      newTo.setDate(newFrom.getDate() + 1);
+      newTo.setDate(newFrom.getDate());
       setDateTo(newTo);
     }
 
     router.push(
-      `${pathname}?from=${format(
-        newFrom.toISOString(),
+      `${pathname}?from=${format(newFrom, "yyyy-MM-dd")}&to=${format(
+        newTo,
         "yyyy-MM-dd"
-      )}&to=${format(newTo.toISOString(), "yyyy-MM-dd")}`
+      )}`
     );
   };
 

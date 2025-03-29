@@ -7,6 +7,7 @@ import DownloadButton from "@/components/DownloadButton";
 import ViewReport from "@/components/tables/ViewReport";
 import { getReportById } from "@/data/report";
 import { MdArrowBackIosNew } from "react-icons/md";
+import { dateQuery } from "@/utils/dateFormatter";
 
 const SingleReportPage = async ({
   params,
@@ -24,15 +25,7 @@ const SingleReportPage = async ({
   const from = query.from;
   const to = query.to;
 
-  const currentDate = new Date();
-  const day1 = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-  const day15 = new Date(currentDate.getFullYear(), currentDate.getMonth(), 15);
-  const dateFrom = from
-    ? new Date(from)
-    : currentDate.getDate() >= 15
-    ? day15
-    : day1;
-  const dateTo = to ? new Date(to) : currentDate;
+  const { dateFrom, dateTo } = dateQuery(from, to);
 
   const report = (await getReportById(id, dateFrom, dateTo)) as any;
 
@@ -52,7 +45,15 @@ const SingleReportPage = async ({
           >
             <MdArrowBackIosNew size={12} />
           </Link>
-          <DynamicHeader label={report ? report.name : "N/A"} />
+          <DynamicHeader
+            label={
+              report
+                ? report.name.ref
+                  ? report.name.name
+                  : `${report.name.name} (no ref)`
+                : "N/A"
+            }
+          />
         </div>
         <div className="flex flex-row items-center justify-between">
           <DateFilter from={dateFrom} />

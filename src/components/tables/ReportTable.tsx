@@ -72,7 +72,7 @@ function ReportTable({
       headerAlign: "center",
       editable: false,
       valueGetter: (value) => {
-        return value["data"] ? value["name"] : `${value["name"]} (no ref)`;
+        return value["ref"] ? value["name"] : `${value["name"]} (no ref)`;
       },
     },
     {
@@ -167,9 +167,9 @@ function ReportTable({
       }}
       pageSizeOptions={[5, 10, 20]}
       paginationMode="server"
-      paginationModel={{ page: currentPage, pageSize }}
+      paginationModel={{ page, pageSize }}
       onPaginationModelChange={(model: any) => {
-        setCurrentPage(model.page);
+        page = model.page;
         setPageSize(model.pageSize);
 
         let key = Object.keys(model)[0] as string;

@@ -9,6 +9,8 @@ import DateFilter from "@/components/DateFilter";
 import TableFilters from "@/components/TableFilters";
 import SummaryTable from "@/components/tables/SummaryTable";
 import { getAllReport, getPaginatedReport } from "@/data/report";
+import { getPaginatedSummary } from "@/data/payroll";
+import { dateQuery } from "@/utils/dateFormatter";
 
 const Summary = async (props: {
   searchParams?: Promise<{
@@ -20,26 +22,19 @@ const Summary = async (props: {
   }>;
 }) => {
   const departments = (await getAllDepartment()) as any;
-  const employees = (await getAllEmployee()) as any;
 
   const params = await props.searchParams;
-  const search = params?.search;
-  const page = params?.page;
-  const limit = params?.limit;
-  const from = params?.from;
-  const to = params?.to;
+  const { search, page, limit, from, to } = params as any;
 
-  const currentDate = new Date();
-  const day1 = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-  const day15 = new Date(currentDate.getFullYear(), currentDate.getMonth(), 15);
-  const dateFrom = from
-    ? new Date(from)
-    : currentDate.getDate() >= 15
-    ? day15
-    : day1;
-  const dateTo = to ? new Date(to) : currentDate;
+  const { dateFrom, dateTo } = dateQuery(from, to);
 
-  const reports = (await getPaginatedReport(dateFrom, dateTo, search)) as any;
+  const summary = (await getPaginatedSummary(
+    dateFrom,
+    dateTo,
+    search,
+    Number(page || 0),
+    Number(limit || 10)
+  )) as any;
 
   async function reload() {
     "use server";
@@ -75,12 +70,14 @@ const Summary = async (props: {
       </div>
       <div className="w-full mt-4">
         <SummaryTable
-          employees={employees}
+          summary={summary.items}
           departments={departments}
           reload={reload}
-          reports={reports}
           from={dateFrom}
           to={dateTo}
+          limit={summary.pageSize}
+          rowCount={summary.pageRange}
+          page={summary.page}
         />
       </div>
     </div>

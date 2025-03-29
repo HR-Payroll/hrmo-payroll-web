@@ -19,11 +19,7 @@ const Employees = async (props: {
   }>;
 }) => {
   const params = await props.searchParams;
-  const search = params?.search;
-  const category = params?.category;
-  const department = params?.department;
-  const page = params?.page;
-  const limit = params?.limit;
+  const { search, page, limit, category, department } = params as any;
 
   const departments = (await getAllDepartment()) as any;
   const employees = (await getPaginatedEmployee(
