@@ -25,19 +25,42 @@ const UploadReports = ({ reload }: { reload?: VoidFunction }) => {
         .split("\n")
         .map((line: string) => line.trim())
         .filter((line: string) => line.length > 0)
-        .map((line: string, index: number) => {
-          const [recordNo, name, timestamp] = line.split("\t");
-          const date = new Date(timestamp);
-          return {
-            recordNo,
-            name,
-            timestamp: date,
-            index: `${recordNo}-${date.toISOString()}`,
-          };
+        .map((line: string) => {
+          const data = line.split("\t");
+
+          if (data.length === 5) {
+            const [recordNo, name, timestamp] = line.split("\t");
+
+            const date = new Date(timestamp);
+            return {
+              recordNo,
+              name,
+              timestamp: date,
+              index: `${recordNo}-${date.toISOString()}`,
+            };
+          } else if (data.length === 6) {
+            const [recordNo, timestamp] = line.split("\t");
+
+            const date = new Date(timestamp);
+            return {
+              recordNo: recordNo.padEnd(9, "0"),
+              name: "N/A",
+              timestamp: date,
+              index: `${recordNo.padEnd(9, "0")}-${date.toISOString()}`,
+            };
+          } else {
+            return setSnackbar({
+              message: "Invalid file format",
+              type: "error",
+              modal: true,
+            });
+          }
         });
 
+      console.log(lines);
       setUpload(lines);
       //onUploadFile(lines);
+      e.preventDefault();
     };
 
     reader.readAsText(file);

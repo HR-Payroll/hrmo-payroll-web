@@ -11,6 +11,7 @@ import DateFilter from "@/components/DateFilter";
 import TableFilters from "@/components/TableFilters";
 import ReportTable from "@/components/tables/ReportTable";
 import { dateQuery } from "@/utils/dateFormatter";
+import UploadReports from "@/components/Uploads/UploadReports";
 
 const Reports = async (props: {
   searchParams?: Promise<{
@@ -60,7 +61,7 @@ const Reports = async (props: {
             <TableSearch />
           </div>
           <div className="flex flex-row gap-x-4">
-            <UploadButton />
+            <UploadReports />
             <DownloadButton />
           </div>
         </div>
