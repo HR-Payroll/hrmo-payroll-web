@@ -85,6 +85,7 @@ function ReportTable({
       type: "singleSelect",
       editable: false,
       valueGetter: (value: any) => {
+        if (!value) return "N/A";
         const dept = departments.find(
           (item: any) => value.$oid === item._id.$oid
         );
