@@ -6,6 +6,98 @@ import { paginationUtil } from "@/utils/tools";
 import { prisma } from "../../prisma/prisma";
 import { format } from "date-fns";
 
+export const getAllSummary = async (
+  from: Date,
+  to?: Date,
+  category?: string,
+  department?: string
+) => {
+  try {
+    let filterQuery = {};
+
+    if (category) filterQuery = { ...filterQuery, category };
+    if (department)
+      filterQuery = { ...filterQuery, department: { $oid: department } };
+
+    const reports = await prisma.report.aggregateRaw({
+      pipeline: [
+        {
+          $match: {
+            timestamp: {
+              $gte: { $date: from },
+              $lte: { $date: to },
+            },
+          },
+        },
+        {
+          $group: {
+            _id: { recordNo: "$recordNo", name: "$name" },
+            count: { $sum: 1 },
+            items: { $push: "$$ROOT" },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            recordNo: "$_id.recordNo",
+            name: { name: "$_id.name", ref: null },
+            items: 1,
+            count: 1,
+          },
+        },
+        {
+          $lookup: {
+            from: "Employee",
+            localField: "recordNo",
+            foreignField: "recordNo",
+            as: "employee",
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            recordNo: 1,
+            name: {
+              name: { $arrayElemAt: ["$employee.name", 0] },
+              ref: { $arrayElemAt: ["$employee._id", 0] },
+            },
+            employee: { $arrayElemAt: ["$employee", 0] },
+            category: { $arrayElemAt: ["$employee.category", 0] },
+            department: { $arrayElemAt: ["$employee.department", 0] },
+            items: 1,
+            count: 1,
+          },
+        },
+        {
+          $match: { ...filterQuery, "name.ref": { $ne: null } },
+        },
+        { $sort: { recordNo: 1 } },
+      ],
+    });
+
+    const result = reports as any;
+    const items = Array.isArray(result)
+      ? result.map((report: any) => {
+          const { earnings, deductions, net } = computeTotalDaysAndLate(
+            report.items,
+            report.employee
+          );
+          return {
+            ...report,
+            earnings,
+            deductions,
+            net,
+          };
+        })
+      : [];
+
+    return items;
+  } catch (error: any) {
+    console.log(error);
+    return null;
+  }
+};
+
 export const getPaginatedSummary = async (
   from: Date,
   to?: Date,
@@ -16,7 +108,6 @@ export const getPaginatedSummary = async (
   department?: string
 ) => {
   try {
-    console.log(from, to);
     let searchQuery = {};
     let filterQuery = {};
 
@@ -87,7 +178,7 @@ export const getPaginatedSummary = async (
           },
         },
         {
-          $match: { ...searchQuery, ...filterQuery },
+          $match: { ...searchQuery, ...filterQuery, "name.ref": { $ne: null } },
         },
         {
           $facet: {

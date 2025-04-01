@@ -8,6 +8,7 @@ import ViewReport from "@/components/tables/ViewReport";
 import { getReportById } from "@/data/report";
 import { MdArrowBackIosNew } from "react-icons/md";
 import { dateQuery } from "@/utils/dateFormatter";
+import DownloadSingleReport from "@/components/Downloads/DownloadSingleReport";
 
 const SingleReportPage = async ({
   params,
@@ -57,7 +58,16 @@ const SingleReportPage = async ({
         </div>
         <div className="flex flex-row items-center justify-between">
           <DateFilter from={dateFrom} />
-          <DownloadButton />
+          <DownloadSingleReport
+            reports={report ? report.items : []}
+            employee={
+              report
+                ? report.name.ref
+                  ? report.name.name
+                  : `${report.name.name} (no ref)`
+                : "N/A"
+            }
+          />
         </div>
       </div>
       <div className="w-full mt-4">
