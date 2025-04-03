@@ -11,6 +11,7 @@ export const getAllReport = async (
   filters?: { category?: string; department?: string }
 ) => {
   try {
+    console.log(from, to);
     const reports = await prisma.report.aggregateRaw({
       pipeline: [
         {

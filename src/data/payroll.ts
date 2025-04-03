@@ -13,6 +13,7 @@ export const getAllSummary = async (
   department?: string
 ) => {
   try {
+    console.log(from, to);
     let filterQuery = {};
 
     if (category) filterQuery = { ...filterQuery, category };
@@ -71,6 +72,41 @@ export const getAllSummary = async (
         {
           $match: { ...filterQuery, "name.ref": { $ne: null } },
         },
+        {
+          $lookup: {
+            from: "Department",
+            let: { departmentId: "$department" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $eq: ["$_id", "$$departmentId"],
+                  },
+                },
+              },
+              {
+                $project: {
+                  _id: 0,
+                  name: 1,
+                },
+              },
+            ],
+            as: "departments",
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            recordNo: 1,
+            name: 1,
+            employee: 1,
+            category: 1,
+            department: { $arrayElemAt: ["$departments", 0] },
+            items: 1,
+            count: 1,
+          },
+        },
+
         { $sort: { recordNo: 1 } },
       ],
     });
@@ -78,15 +114,14 @@ export const getAllSummary = async (
     const result = reports as any;
     const items = Array.isArray(result)
       ? result.map((report: any) => {
-          const { earnings, deductions, net } = computeTotalDaysAndLate(
-            report.items,
-            report.employee
-          );
+          const { earnings, deductions, net, totalDays } =
+            computeTotalDaysAndLate(report.items, report.employee);
           return {
             ...report,
             earnings,
             deductions,
             net,
+            totalDays,
           };
         })
       : [];

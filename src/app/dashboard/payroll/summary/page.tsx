@@ -11,6 +11,7 @@ import SummaryTable from "@/components/tables/SummaryTable";
 import { getAllReport, getPaginatedReport } from "@/data/report";
 import { getPaginatedSummary } from "@/data/payroll";
 import { dateQuery } from "@/utils/dateFormatter";
+import DownloadSummary from "@/components/Downloads/DownloadSummary";
 
 const Summary = async (props: {
   searchParams?: Promise<{
@@ -55,7 +56,7 @@ const Summary = async (props: {
             <TableSearch />
           </div>
           <div>
-            <DownloadButton />
+            <DownloadSummary />
           </div>
         </div>
         <div className="flex flex-col lg:flex-row items-center justify-between gap-y-4">
@@ -70,7 +71,7 @@ const Summary = async (props: {
       </div>
       <div className="w-full mt-4">
         <SummaryTable
-          summary={summary.items}
+          summary={summary.items || []}
           departments={departments}
           reload={reload}
           from={dateFrom}
