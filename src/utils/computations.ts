@@ -45,7 +45,17 @@ export const computeTotalDaysAndLate = (dates: any[], employee?: any) => {
     (sum: number, num: any) => sum + num.deductions,
     0
   );
-  const earnings = employee ? total * employee.rate : 0;
+
+  //temporary calculations
+  let earnings = 0;
+
+  if (employee.type === "MONTHLY") {
+    const dailyRate = (employee.rate * 12) / 261;
+    earnings = total * dailyRate;
+  } else {
+    earnings = employee ? total * employee.rate : 0;
+  }
+
   const deductions = employee
     ? getTotalDeduction(employee) + lateDeductions
     : 0;
@@ -86,7 +96,16 @@ export const computeTotalDaysAndLateSingle = (reports: any, employee: any) => {
       console.log(totalHours);
 
       const deductions = (totalLate / 480) * 300;
-      const earnings = employee ? totalDays * employee.rate : 0;
+
+      //temporary calculations
+      let earnings = 0;
+      if (employee.type === "MONTHLY") {
+        const dailyRate = (employee.rate * 12) / 261;
+        earnings = totalDays * dailyRate;
+      } else {
+        earnings = employee ? totalDays * employee.rate : 0;
+      }
+
       const net = employee ? earnings - deductions : 0;
 
       return {
