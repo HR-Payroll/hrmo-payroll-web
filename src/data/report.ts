@@ -1,5 +1,8 @@
 import { prisma } from "@/../prisma/prisma";
-import { computeTotalDaysAndLate } from "@/utils/computations";
+import {
+  computeTotalDaysAndLate,
+  getTotalBusinessDays,
+} from "@/utils/computations";
 import { stringToDate } from "@/utils/dateFormatter";
 import moment from "moment-timezone";
 import { format } from "date-fns";
@@ -87,7 +90,7 @@ export const getAllReport = async (
 
 export const getPaginatedReport = async (
   from: Date,
-  to?: Date,
+  to: Date,
   search?: string,
   page = 0,
   limit = 10,
@@ -178,13 +181,16 @@ export const getPaginatedReport = async (
       ],
     });
 
+    const totalBusinessDays = getTotalBusinessDays(from, to);
+
     const result = reports as any;
     const length = result[0].totalCount[0] ? result[0].totalCount[0].count : 0;
     const items = Array.isArray(result[0].items)
       ? result[0].items.map((report: any) => {
           const { totalDays, late } = computeTotalDaysAndLate(
             report.items,
-            report.employee
+            report.employee,
+            totalBusinessDays
           );
           return {
             ...report,

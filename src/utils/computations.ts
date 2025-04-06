@@ -1,6 +1,13 @@
 import { format } from "date-fns";
+var moment = require("moment-business-days");
+var Holidays = require("date-holidays");
+var hd = new Holidays("PH");
 
-export const computeTotalDaysAndLate = (dates: any[], employee?: any) => {
+export const computeTotalDaysAndLate = (
+  dates: any[],
+  employee?: any,
+  businessDays = 10
+) => {
   const days = dates
     .map((item: any) => item.timestamp)
     .reduce((acc: any, dateTime: any) => {
@@ -50,8 +57,7 @@ export const computeTotalDaysAndLate = (dates: any[], employee?: any) => {
   let earnings = 0;
 
   if (employee.type === "MONTHLY") {
-    const dailyRate = (employee.rate * 12) / 261;
-    earnings = total * dailyRate;
+    earnings = (employee.rate / 2 / businessDays) * total;
   } else {
     earnings = employee ? total * employee.rate : 0;
   }
@@ -71,7 +77,11 @@ export const computeTotalDaysAndLate = (dates: any[], employee?: any) => {
   };
 };
 
-export const computeTotalDaysAndLateSingle = (reports: any, employee: any) => {
+export const computeTotalDaysAndLateSingle = (
+  reports: any,
+  employee: any,
+  businessDays = 10
+) => {
   return Object.keys(reports)
     .sort((a: any, b: any) => new Date(b).getTime() - new Date(a).getTime())
     .map((date) => {
@@ -92,16 +102,12 @@ export const computeTotalDaysAndLateSingle = (reports: any, employee: any) => {
         Math.floor(totalHours / 8) + (totalHours % 8) / 8
       );
       const totalLate = lateness > 0 ? Math.floor(lateness / (1000 * 60)) : 0;
-
-      console.log(totalHours);
-
       const deductions = (totalLate / 480) * 300;
 
       //temporary calculations
       let earnings = 0;
       if (employee.type === "MONTHLY") {
-        const dailyRate = (employee.rate * 12) / 261;
-        earnings = totalDays * dailyRate;
+        earnings = (employee.rate / 2 / businessDays) * totalDays;
       } else {
         earnings = employee ? totalDays * employee.rate : 0;
       }
@@ -145,4 +151,21 @@ const getTotalDeduction = (employee: any) => {
   return deductionList.reduce((sum: number, deduction: string) => {
     return sum + employee[deduction] || 0;
   }, 0);
+};
+
+export const getTotalBusinessDays = (from: Date, to: Date) => {
+  from = new Date(from);
+  to = new Date(to);
+
+  moment.updateLocale("ph");
+
+  const holidays = hd
+    .getHolidays(2025)
+    .filter((holiday: any) => holiday.start >= from && holiday.end <= to);
+
+  const businessDays = moment(from).businessDiff(
+    moment(to.setDate(to.getDate() + 1))
+  );
+
+  return businessDays - holidays.length;
 };
