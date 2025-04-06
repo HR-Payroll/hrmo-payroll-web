@@ -16,7 +16,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${arimo.variable} antialiased`}>{children}</body>
+      <body className={`${arimo.variable} antialiased bg-[var(--slate)]`}>
+        {children}
+      </body>
     </html>
   );
 }

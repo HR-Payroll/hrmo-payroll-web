@@ -46,9 +46,9 @@ const TableFilters = ({
 
   return (
     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-[var(--text)] text-sm">
-      <div className="relative flex flex-row items-center justify-center gap-4">
+      <div className="relative flex flex-row items-center justify-center gap-2">
         <select
-          className="appearance-none rounded-md border-2 border-[var(--border)] py-1.5 px-8 cursor-pointer"
+          className="appearance-none outline-none rounded-md ring-2 ring-[var(--border)] py-1.5 px-8 cursor-pointer"
           defaultValue={data?.category}
           onChange={(e) => {
             setCategoryFilter(e.target.value),
@@ -71,7 +71,7 @@ const TableFilters = ({
       </div>
       <div className="relative flex flex-row items-center justify-between gap-2">
         <select
-          className="appearance-none rounded-md border-2 border-[var(--border)] py-1.5 px-4 cursor-pointer"
+          className="appearance-none outline-none rounded-md ring-2 ring-[var(--border)] py-1.5 px-4 cursor-pointer"
           defaultValue={data?.department}
           onChange={(e) => onChangeFilter("department", e.target.value)}
         >
@@ -96,7 +96,7 @@ const TableFilters = ({
               })}
         </select>
         <MdOutlineKeyboardArrowDown
-          className="absolute top-1/2 right-2 -translate-y-1/2 text-border-500 pointer-events-none cursor-pointer"
+          className="absolute top-1/2 right-2 -translate-y-1/2 text-gray-500 pointer-events-none cursor-pointer"
           size={18}
         />
       </div>
