@@ -1,7 +1,7 @@
-import PageInfo from "@/components/PageInfo";
-import Link from "next/link";
 import React from "react";
+import Link from "next/link";
 import Calendar from "react-calendar";
+import PageInfo from "@/components/PageInfo";
 import { MdArrowBackIosNew, MdOutlineCheck } from "react-icons/md";
 
 const HolidaysSettingsPage = () => {
@@ -22,139 +22,139 @@ const HolidaysSettingsPage = () => {
         </Link>
         <h1 className="text-base font-semibold">Holidays Settings</h1>
       </div>
-      <div className="flex flex-row gap-x-8">
+      <div className="flex flex-col sm:flex-row gap-x-8 gap-y-4">
         <div className="w-fit flex flex-col gap-y-4">
           <h1 className="font-semibold">Regular Holidays</h1>
-          <div className="flex items-center justify-center rounded-md border-2 border-[var(--border)]">
-            <input
-              type="text"
-              placeholder="Holiday 1"
-              className="w-[200px] outline-none px-2"
-            ></input>
-            <button className="bg-[var(--border)] hover:bg-blue-200 active:bg-blue-300 active:text-[var(--accent)] text-[var(--text)] py-1.5 px-2 cursor-pointer">
-              <MdOutlineCheck />
-            </button>
-          </div>
-          <div className="flex items-center justify-center rounded-md border-2 border-[var(--border)]">
-            <input
-              type="text"
-              placeholder="Holiday 1"
-              className="w-[200px] outline-none px-2"
-            ></input>
-            <button className="bg-[var(--border)] hover:bg-blue-200 active:bg-blue-300 active:text-[var(--accent)] text-[var(--text)] py-1.5 px-2 cursor-pointer">
-              <MdOutlineCheck />
-            </button>
-          </div>
-          <div className="flex items-center justify-center rounded-md border-2 border-[var(--border)]">
-            <input
-              type="text"
-              placeholder="Holiday 1"
-              className="w-[200px] outline-none px-2"
-            ></input>
-            <button className="bg-[var(--border)] hover:bg-blue-200 active:bg-blue-300 active:text-[var(--accent)] text-[var(--text)] py-1.5 px-2 cursor-pointer">
-              <MdOutlineCheck />
-            </button>
-          </div>
-          <div className="flex items-center justify-center rounded-md border-2 border-[var(--border)]">
-            <input
-              type="text"
-              placeholder="Holiday 1"
-              className="w-[200px] outline-none px-2"
-            ></input>
-            <button className="bg-[var(--border)] hover:bg-blue-200 active:bg-blue-300 active:text-[var(--accent)] text-[var(--text)] py-1.5 px-2 cursor-pointer">
-              <MdOutlineCheck />
-            </button>
-          </div>
-          <div className="flex items-center justify-center rounded-md border-2 border-[var(--border)]">
-            <input
-              type="text"
-              placeholder="Holiday 1"
-              className="w-[200px] outline-none px-2"
-            ></input>
-            <button className="bg-[var(--border)] hover:bg-blue-200 active:bg-blue-300 active:text-[var(--accent)] text-[var(--text)] py-1.5 px-2 cursor-pointer">
-              <MdOutlineCheck />
-            </button>
-          </div>
-          <div className="flex items-center justify-center rounded-md border-2 border-[var(--border)]">
-            <input
-              type="text"
-              placeholder="Holiday 1"
-              className="w-[200px] outline-none px-2"
-            ></input>
-            <button className="bg-[var(--border)] hover:bg-blue-200 active:bg-blue-300 active:text-[var(--accent)] text-[var(--text)] py-1.5 px-2 cursor-pointer">
-              <MdOutlineCheck />
-            </button>
-          </div>
           <div className="flex items-center gap-x-2">
-            <input type="checkbox"></input>
-            <h1 className="font-semibold">Apply All</h1>
+            <input type="checkbox" />
+            <h1 className="font-medium">Apply All</h1>
+          </div>
+          <div className="flex items-center justify-center rounded-md border-2 border-[var(--border)]">
+            <input
+              type="text"
+              placeholder="Holiday 1"
+              className="w-[200px] outline-none px-2"
+            />
+            <button className="bg-[var(--border)] hover:bg-blue-200 active:bg-blue-300 active:text-[var(--accent)] text-[var(--text)] py-1.5 px-2 cursor-pointer">
+              <MdOutlineCheck />
+            </button>
+          </div>
+          <div className="flex items-center justify-center rounded-md border-2 border-[var(--border)]">
+            <input
+              type="text"
+              placeholder="Holiday 1"
+              className="w-[200px] outline-none px-2"
+            />
+            <button className="bg-[var(--border)] hover:bg-blue-200 active:bg-blue-300 active:text-[var(--accent)] text-[var(--text)] py-1.5 px-2 cursor-pointer">
+              <MdOutlineCheck />
+            </button>
+          </div>
+          <div className="flex items-center justify-center rounded-md border-2 border-[var(--border)]">
+            <input
+              type="text"
+              placeholder="Holiday 1"
+              className="w-[200px] outline-none px-2"
+            />
+            <button className="bg-[var(--border)] hover:bg-blue-200 active:bg-blue-300 active:text-[var(--accent)] text-[var(--text)] py-1.5 px-2 cursor-pointer">
+              <MdOutlineCheck />
+            </button>
+          </div>
+          <div className="flex items-center justify-center rounded-md border-2 border-[var(--border)]">
+            <input
+              type="text"
+              placeholder="Holiday 1"
+              className="w-[200px] outline-none px-2"
+            />
+            <button className="bg-[var(--border)] hover:bg-blue-200 active:bg-blue-300 active:text-[var(--accent)] text-[var(--text)] py-1.5 px-2 cursor-pointer">
+              <MdOutlineCheck />
+            </button>
+          </div>
+          <div className="flex items-center justify-center rounded-md border-2 border-[var(--border)]">
+            <input
+              type="text"
+              placeholder="Holiday 1"
+              className="w-[200px] outline-none px-2"
+            />
+            <button className="bg-[var(--border)] hover:bg-blue-200 active:bg-blue-300 active:text-[var(--accent)] text-[var(--text)] py-1.5 px-2 cursor-pointer">
+              <MdOutlineCheck />
+            </button>
+          </div>
+          <div className="flex items-center justify-center rounded-md border-2 border-[var(--border)]">
+            <input
+              type="text"
+              placeholder="Holiday 1"
+              className="w-[200px] outline-none px-2"
+            />
+            <button className="bg-[var(--border)] hover:bg-blue-200 active:bg-blue-300 active:text-[var(--accent)] text-[var(--text)] py-1.5 px-2 cursor-pointer">
+              <MdOutlineCheck />
+            </button>
           </div>
         </div>
         <div className="w-fit flex flex-col gap-y-4">
           <h1 className="font-semibold">Special (Non-Working) Holidays</h1>
-          <div className="flex items-center justify-center rounded-md border-2 border-[var(--border)]">
-            <input
-              type="text"
-              placeholder="Holiday 1"
-              className="w-[200px] outline-none px-2"
-            ></input>
-            <button className="bg-[var(--border)] hover:bg-blue-200 active:bg-blue-300 active:text-[var(--accent)] text-[var(--text)] py-1.5 px-2 cursor-pointer">
-              <MdOutlineCheck />
-            </button>
-          </div>
-          <div className="flex items-center justify-center rounded-md border-2 border-[var(--border)]">
-            <input
-              type="text"
-              placeholder="Holiday 1"
-              className="w-[200px] outline-none px-2"
-            ></input>
-            <button className="bg-[var(--border)] hover:bg-blue-200 active:bg-blue-300 active:text-[var(--accent)] text-[var(--text)] py-1.5 px-2 cursor-pointer">
-              <MdOutlineCheck />
-            </button>
-          </div>
-          <div className="flex items-center justify-center rounded-md border-2 border-[var(--border)]">
-            <input
-              type="text"
-              placeholder="Holiday 1"
-              className="w-[200px] outline-none px-2"
-            ></input>
-            <button className="bg-[var(--border)] hover:bg-blue-200 active:bg-blue-300 active:text-[var(--accent)] text-[var(--text)] py-1.5 px-2 cursor-pointer">
-              <MdOutlineCheck />
-            </button>
-          </div>
-          <div className="flex items-center justify-center rounded-md border-2 border-[var(--border)]">
-            <input
-              type="text"
-              placeholder="Holiday 1"
-              className="w-[200px] outline-none px-2"
-            ></input>
-            <button className="bg-[var(--border)] hover:bg-blue-200 active:bg-blue-300 active:text-[var(--accent)] text-[var(--text)] py-1.5 px-2 cursor-pointer">
-              <MdOutlineCheck />
-            </button>
-          </div>
-          <div className="flex items-center justify-center rounded-md border-2 border-[var(--border)]">
-            <input
-              type="text"
-              placeholder="Holiday 1"
-              className="w-[200px] outline-none px-2"
-            ></input>
-            <button className="bg-[var(--border)] hover:bg-blue-200 active:bg-blue-300 active:text-[var(--accent)] text-[var(--text)] py-1.5 px-2 cursor-pointer">
-              <MdOutlineCheck />
-            </button>
-          </div>
-          <div className="flex items-center justify-center rounded-md border-2 border-[var(--border)]">
-            <input
-              type="text"
-              placeholder="Holiday 1"
-              className="w-[200px] outline-none px-2"
-            ></input>
-            <button className="bg-[var(--border)] hover:bg-blue-200 active:bg-blue-300 active:text-[var(--accent)] text-[var(--text)] py-1.5 px-2 cursor-pointer">
-              <MdOutlineCheck />
-            </button>
-          </div>
           <div className="flex items-center gap-x-2">
-            <input type="checkbox"></input>
-            <h1 className="font-semibold">Apply All</h1>
+            <input type="checkbox" />
+            <h1 className="font-medium">Apply All</h1>
+          </div>
+          <div className="flex items-center justify-center rounded-md border-2 border-[var(--border)]">
+            <input
+              type="text"
+              placeholder="Holiday 1"
+              className="w-[200px] outline-none px-2"
+            />
+            <button className="bg-[var(--border)] hover:bg-blue-200 active:bg-blue-300 active:text-[var(--accent)] text-[var(--text)] py-1.5 px-2 cursor-pointer">
+              <MdOutlineCheck />
+            </button>
+          </div>
+          <div className="flex items-center justify-center rounded-md border-2 border-[var(--border)]">
+            <input
+              type="text"
+              placeholder="Holiday 1"
+              className="w-[200px] outline-none px-2"
+            />
+            <button className="bg-[var(--border)] hover:bg-blue-200 active:bg-blue-300 active:text-[var(--accent)] text-[var(--text)] py-1.5 px-2 cursor-pointer">
+              <MdOutlineCheck />
+            </button>
+          </div>
+          <div className="flex items-center justify-center rounded-md border-2 border-[var(--border)]">
+            <input
+              type="text"
+              placeholder="Holiday 1"
+              className="w-[200px] outline-none px-2"
+            />
+            <button className="bg-[var(--border)] hover:bg-blue-200 active:bg-blue-300 active:text-[var(--accent)] text-[var(--text)] py-1.5 px-2 cursor-pointer">
+              <MdOutlineCheck />
+            </button>
+          </div>
+          <div className="flex items-center justify-center rounded-md border-2 border-[var(--border)]">
+            <input
+              type="text"
+              placeholder="Holiday 1"
+              className="w-[200px] outline-none px-2"
+            />
+            <button className="bg-[var(--border)] hover:bg-blue-200 active:bg-blue-300 active:text-[var(--accent)] text-[var(--text)] py-1.5 px-2 cursor-pointer">
+              <MdOutlineCheck />
+            </button>
+          </div>
+          <div className="flex items-center justify-center rounded-md border-2 border-[var(--border)]">
+            <input
+              type="text"
+              placeholder="Holiday 1"
+              className="w-[200px] outline-none px-2"
+            />
+            <button className="bg-[var(--border)] hover:bg-blue-200 active:bg-blue-300 active:text-[var(--accent)] text-[var(--text)] py-1.5 px-2 cursor-pointer">
+              <MdOutlineCheck />
+            </button>
+          </div>
+          <div className="flex items-center justify-center rounded-md border-2 border-[var(--border)]">
+            <input
+              type="text"
+              placeholder="Holiday 1"
+              className="w-[200px] outline-none px-2"
+            />
+            <button className="bg-[var(--border)] hover:bg-blue-200 active:bg-blue-300 active:text-[var(--accent)] text-[var(--text)] py-1.5 px-2 cursor-pointer">
+              <MdOutlineCheck />
+            </button>
           </div>
         </div>
         {/* Dummy Calendar */}

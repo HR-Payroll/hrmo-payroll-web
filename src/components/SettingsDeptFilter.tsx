@@ -30,7 +30,7 @@ const SettingsDeptFilter = ({
   );
 
   return (
-    <div className="flex flex-row items-center justify-center gap-x-4 text-[var(--text)] text-sm">
+    <div className="flex flex-col sm:flex-row items-center justify-center gap-x-3 text-[var(--text)] text-sm">
       <select
         className="outline-none rounded-md border-2 border-[var(--border)] py-1 px-2 cursor-pointer"
         onChange={handleCategoryChange}

@@ -55,6 +55,7 @@ td:nth-child(odd) {
 
 td:nth-child(even) {
   text-align: left;
+  place-content: start;
 }
 
 th, td {
