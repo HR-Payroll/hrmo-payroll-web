@@ -48,10 +48,11 @@ const TableSearch = () => {
   }, [searchParams]);
 
   return (
-    <div className="w-full md:auto flex items-center rounded-md ring-[2px] ring-[var(--border)] gap-2 text-sm">
+    <div className="w-fit flex items-center rounded-md ring-2 ring-[var(--border)] gap-x-2 text-sm py-1.5">
       <input
+        type="search"
         placeholder="Search"
-        className="w-full bg-transparent pl-2 py-1.5 outline-none"
+        className="w-[180px] outline-none pl-4"
         onChange={(e) => debounceSearch(e.target.value)}
       />
       <button className="text-gray-300 hover:text-gray-400 active:text-gray-500 cursor-pointer pr-2">

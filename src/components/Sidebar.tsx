@@ -12,6 +12,7 @@ import {
   MdOutlineKeyboardArrowUp,
   MdOutlineKeyboardArrowDown,
   MdOutlineHorizontalRule,
+  MdOutlineSettings,
 } from "react-icons/md";
 
 interface SidebarItemProps {
@@ -119,11 +120,10 @@ const Sidebar = () => {
           label="Reports"
           isCollapsed={isCollapsed}
         />
-
         <div>
           <button
             onClick={() => setIsPayrollExpanded(!isPayrollExpanded)}
-            className="flex items-center gap-4 px-4 py-2 w-full hover:bg-blue-100 border-l-[10px] border-l-transparent hover:border-blue-500 focus:text-[var(--accent)] cursor-pointer transition-all ease-in-out duration-700"
+            className="flex items-center gap-4 px-4 py-3 w-full hover:bg-blue-100 border-l-[10px] border-l-transparent hover:border-blue-500 focus:text-[var(--accent)] cursor-pointer transition-all ease-in-out duration-700"
           >
             <MdOutlinePayment size={20} />
             {!isCollapsed && (
@@ -142,7 +142,6 @@ const Sidebar = () => {
                 />
               ))}
           </button>
-
           <div className={`${isPayrollExpanded ? "block" : "hidden"} ml-6`}>
             {!isCollapsed &&
               payrollItems.map((item) => {
@@ -161,6 +160,12 @@ const Sidebar = () => {
               })}
           </div>
         </div>
+        <SidebarItem
+          href="/dashboard/settings"
+          icon={<MdOutlineSettings size={20} />}
+          label="Settings"
+          isCollapsed={isCollapsed}
+        />
       </nav>
     </div>
   );

@@ -40,3 +40,27 @@
   background-color: #dbeafe !important;
   color: #0000ff !important;
 }
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+td:nth-child(odd) {
+  background-color: #ECEEF6;
+  font-weight: 700;
+  text-align: right;
+}
+
+td:nth-child(even) {
+  text-align: left;
+  place-content: start;
+}
+
+th, td {
+  padding-top: 20px;
+  padding-bottom: 0px;
+  padding-left: 20px;
+  padding-right: 15px;
+}

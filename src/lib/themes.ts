@@ -1,6 +1,6 @@
 export const tableStyle = {
   "& .odd-row": {
-    backgroundColor: "#F8FAFC",
+    backgroundColor: "#F8FAFB",
   },
   "& .edited-row": {
     backgroundColor: "#fff8e1",

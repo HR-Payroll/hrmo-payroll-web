@@ -54,7 +54,7 @@ function LoginForm() {
         placeholder="Email"
         className="py-2 pl-4 bg-transparent border-2 border-[var(--border)] rounded-md focus:outline focus:outline-blue-500"
         {...register("email")}
-      ></input>
+      />
       {errors.email && <p style={{ color: "red" }}>{errors.email.message}</p>}
       <label>Password</label>
       <input
@@ -62,7 +62,7 @@ function LoginForm() {
         placeholder="Password"
         className="py-2 pl-4 bg-transparent border-2 border-[var(--border)] rounded-md focus:outline focus:outline-blue-500"
         {...register("password")}
-      ></input>
+      />
       {errors.password && (
         <p style={{ color: "red" }}>{errors.password.message}</p>
       )}

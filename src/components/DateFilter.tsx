@@ -34,7 +34,7 @@ const DateFilter = ({ from }: { from: Date }) => {
         <input
           value={format(dateFrom.toISOString(), "yyyy-MM-dd")}
           type="date"
-          className="rounded-md border-2 border-[var(--border)] text-sm py-1.5 px-4 cursor-pointer"
+          className="outline-none rounded-md border-2 border-[var(--border)] text-sm py-1.5 px-4 cursor-pointer"
           onChange={(e) => {
             setDateFrom(new Date(e.target.value));
             onChangeDate({ from: new Date(e.target.value) });
@@ -46,7 +46,7 @@ const DateFilter = ({ from }: { from: Date }) => {
         <input
           value={format(dateTo.toISOString(), "yyyy-MM-dd")}
           type="date"
-          className="rounded-md border-2 border-[var(--border)] text-sm py-1.5 px-4 cursor-pointer"
+          className="outline-none rounded-md border-2 border-[var(--border)] text-sm py-1.5 px-4 cursor-pointer"
           min={format(dateFrom.toISOString(), "yyyy-MM-dd")}
           onChange={(e) => {
             setDateTo(new Date(e.target.value));
