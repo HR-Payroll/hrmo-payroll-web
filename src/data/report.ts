@@ -1,5 +1,8 @@
 import { prisma } from "@/../prisma/prisma";
-import { computeTotalDaysAndLate } from "@/utils/computations";
+import {
+  computeTotalDaysAndLate,
+  getTotalBusinessDays,
+} from "@/utils/computations";
 import { stringToDate } from "@/utils/dateFormatter";
 import moment from "moment-timezone";
 import { format } from "date-fns";
@@ -49,9 +52,15 @@ export const getAllReport = async (
               name: { $arrayElemAt: ["$employee.name", 0] },
               data: { $arrayElemAt: ["$employee", 0] },
             },
+            employee: { $arrayElemAt: ["$employee", 0] },
+            category: { $arrayElemAt: ["$employee.category", 0] },
+            department: { $arrayElemAt: ["$employee.department", 0] },
             items: 1,
             count: 1,
           },
+        },
+        {
+          $match: { "name.ref": { $ne: null } },
         },
         {
           $sort: { recordNo: 1 },
@@ -61,7 +70,10 @@ export const getAllReport = async (
 
     const temp = Array.isArray(reports)
       ? reports.map((report: any) => {
-          const { totalDays, late } = computeTotalDaysAndLate(report.items);
+          const { totalDays, late } = computeTotalDaysAndLate(
+            report.items,
+            report.employee
+          );
           return {
             ...report,
             numDays: totalDays,
@@ -78,7 +90,7 @@ export const getAllReport = async (
 
 export const getPaginatedReport = async (
   from: Date,
-  to?: Date,
+  to: Date,
   search?: string,
   page = 0,
   limit = 10,
@@ -146,6 +158,7 @@ export const getPaginatedReport = async (
               name: { $arrayElemAt: ["$employee.name", 0] },
               ref: { $arrayElemAt: ["$employee._id", 0] },
             },
+            employee: { $arrayElemAt: ["$employee", 0] },
             category: { $arrayElemAt: ["$employee.category", 0] },
             department: { $arrayElemAt: ["$employee.department", 0] },
             items: 1,
@@ -153,7 +166,7 @@ export const getPaginatedReport = async (
           },
         },
         {
-          $match: { ...searchQuery, ...filterQuery },
+          $match: { ...searchQuery, ...filterQuery, "name.ref": { $ne: null } },
         },
         {
           $facet: {
@@ -168,11 +181,17 @@ export const getPaginatedReport = async (
       ],
     });
 
+    const totalBusinessDays = getTotalBusinessDays(from, to);
+
     const result = reports as any;
     const length = result[0].totalCount[0] ? result[0].totalCount[0].count : 0;
     const items = Array.isArray(result[0].items)
       ? result[0].items.map((report: any) => {
-          const { totalDays, late } = computeTotalDaysAndLate(report.items);
+          const { totalDays, late } = computeTotalDaysAndLate(
+            report.items,
+            report.employee,
+            totalBusinessDays
+          );
           return {
             ...report,
             numDays: totalDays,
@@ -229,6 +248,9 @@ export const getReportById = async (id: string, from: Date, to: Date) => {
               name: { $arrayElemAt: ["$employee.name", 0] },
               ref: { $arrayElemAt: ["$employee._id", 0] },
             },
+            employee: { $arrayElemAt: ["$employee", 0] },
+            category: { $arrayElemAt: ["$employee.category", 0] },
+            department: { $arrayElemAt: ["$employee.department", 0] },
             items: 1,
           },
         },

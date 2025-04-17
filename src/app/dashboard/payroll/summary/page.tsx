@@ -20,12 +20,14 @@ const Summary = async (props: {
     limit?: string;
     from?: string;
     to?: string;
+    category?: string;
+    department?: string;
   }>;
 }) => {
   const departments = (await getAllDepartment()) as any;
 
   const params = await props.searchParams;
-  const { search, page, limit, from, to } = params as any;
+  const { search, page, limit, from, to, category, department } = params as any;
 
   const { dateFrom, dateTo } = dateQuery(from, to);
 
@@ -34,7 +36,9 @@ const Summary = async (props: {
     dateTo,
     search,
     Number(page || 0),
-    Number(limit || 10)
+    Number(limit || 10),
+    category,
+    department
   )) as any;
 
   async function reload() {
