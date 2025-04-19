@@ -1,4 +1,4 @@
-import { z, date, number, object, string } from "zod";
+import { z, date, number, object, string, boolean } from "zod";
 
 export const LoginSchema = object({
   email: string({ required_error: "Email is required" })
@@ -70,4 +70,12 @@ export const ReportSchema = object({
   name: string().min(1, "Employee name is required"),
   timestamp: date(),
   index: string().min(1, "Index is required"),
+});
+
+export const EventSchema = object({
+  name: string().min(1, "Event name is required"),
+  startDate: string().min(1, "Start date is required"),
+  endDate: date(),
+  type: string().min(1, "Type is required"),
+  applied: boolean().default(true).optional(),
 });

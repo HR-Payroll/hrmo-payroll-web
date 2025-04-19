@@ -22,7 +22,7 @@ function DownloadSummary() {
   }, [searchParams]);
 
   const handleDownload = async () => {
-    const response = await downloadSummary(from, to, "JOB_ORDER");
+    const response = await downloadSummary(from, to, "REGULAR");
     if (response) {
       const blob = new Blob([response], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

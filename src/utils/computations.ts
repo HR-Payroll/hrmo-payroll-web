@@ -1,7 +1,6 @@
 import { format } from "date-fns";
+import { getHolidaysAPI } from "./holidays";
 var moment = require("moment-business-days");
-var Holidays = require("date-holidays");
-var hd = new Holidays("PH");
 
 export const computeTotalDaysAndLate = (
   dates: any[],
@@ -57,7 +56,10 @@ export const computeTotalDaysAndLate = (
   let earnings = 0;
 
   if (employee.type === "MONTHLY") {
-    earnings = (employee.rate / 2 / businessDays) * total;
+    earnings = Math.min(
+      (employee.rate / 2 / businessDays) * total,
+      employee.rate / 2
+    );
   } else {
     earnings = employee ? total * employee.rate : 0;
   }
@@ -159,12 +161,10 @@ export const getTotalBusinessDays = (from: Date, to: Date) => {
 
   moment.updateLocale("ph");
 
-  const holidays = hd
-    .getHolidays(2025)
-    .filter((holiday: any) => holiday.start >= from && holiday.end <= to);
+  const holidays = getHolidaysAPI(from, to);
 
   const businessDays = moment(from).businessDiff(
-    moment(to.setDate(to.getDate() + 1))
+    moment(to.setDate(to.getDate()))
   );
 
   return businessDays - holidays.length;

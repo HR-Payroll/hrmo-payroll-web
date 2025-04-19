@@ -1,6 +1,7 @@
 import {
   computeTotalDaysAndLate,
   computeTotalDaysAndLateSingle,
+  getTotalBusinessDays,
 } from "@/utils/computations";
 import { paginationUtil } from "@/utils/tools";
 import { prisma } from "../../prisma/prisma";
@@ -135,7 +136,7 @@ export const getAllSummary = async (
 
 export const getPaginatedSummary = async (
   from: Date,
-  to?: Date,
+  to: Date,
   search?: string,
   page = 0,
   limit = 10,
@@ -230,11 +231,17 @@ export const getPaginatedSummary = async (
 
     const result = reports as any;
     const length = result[0].totalCount[0] ? result[0].totalCount[0].count : 0;
+
+    const totalBusinessDays = getTotalBusinessDays(from, to);
+
+    console.log(totalBusinessDays);
+
     const items = Array.isArray(result[0].items)
       ? result[0].items.map((report: any) => {
           const { earnings, deductions, net } = computeTotalDaysAndLate(
             report.items,
-            report.employee
+            report.employee,
+            totalBusinessDays
           );
           return {
             ...report,
