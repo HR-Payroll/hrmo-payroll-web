@@ -68,7 +68,7 @@ export const LoanSchema = object({
 export const ReportSchema = object({
   recordNo: string().min(1, "Record Number is required"),
   name: string().min(1, "Employee name is required"),
-  timestamp: date(),
+  timestamp: string().min(1, "Timestamp is required"),
   index: string().min(1, "Index is required"),
 });
 
@@ -78,4 +78,5 @@ export const EventSchema = object({
   endDate: date(),
   type: string().min(1, "Type is required"),
   applied: boolean().default(true).optional(),
+  rule: number().default(1).optional(),
 });

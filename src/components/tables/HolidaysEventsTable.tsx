@@ -90,7 +90,26 @@ function HolidaysEventsTable({
         return { ...row, type: value };
       },
       valueGetter: (params: string) => {
-        return params ? params.toUpperCase() : "";
+        return params
+          ? params.charAt(0).toUpperCase() + params.slice(1).toLowerCase()
+          : "";
+      },
+    },
+    {
+      field: "rule",
+      headerName: "Rule",
+      headerClassName: "custom-header",
+      flex: 1,
+      align: "center",
+      headerAlign: "center",
+      valueOptions: ["Half Day", "Whole Day"],
+      type: "singleSelect",
+      editable: true,
+      valueSetter: (value, row) => {
+        return { ...row, rule: value === "Half Day" ? 0.5 : 1 };
+      },
+      valueGetter: (params: any) => {
+        return params === 1 ? "Whole Day" : "Half Day";
       },
     },
     {
@@ -110,10 +129,10 @@ function HolidaysEventsTable({
         return (
           <p
             className={`${
-              params ? "text-green-600" : "text-red-600"
+              params.value ? "text-green-600" : "text-red-600"
             } text-sm h-full flex items-center justify-center`}
           >
-            {params ? "INCLUDED" : "EXCLUDED"}
+            {params.value ? "INCLUDED" : "EXCLUDED"}
           </p>
         );
       },
@@ -150,6 +169,7 @@ function HolidaysEventsTable({
                       endDate: row.endDate,
                       type: row.type,
                       applied: row.applied,
+                      rule: row.rule,
                     });
                   }}
                   className="w-full flex items-center justify-center p-1 cursor-pointer"
@@ -214,12 +234,13 @@ function HolidaysEventsTable({
       endDate: Date;
       type: string;
       applied: boolean;
+      rule: number;
     }
   ) => {
     try {
       await updateEvent(id, payload);
       setSnackbar({
-        message: "Employee info successfully updated!",
+        message: "Event info successfully updated!",
         type: "success",
         modal: true,
       });
@@ -229,7 +250,7 @@ function HolidaysEventsTable({
       setEditing(temp);
     } catch (error) {
       setSnackbar({
-        message: "Failed to update employee!",
+        message: "Failed to update event!",
         type: "error",
         modal: true,
       });

@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { getHolidaysAPI } from "./holidays";
+import { getBusinessDays, getHolidaysAPI, getTotalHolidays } from "./holidays";
 var moment = require("moment-business-days");
 
 export const computeTotalDaysAndLate = (
@@ -10,12 +10,11 @@ export const computeTotalDaysAndLate = (
   const days = dates
     .map((item: any) => item.timestamp)
     .reduce((acc: any, dateTime: any) => {
-      const date = format(
-        new Date(dateTime.$date),
-        "yyyy-MM-dd HH:mm:ss"
-      ).split(" ")[0];
+      const date = format(new Date(dateTime), "yyyy-MM-dd HH:mm:ss").split(
+        " "
+      )[0];
       acc[date] = acc[date] || [];
-      acc[date].push(new Date(dateTime.$date));
+      acc[date].push(new Date(dateTime));
       return acc;
     }, {});
 
@@ -155,17 +154,9 @@ const getTotalDeduction = (employee: any) => {
   }, 0);
 };
 
-export const getTotalBusinessDays = (from: Date, to: Date) => {
+export const getTotalBusinessDays = (from: Date, to: Date, events: any[]) => {
   from = new Date(from);
   to = new Date(to);
 
-  moment.updateLocale("ph");
-
-  const holidays = getHolidaysAPI(from, to);
-
-  const businessDays = moment(from).businessDiff(
-    moment(to.setDate(to.getDate()))
-  );
-
-  return businessDays - holidays.length;
+  return getBusinessDays(from, to) - getTotalHolidays(events);
 };

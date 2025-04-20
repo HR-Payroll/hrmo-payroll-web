@@ -53,15 +53,6 @@ function SummaryTable({
 
   const columns: GridColDef[] = [
     {
-      field: "recordNo",
-      headerName: "ID Number",
-      headerClassName: "custom-header",
-      flex: 1,
-      align: "center",
-      headerAlign: "center",
-      editable: false,
-    },
-    {
       field: "name",
       headerName: "Employee Name",
       headerClassName: "custom-header",
@@ -109,6 +100,24 @@ function SummaryTable({
 
         return dept[row];
       },
+    },
+    {
+      field: "totalDays",
+      headerName: "Total Days",
+      headerClassName: "custom-header",
+      flex: 1,
+      align: "center",
+      headerAlign: "center",
+      editable: false,
+    },
+    {
+      field: "rate",
+      headerName: "Rate",
+      headerClassName: "custom-header",
+      flex: 1,
+      align: "center",
+      headerAlign: "center",
+      editable: false,
     },
     {
       field: "earnings",

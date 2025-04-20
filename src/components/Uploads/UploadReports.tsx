@@ -4,6 +4,7 @@ import { MdOutlineUploadFile } from "react-icons/md";
 import SnackbarInfo, { initialSnackbar } from "../ui/SnackbarInfo";
 import { uploadReport } from "@/actions/report";
 import { Backdrop, CircularProgress } from "@mui/material";
+import moment from "moment-timezone";
 
 const UploadReports = ({ reload }: { reload?: VoidFunction }) => {
   const [isUploading, setUploading] = useState(false);
@@ -35,7 +36,7 @@ const UploadReports = ({ reload }: { reload?: VoidFunction }) => {
             return {
               recordNo,
               name,
-              timestamp: date,
+              timestamp: date.toISOString(),
               index: `${recordNo}-${date.toISOString()}`,
             };
           } else if (data.length === 6) {
@@ -45,7 +46,7 @@ const UploadReports = ({ reload }: { reload?: VoidFunction }) => {
             return {
               recordNo: recordNo.padEnd(9, "0"),
               name: "N/A",
-              timestamp: date,
+              timestamp: date.toISOString(),
               index: `${recordNo.padEnd(9, "0")}-${date.toISOString()}`,
             };
           } else {
@@ -120,7 +121,7 @@ const UploadReports = ({ reload }: { reload?: VoidFunction }) => {
           type="file"
           id="upload"
           className="hidden"
-          accept=".csv, .xlsx, .dat"
+          accept=".csv, .xlsx, .dat, .DAT"
           disabled={isUploading}
           onChange={handleFileUpload}
         />

@@ -7,7 +7,7 @@ import HolidaysEventsTable from "@/components/tables/HolidaysEventsTable";
 import PayCalendar from "@/components/PayCalendar";
 import AddButton from "@/components/AddButton";
 import { getEventsByDateRange } from "@/actions/events";
-import { getBusinessDays } from "@/utils/holidays";
+import { getBusinessDays, getTotalHolidays } from "@/utils/holidays";
 import { revalidatePath } from "next/cache";
 
 const HolidaysSettingsPage = async (props: {
@@ -24,7 +24,7 @@ const HolidaysSettingsPage = async (props: {
 
   const events = (await getEventsByDateRange(dateFrom, dateTo)) as any;
   const businessDays = getBusinessDays(dateFrom, dateTo);
-  const totalBusinessDays = businessDays - events.items.length;
+  const totalBusinessDays = businessDays - getTotalHolidays(events.items || []);
 
   async function reload() {
     "use server";

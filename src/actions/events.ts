@@ -10,15 +10,21 @@ export const syncHolidays = async (year: number) => {
       new Date(year, 11, 31)
     );
 
-    const holidayEvents = holidays.map((holiday: any) => ({
-      name: holiday.name,
-      index: holiday.date,
-      startDate: new Date(holiday.start),
-      endDate: new Date(holiday.end),
-      type: holiday.type || "event",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }));
+    const holidayEvents = holidays.map((holiday: any) => {
+      const startDate = new Date(holiday.start);
+      const isWeekend = startDate.getDay() === 0 || startDate.getDay() === 6;
+
+      return {
+        name: holiday.name,
+        index: holiday.date,
+        startDate: new Date(holiday.start),
+        endDate: new Date(holiday.end),
+        type: holiday.type || "event",
+        rule: 1,
+        applied: !isWeekend,
+        createdAt: new Date(),
+      };
+    });
 
     for (const event of holidayEvents) {
       await prisma.events.upsert({
