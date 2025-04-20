@@ -5,8 +5,6 @@ export const getSettings = async () => {
   try {
     const existingSettings = await prisma.settings.findFirst();
 
-    console.log("Existing Settings:", existingSettings);
-
     if (existingSettings) {
       return existingSettings;
     } else {

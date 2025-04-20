@@ -10,12 +10,20 @@ import { getEventsByDateRange } from "@/actions/events";
 import { getBusinessDays } from "@/utils/holidays";
 import { revalidatePath } from "next/cache";
 
-const HolidaysSettingsPage = async () => {
-  const now = new Date();
-  const from = new Date(now.getFullYear(), now.getMonth(), 1);
-  const to = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-  const events = (await getEventsByDateRange(from, to)) as any;
-  const businessDays = getBusinessDays(from, to);
+const HolidaysSettingsPage = async (props: {
+  searchParams?: Promise<{
+    from?: string;
+  }>;
+}) => {
+  const params = await props.searchParams;
+  const { from } = params as any;
+
+  const now = new Date(from || new Date());
+  const dateFrom = new Date(now.getFullYear(), now.getMonth(), 1);
+  const dateTo = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+  const events = (await getEventsByDateRange(dateFrom, dateTo)) as any;
+  const businessDays = getBusinessDays(dateFrom, dateTo);
   const totalBusinessDays = businessDays - events.items.length;
 
   async function reload() {
@@ -49,9 +57,9 @@ const HolidaysSettingsPage = async () => {
         </div>
       </div>
       <div className="flex flex-col sm:flex-row gap-4">
-        <HolidaysEventsTable events={events.items} reload={reload} />
+        <HolidaysEventsTable events={events.items || []} reload={reload} />
         <div className="w-full max-w-1/4">
-          <PayCalendar />
+          <PayCalendar isFilter={true} events={events.items || []} />
         </div>
       </div>
     </div>
