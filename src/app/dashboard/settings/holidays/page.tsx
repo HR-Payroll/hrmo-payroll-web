@@ -1,8 +1,7 @@
 import React from "react";
 import Link from "next/link";
-import Calendar from "react-calendar";
 import PageInfo from "@/components/PageInfo";
-import { MdArrowBackIosNew, MdOutlineCheck } from "react-icons/md";
+import { MdArrowBackIosNew } from "react-icons/md";
 import HolidaysEventsTable from "@/components/tables/HolidaysEventsTable";
 import PayCalendar from "@/components/PayCalendar";
 import AddButton from "@/components/AddButton";

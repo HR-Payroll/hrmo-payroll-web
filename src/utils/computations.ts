@@ -1,6 +1,5 @@
 import { format } from "date-fns";
-import { getBusinessDays, getHolidaysAPI, getTotalHolidays } from "./holidays";
-var moment = require("moment-business-days");
+import { getBusinessDays, getTotalHolidays } from "./holidays";
 
 export const computeTotalDaysAndLate = (
   dates: any[],

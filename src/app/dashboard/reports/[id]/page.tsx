@@ -3,7 +3,6 @@ import Link from "next/link";
 import PageInfo from "@/components/PageInfo";
 import DynamicHeader from "@/components/ui/DynamicHeader";
 import DateFilter from "@/components/DateFilter";
-import DownloadButton from "@/components/DownloadButton";
 import ViewReport from "@/components/tables/ViewReport";
 import { getReportById } from "@/data/report";
 import { MdArrowBackIosNew } from "react-icons/md";

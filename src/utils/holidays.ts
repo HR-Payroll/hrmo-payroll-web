@@ -1,6 +1,7 @@
-var Holidays = require("date-holidays");
-var hd = new Holidays("PH");
-var moment = require("moment-business-days");
+import Holidays from "date-holidays";
+import moment from "moment-business-days";
+
+const hd = new Holidays("PH");
 
 export const getHolidaysAPI = (from: Date, to: Date) => {
   const year = new Date().getFullYear();
@@ -13,7 +14,7 @@ export const getBusinessDays = (from: Date, to: Date) => {
   from = new Date(from);
   to = new Date(to);
 
-  moment.updateLocale("ph");
+  moment.updateLocale("ph", {});
   const businessDays = moment(moment(from)).businessDiff(
     moment(to.setHours(to.getHours()))
   );

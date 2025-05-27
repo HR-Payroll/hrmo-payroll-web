@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 import InputField from "../InputField";
 import Button from "../ui/Button";
 import { z } from "zod";
-import { updateMandatory } from "@/actions/mandatory";
 
 const MandDeductionForm = ({
   data,

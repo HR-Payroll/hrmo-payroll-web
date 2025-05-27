@@ -2,7 +2,6 @@
 import React from "react";
 import { tableStyle } from "@/lib/themes";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { format } from "date-fns";
 
 function ViewSummary({ summary, name }: { summary?: any[]; name?: string }) {
   const columns: GridColDef[] = [

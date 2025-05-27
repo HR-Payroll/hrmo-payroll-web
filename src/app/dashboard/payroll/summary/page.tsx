@@ -1,14 +1,11 @@
 import React from "react";
 import { revalidatePath } from "next/cache";
-import { getAllEmployee } from "@/data/employee";
 import { getAllDepartment } from "@/data/department";
 import PageInfo from "@/components/PageInfo";
 import TableSearch from "@/components/TableSearch";
-import DownloadButton from "@/components/DownloadButton";
 import DateFilter from "@/components/DateFilter";
 import TableFilters from "@/components/TableFilters";
 import SummaryTable from "@/components/tables/SummaryTable";
-import { getAllReport, getPaginatedReport } from "@/data/report";
 import { getPaginatedSummary } from "@/data/payroll";
 import { dateQuery } from "@/utils/dateFormatter";
 import DownloadSummary from "@/components/Downloads/DownloadSummary";

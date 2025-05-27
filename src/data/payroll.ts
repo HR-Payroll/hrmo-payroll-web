@@ -7,7 +7,6 @@ import { paginationUtil } from "@/utils/tools";
 import { prisma } from "../../prisma/prisma";
 import { format } from "date-fns";
 import { getEventsByDateRange } from "@/actions/events";
-import moment from "moment-timezone";
 
 export const getAllSummary = async (
   from: Date,

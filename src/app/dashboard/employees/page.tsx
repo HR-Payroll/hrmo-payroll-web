@@ -1,6 +1,6 @@
 import React from "react";
 import { revalidatePath } from "next/cache";
-import { getAllEmployee, getPaginatedEmployee } from "@/data/employee";
+import { getPaginatedEmployee } from "@/data/employee";
 import { getAllDepartment } from "@/data/department";
 import PageInfo from "@/components/PageInfo";
 import TableSearch from "@/components/TableSearch";

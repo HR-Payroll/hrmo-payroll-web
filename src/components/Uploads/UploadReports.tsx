@@ -4,7 +4,6 @@ import { MdOutlineUploadFile } from "react-icons/md";
 import SnackbarInfo, { initialSnackbar } from "../ui/SnackbarInfo";
 import { uploadReport } from "@/actions/report";
 import { Backdrop, CircularProgress } from "@mui/material";
-import moment from "moment-timezone";
 
 const UploadReports = ({ reload }: { reload?: VoidFunction }) => {
   const [isUploading, setUploading] = useState(false);

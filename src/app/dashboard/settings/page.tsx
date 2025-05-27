@@ -4,7 +4,6 @@ import SettingsTable from "@/components/tables/SettingsTable";
 import { getAllDepartment } from "@/data/department";
 import { syncHolidays } from "@/actions/events";
 import { getSettings } from "@/actions/settings";
-import { console } from "inspector";
 
 const SettingsPage = async () => {
   const departments = (await getAllDepartment()) as any;

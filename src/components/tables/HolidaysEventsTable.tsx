@@ -9,7 +9,6 @@ import {
   GridRenderEditCellParams,
 } from "@mui/x-data-grid";
 import { format } from "date-fns";
-import { getBusinessDays } from "@/utils/holidays";
 import { MdCheck, MdClose, MdDeleteOutline } from "react-icons/md";
 import Alert from "../ui/Alert";
 import { deleteEvent, updateEvent } from "@/actions/events";
