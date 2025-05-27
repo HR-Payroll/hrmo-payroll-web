@@ -8,6 +8,9 @@ const nextConfig: NextConfig = {
   // turbopack: {
   //   // ...
   // },
+  compiler: {
+    styledComponents: true,
+  },
 };
 
 export default nextConfig;
