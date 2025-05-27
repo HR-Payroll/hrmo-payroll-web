@@ -1,7 +1,6 @@
 import { format } from "date-fns";
+import { getBusinessDays, getHolidaysAPI, getTotalHolidays } from "./holidays";
 var moment = require("moment-business-days");
-var Holidays = require("date-holidays");
-var hd = new Holidays("PH");
 
 export const computeTotalDaysAndLate = (
   dates: any[],
@@ -11,12 +10,11 @@ export const computeTotalDaysAndLate = (
   const days = dates
     .map((item: any) => item.timestamp)
     .reduce((acc: any, dateTime: any) => {
-      const date = format(
-        new Date(dateTime.$date),
-        "yyyy-MM-dd HH:mm:ss"
-      ).split(" ")[0];
+      const date = format(new Date(dateTime), "yyyy-MM-dd HH:mm:ss").split(
+        " "
+      )[0];
       acc[date] = acc[date] || [];
-      acc[date].push(new Date(dateTime.$date));
+      acc[date].push(new Date(dateTime));
       return acc;
     }, {});
 
@@ -57,7 +55,10 @@ export const computeTotalDaysAndLate = (
   let earnings = 0;
 
   if (employee.type === "MONTHLY") {
-    earnings = (employee.rate / 2 / businessDays) * total;
+    earnings = Math.min(
+      (employee.rate / 2 / businessDays) * total,
+      employee.rate / 2
+    );
   } else {
     earnings = employee ? total * employee.rate : 0;
   }
@@ -153,19 +154,9 @@ const getTotalDeduction = (employee: any) => {
   }, 0);
 };
 
-export const getTotalBusinessDays = (from: Date, to: Date) => {
+export const getTotalBusinessDays = (from: Date, to: Date, events: any[]) => {
   from = new Date(from);
   to = new Date(to);
 
-  moment.updateLocale("ph");
-
-  const holidays = hd
-    .getHolidays(2025)
-    .filter((holiday: any) => holiday.start >= from && holiday.end <= to);
-
-  const businessDays = moment(from).businessDiff(
-    moment(to.setDate(to.getDate() + 1))
-  );
-
-  return businessDays - holidays.length;
+  return getBusinessDays(from, to) - getTotalHolidays(events);
 };

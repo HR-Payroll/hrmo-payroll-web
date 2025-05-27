@@ -10,11 +10,11 @@ import { paginationUtil } from "@/utils/tools";
 
 export const getAllReport = async (
   from: Date,
-  to?: Date,
+  to: Date,
   filters?: { category?: string; department?: string }
 ) => {
   try {
-    console.log(from, to);
+    to.setDate(to.getDate() + 1);
     const reports = await prisma.report.aggregateRaw({
       pipeline: [
         {
@@ -98,7 +98,8 @@ export const getPaginatedReport = async (
   department?: string
 ) => {
   try {
-    console.log(from, to);
+    to.setDate(to.getDate() + 1);
+
     let searchQuery = {};
     let filterQuery = {};
 
@@ -123,7 +124,10 @@ export const getPaginatedReport = async (
       pipeline: [
         {
           $match: {
-            timestamp: { $gte: { $date: from }, $lte: { $date: to } },
+            timestamp: {
+              $gte: from.toISOString(),
+              $lte: to.toISOString(),
+            },
           },
         },
         {
@@ -181,16 +185,13 @@ export const getPaginatedReport = async (
       ],
     });
 
-    const totalBusinessDays = getTotalBusinessDays(from, to);
-
     const result = reports as any;
     const length = result[0].totalCount[0] ? result[0].totalCount[0].count : 0;
     const items = Array.isArray(result[0].items)
       ? result[0].items.map((report: any) => {
           const { totalDays, late } = computeTotalDaysAndLate(
             report.items,
-            report.employee,
-            totalBusinessDays
+            report.employee
           );
           return {
             ...report,
@@ -209,12 +210,18 @@ export const getPaginatedReport = async (
 
 export const getReportById = async (id: string, from: Date, to: Date) => {
   try {
+    to.setDate(to.getDate() + 1);
+
+    console.log(from, to);
     const report = await prisma.report.aggregateRaw({
       pipeline: [
         {
           $match: {
             recordNo: id,
-            timestamp: { $gte: { $date: from }, $lte: { $date: to } },
+            timestamp: {
+              $gte: from.toISOString(),
+              $lte: to.toISOString(),
+            },
           },
         },
         {
@@ -259,8 +266,13 @@ export const getReportById = async (id: string, from: Date, to: Date) => {
 
     const result = report[0] as any;
 
+    const { totalDays } = computeTotalDaysAndLate(
+      result.items,
+      result.employee
+    );
+
     let reports = result.items
-      .map((item: any) => item.timestamp.$date)
+      .map((item: any) => item.timestamp)
       .reduce((acc: any, dateTime: any) => {
         const date = format(new Date(dateTime), "yyyy-MM-dd HH:mm:ss").split(
           " "
@@ -291,7 +303,7 @@ export const getReportById = async (id: string, from: Date, to: Date) => {
         };
       });
 
-    return { ...result, items: reports };
+    return { ...result, items: reports, totalDays };
   } catch (error: any) {
     console.log(error);
   }

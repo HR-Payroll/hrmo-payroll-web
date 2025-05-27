@@ -19,6 +19,9 @@ const MandDeducForm = dynamic(() => import("./forms/MandDeducForm"), {
 const LoanDeducForm = dynamic(() => import("./forms/LoanDeducForm"), {
   loading: () => <h1 className="text-xs text-[var(--text)]">Loading...</h1>,
 });
+const EventForm = dynamic(() => import("./forms/EventForm"), {
+  loading: () => <h1 className="text-xs text-[var(--text)]">Loading...</h1>,
+});
 
 const AddButton = ({
   title,
@@ -52,6 +55,7 @@ const AddButton = ({
     rate: () => <CompRateForm onClose={() => {}} />,
     deduction: () => <MandDeducForm onClose={() => {}} />,
     loan: () => <LoanDeducForm onClose={() => {}} />,
+    event: () => <EventForm onClose={onClose} />,
   };
 
   const onClose = () => {

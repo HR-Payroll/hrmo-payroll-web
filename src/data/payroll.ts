@@ -1,19 +1,22 @@
 import {
   computeTotalDaysAndLate,
   computeTotalDaysAndLateSingle,
+  getTotalBusinessDays,
 } from "@/utils/computations";
 import { paginationUtil } from "@/utils/tools";
 import { prisma } from "../../prisma/prisma";
 import { format } from "date-fns";
+import { getEventsByDateRange } from "@/actions/events";
+import moment from "moment-timezone";
 
 export const getAllSummary = async (
   from: Date,
-  to?: Date,
+  to: Date,
   category?: string,
   department?: string
 ) => {
   try {
-    console.log(from, to);
+    to.setDate(to.getDate() + 1);
     let filterQuery = {};
 
     if (category) filterQuery = { ...filterQuery, category };
@@ -25,8 +28,8 @@ export const getAllSummary = async (
         {
           $match: {
             timestamp: {
-              $gte: { $date: from },
-              $lte: { $date: to },
+              $gte: from.toISOString(),
+              $lte: to.toISOString(),
             },
           },
         },
@@ -135,7 +138,7 @@ export const getAllSummary = async (
 
 export const getPaginatedSummary = async (
   from: Date,
-  to?: Date,
+  to: Date,
   search?: string,
   page = 0,
   limit = 10,
@@ -143,6 +146,7 @@ export const getPaginatedSummary = async (
   department?: string
 ) => {
   try {
+    to.setDate(to.getDate() + 1);
     let searchQuery = {};
     let filterQuery = {};
 
@@ -168,8 +172,8 @@ export const getPaginatedSummary = async (
         {
           $match: {
             timestamp: {
-              $gte: { $date: from },
-              $lte: { $date: to },
+              $gte: from.toISOString(),
+              $lte: to.toISOString(),
             },
           },
         },
@@ -230,16 +234,30 @@ export const getPaginatedSummary = async (
 
     const result = reports as any;
     const length = result[0].totalCount[0] ? result[0].totalCount[0].count : 0;
+
+    const events = await getEventsByDateRange(from, to);
+    const totalBusinessDays = getTotalBusinessDays(
+      from,
+      to,
+      events.items || []
+    );
+
+    console.log(totalBusinessDays);
+
     const items = Array.isArray(result[0].items)
       ? result[0].items.map((report: any) => {
-          const { earnings, deductions, net } = computeTotalDaysAndLate(
-            report.items,
-            report.employee
-          );
+          const { earnings, deductions, net, totalDays } =
+            computeTotalDaysAndLate(
+              report.items,
+              report.employee,
+              totalBusinessDays
+            );
           return {
             ...report,
             earnings,
             deductions,
+            totalDays,
+            rate: report.employee.rate,
             net,
           };
         })
@@ -254,14 +272,15 @@ export const getPaginatedSummary = async (
 
 export const getSummaryById = async (id: string, from: Date, to: Date) => {
   try {
+    to.setDate(to.getDate() + 1);
     const report = await prisma.report.aggregateRaw({
       pipeline: [
         {
           $match: {
             recordNo: id,
             timestamp: {
-              $gte: { $date: from.toISOString() },
-              $lte: { $date: to.toISOString() },
+              $gte: from.toISOString(),
+              $lte: to.toISOString(),
             },
           },
         },
@@ -306,7 +325,7 @@ export const getSummaryById = async (id: string, from: Date, to: Date) => {
     const result = report[0] as any;
 
     let reports = result.items
-      .map((item: any) => item.timestamp.$date)
+      .map((item: any) => item.timestamp)
       .reduce((acc: any, dateTime: any) => {
         const date = format(new Date(dateTime), "yyyy-MM-dd HH:mm:ss").split(
           " "
@@ -316,9 +335,17 @@ export const getSummaryById = async (id: string, from: Date, to: Date) => {
         return acc;
       }, {});
 
-    reports = computeTotalDaysAndLateSingle(reports, result.employee);
-
-    console.log(reports);
+    const events = await getEventsByDateRange(from, to);
+    const totalBusinessDays = getTotalBusinessDays(
+      from,
+      to,
+      events.items || []
+    );
+    reports = computeTotalDaysAndLateSingle(
+      reports,
+      result.employee,
+      totalBusinessDays
+    );
 
     return { ...result, items: reports };
   } catch (error: any) {

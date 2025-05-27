@@ -28,7 +28,7 @@ export const updateReport = async (
   payload: {
     recordNo?: string;
     name?: string;
-    timestamp?: Date;
+    timestamp?: string;
     index?: string;
   }
 ) => {
@@ -86,19 +86,6 @@ export const uploadReport = async (data: z.infer<typeof ReportSchema>[]) => {
               {
                 $set: {
                   createdAt: { $toDate: "$createdAt" },
-                },
-              },
-            ],
-            multi: true,
-          },
-          {
-            q: {
-              timestamp: { $type: "string" },
-            },
-            u: [
-              {
-                $set: {
-                  timestamp: { $toDate: "$timestamp" },
                 },
               },
             ],

@@ -12,7 +12,6 @@ export const downloadSummary = async (
 ) => {
   try {
     const reports = await getAllSummary(from, to, category, department);
-    console.log(reports);
 
     const fs = await import("fs");
     const templatePath = path.join(
