@@ -1,5 +1,6 @@
 "use client";
 import { downloadSummary } from "@/actions/payroll";
+import { format } from "date-fns";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { MdOutlineFileDownload } from "react-icons/md";
@@ -22,7 +23,45 @@ function DownloadSummary() {
   }, [searchParams]);
 
   const handleDownload = async () => {
-    const response = await downloadSummary(from, to, "REGULAR");
+    const category = searchParams.get("category") || "all";
+
+    if (category === "all") {
+      return await Promise.all([
+        createCSVFile({
+          category: "REGULAR",
+          from,
+          to,
+        }),
+        createCSVFile({
+          category: "CASUAL",
+          from,
+          to,
+        }),
+        createCSVFile({
+          category: "JOB_ORDER",
+          from,
+          to,
+        }),
+      ]);
+    }
+
+    await createCSVFile({
+      category,
+      from,
+      to,
+    });
+  };
+
+  const createCSVFile = async ({
+    category,
+    from,
+    to,
+  }: {
+    category: string;
+    from: Date;
+    to: Date;
+  }) => {
+    const response = await downloadSummary(from, to, category);
     if (response) {
       const blob = new Blob([response], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -31,7 +70,10 @@ function DownloadSummary() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "exported_data.xlsx";
+      a.download = `Payroll_${category}_${format(from, "yyyy-MM-dd")}-${format(
+        to,
+        "yyyy-MM-dd"
+      )}.xlsx`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
