@@ -60,13 +60,8 @@ const SingleReportPage = async ({
           <DateFilter from={dateFrom} />
           <DownloadSingleReport
             reports={report ? report.items : []}
-            employee={
-              report
-                ? report.name.ref
-                  ? report.name.name
-                  : `${report.name.name} (no ref)`
-                : "N/A"
-            }
+            employee={report ? report.employee : null}
+            numDays={report ? report.totalDays : 0}
           />
         </div>
       </div>

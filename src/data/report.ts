@@ -266,6 +266,11 @@ export const getReportById = async (id: string, from: Date, to: Date) => {
 
     const result = report[0] as any;
 
+    const { totalDays } = computeTotalDaysAndLate(
+      result.items,
+      result.employee
+    );
+
     let reports = result.items
       .map((item: any) => item.timestamp)
       .reduce((acc: any, dateTime: any) => {
@@ -298,7 +303,7 @@ export const getReportById = async (id: string, from: Date, to: Date) => {
         };
       });
 
-    return { ...result, items: reports };
+    return { ...result, items: reports, totalDays };
   } catch (error: any) {
     console.log(error);
   }
