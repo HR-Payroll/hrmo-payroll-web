@@ -48,8 +48,17 @@ export const downloadSummary = async (
       const reports = reportDepartments[departmentName];
 
       reports?.forEach((report: any, index: number) => {
-        const { recordNo, name, items, employee, totalDays, earnings, net } =
-          report;
+        const {
+          recordNo,
+          name,
+          items,
+          employee,
+          totalDays,
+          earnings,
+          net,
+          late,
+          deductions,
+        } = report;
         const rowIndex = index + 1;
 
         worksheet[`A${rowStart + rowIndex}`] = { v: rowIndex };
@@ -58,6 +67,10 @@ export const downloadSummary = async (
         worksheet[`D${rowStart + rowIndex}`] = { v: employee.type };
         worksheet[`E${rowStart + rowIndex}`] = { v: totalDays };
         worksheet[`F${rowStart + rowIndex}`] = { v: earnings };
+        worksheet[`G${rowStart + rowIndex}`] = { v: deductions };
+        worksheet[`H${rowStart + rowIndex}`] = { v: earnings - deductions };
+        worksheet[`AC${rowStart + rowIndex}`] = { v: deductions };
+        worksheet[`AE${rowStart + rowIndex}`] = { v: net };
       });
     });
 

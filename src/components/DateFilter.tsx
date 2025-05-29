@@ -1,7 +1,7 @@
 "use client";
 import { format } from "date-fns";
 import React, { useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
 const DateFilter = ({ from }: { from: Date }) => {
   const [dateFrom, setDateFrom] = useState(from);
@@ -9,6 +9,7 @@ const DateFilter = ({ from }: { from: Date }) => {
 
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const onChangeDate = ({ from, to }: { from?: Date; to?: Date }) => {
     const newFrom = from || dateFrom;
@@ -19,12 +20,23 @@ const DateFilter = ({ from }: { from: Date }) => {
       setDateTo(newTo);
     }
 
-    router.push(
-      `${pathname}?from=${format(newFrom, "yyyy-MM-dd")}&to=${format(
-        newTo,
-        "yyyy-MM-dd"
-      )}`
-    );
+    onChangeFilter("from", format(newFrom, "yyyy-MM-dd"));
+    onChangeFilter("to", format(newTo, "yyyy-MM-dd"));
+  };
+
+  const onChangeFilter = (key: string, value: string) => {
+    let path = "";
+    const params = Object.fromEntries(searchParams.entries());
+
+    if (params[key]) delete params[key];
+    if (value) params[key] = value;
+
+    Object.keys(params).forEach((key, index) => {
+      if (index === 0) path += `?${key}=${params[key]}`;
+      else path += `&${key}=${params[key]}`;
+    });
+
+    router.push(`${pathname}${path}`);
   };
 
   return (

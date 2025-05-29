@@ -116,7 +116,7 @@ export const getAllSummary = async (
     const result = reports as any;
     const items = Array.isArray(result)
       ? result.map((report: any) => {
-          const { earnings, deductions, net, totalDays } =
+          const { earnings, deductions, net, totalDays, late } =
             computeTotalDaysAndLate(report.items, report.employee);
           return {
             ...report,
@@ -124,6 +124,7 @@ export const getAllSummary = async (
             deductions,
             net,
             totalDays,
+            late,
           };
         })
       : [];

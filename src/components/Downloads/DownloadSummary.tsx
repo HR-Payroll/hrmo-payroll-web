@@ -1,6 +1,6 @@
 "use client";
 import { downloadSummary } from "@/actions/payroll";
-import { format } from "date-fns";
+import { format, set } from "date-fns";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { MdOutlineFileDownload } from "react-icons/md";
@@ -9,6 +9,7 @@ function DownloadSummary() {
   const searchParams = useSearchParams();
   const [from, setFrom] = useState<Date>(new Date());
   const [to, setTo] = useState<Date>(new Date());
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const from = searchParams.get("from");
@@ -25,31 +26,38 @@ function DownloadSummary() {
   const handleDownload = async () => {
     const category = searchParams.get("category") || "all";
 
-    if (category === "all") {
-      return await Promise.all([
-        createCSVFile({
-          category: "REGULAR",
+    setIsLoading(true);
+    try {
+      if (category === "all") {
+        await Promise.all([
+          createCSVFile({
+            category: "REGULAR",
+            from,
+            to,
+          }),
+          createCSVFile({
+            category: "CASUAL",
+            from,
+            to,
+          }),
+          createCSVFile({
+            category: "JOB_ORDER",
+            from,
+            to,
+          }),
+        ]);
+      } else {
+        await createCSVFile({
+          category,
           from,
           to,
-        }),
-        createCSVFile({
-          category: "CASUAL",
-          from,
-          to,
-        }),
-        createCSVFile({
-          category: "JOB_ORDER",
-          from,
-          to,
-        }),
-      ]);
-    }
+        });
+      }
 
-    await createCSVFile({
-      category,
-      from,
-      to,
-    });
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+    }
   };
 
   const createCSVFile = async ({
@@ -81,15 +89,18 @@ function DownloadSummary() {
   };
 
   return (
-    <div
+    <button
+      disabled={isLoading}
       onClick={() => {
         handleDownload();
       }}
-      className="flex flex-row items-center justify-center rounded-md bg-[var(--border)] hover:bg-slate-300 active:bg-slate-400 active:text-white text-[var(--text)] text-sm cursor-pointer gap-x-2 py-2 px-5"
+      className="flex flex-row items-center justify-center rounded-md disabled:bg-[var(--border)]/60 bg-[var(--border)] hover:bg-slate-300 active:bg-slate-400 active:text-white text-[var(--text)] text-sm cursor-pointer gap-x-2 py-2 px-5"
     >
       <MdOutlineFileDownload size={18} />
-      <span className="hidden md:block">Download File</span>
-    </div>
+      <span className="hidden md:block">
+        {isLoading ? "Downloading..." : "Download File"}
+      </span>
+    </button>
   );
 }
 
