@@ -20,16 +20,20 @@ const DateFilter = ({ from }: { from: Date }) => {
       setDateTo(newTo);
     }
 
-    onChangeFilter("from", format(newFrom, "yyyy-MM-dd"));
-    onChangeFilter("to", format(newTo, "yyyy-MM-dd"));
+    onChangeFilter([
+      { key: "from", value: format(newFrom, "yyyy-MM-dd") },
+      { key: "to", value: format(newTo, "yyyy-MM-dd") },
+    ]);
   };
 
-  const onChangeFilter = (key: string, value: string) => {
+  const onChangeFilter = (keys: { key: string; value: string }[]) => {
     let path = "";
     const params = Object.fromEntries(searchParams.entries());
 
-    if (params[key]) delete params[key];
-    if (value) params[key] = value;
+    for (const key of keys) {
+      if (params[key.key]) delete params[key.key];
+      if (key.value) params[key.key] = key.value;
+    }
 
     Object.keys(params).forEach((key, index) => {
       if (index === 0) path += `?${key}=${params[key]}`;
