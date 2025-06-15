@@ -1,6 +1,7 @@
 "use server";
 import * as XLSX from "xlsx";
 import path from "path";
+import fs from "fs";
 import { getAllReport } from "@/data/report";
 import { getAllSummary } from "@/data/payroll";
 
@@ -12,8 +13,6 @@ export const downloadSummary = async (
 ) => {
   try {
     const reports = await getAllSummary(from, to, category, department);
-
-    const fs = await import("fs");
     const templatePath = path.join(
       process.cwd(),
       "public",
