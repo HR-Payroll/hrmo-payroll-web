@@ -1,8 +1,5 @@
 "use server";
 import * as XLSX from "xlsx";
-import path from "path";
-import fs from "fs";
-import { getAllReport } from "@/data/report";
 import { getAllSummary } from "@/data/payroll";
 
 export const downloadSummary = async (
@@ -13,18 +10,14 @@ export const downloadSummary = async (
 ) => {
   try {
     const reports = await getAllSummary(from, to, category, department);
-    const templatePath = path.join(
-      process.cwd(),
-      "public",
-      "templates/payroll_template.xlsx"
+
+    const res = await fetch(
+      `${
+        process.env.NEXT_PUBLIC_CLIENT_URL || ""
+      }/templates/payroll_template.xlsx`
     );
 
-    console.log(templatePath);
-    if (!fs.existsSync(templatePath)) {
-      throw new Error("Template file not found");
-    }
-
-    const fileBuffer = fs.readFileSync(templatePath);
+    const fileBuffer = await res.arrayBuffer();
     const workbook = XLSX.read(fileBuffer, {
       type: "array",
       cellStyles: true,
