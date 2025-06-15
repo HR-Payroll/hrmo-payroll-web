@@ -16,8 +16,8 @@ export const downloadSummary = async (
     const fs = await import("fs");
     const templatePath = path.join(
       process.cwd(),
-      "public/templates",
-      "payroll_template.xlsx"
+      "public",
+      "templates/payroll_template.xlsx"
     );
 
     console.log(templatePath);
