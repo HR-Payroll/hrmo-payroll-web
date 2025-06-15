@@ -19,6 +19,12 @@ export const downloadSummary = async (
       "public/templates",
       "payroll_template.xlsx"
     );
+
+    console.log(templatePath);
+    if (!fs.existsSync(templatePath)) {
+      throw new Error("Template file not found");
+    }
+
     const fileBuffer = fs.readFileSync(templatePath);
     const workbook = XLSX.read(fileBuffer, {
       type: "array",
