@@ -1,8 +1,6 @@
 import authConfig from "./auth.config";
 import NextAuth from "next-auth";
 
-const URL = process.env.CLIENT_URL;
-
 const { auth } = NextAuth(authConfig);
 export default auth(async (req) => {
   const isLoggedIn = !!req.auth;
@@ -13,9 +11,11 @@ export default auth(async (req) => {
   const isApiRoute = nextUrl.pathname.includes("/api");
 
   if (isApiRoute) return;
-  if (isLoggedIn && isAuthRoute) return Response.redirect(`${URL}/dashboard`);
+  if (isLoggedIn && isAuthRoute)
+    return Response.redirect(`${process.env.NEXT_PUBLIC_CLIENT_URL}/dashboard`);
   if (!isLoggedIn && isAuthRoute) return;
-  if (!isLoggedIn && isPrivateRoute) return Response.redirect(`${URL}/login`);
+  if (!isLoggedIn && isPrivateRoute)
+    return Response.redirect(`${process.env.NEXT_PUBLIC_CLIENT_URL}/login`);
 });
 
 export const config = {
