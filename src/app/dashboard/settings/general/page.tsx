@@ -5,13 +5,12 @@ import { getAllDepartment } from "@/data/department";
 import { syncHolidays } from "@/actions/events";
 import { getSettings } from "@/actions/settings";
 
-const SettingsPage = async () => {
+async function General() {
   const departments = (await getAllDepartment()) as any;
   const settings = (await getSettings()) as any;
   const year = new Date().getFullYear();
 
   if (settings.syncHolidays !== year.toString()) await syncHolidays(year);
-
   return (
     <div className="w-full text-[var(--text)] text-sm overflow-y-scroll pb-8">
       <div className="absolute top-4 -ml-4 px-4">
@@ -33,6 +32,6 @@ const SettingsPage = async () => {
       </div>
     </div>
   );
-};
+}
 
-export default SettingsPage;
+export default General;

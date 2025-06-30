@@ -23,4 +23,9 @@ const paginationUtil = (
   };
 };
 
-export { debounce, paginationUtil };
+const isArrayEqual = (arr1: string[], arr2: string[]): boolean => {
+  if (arr1.length !== arr2.length) return false;
+  return arr1.every((val, idx) => val === arr2[idx]);
+};
+
+export { debounce, paginationUtil, isArrayEqual };

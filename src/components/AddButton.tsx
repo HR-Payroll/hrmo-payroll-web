@@ -22,6 +22,9 @@ const LoanDeducForm = dynamic(() => import("./forms/LoanDeducForm"), {
 const EventForm = dynamic(() => import("./forms/EventForm"), {
   loading: () => <h1 className="text-xs text-[var(--text)]">Loading...</h1>,
 });
+const ScheduleForm = dynamic(() => import("./forms/ScheduleForm"), {
+  loading: () => <h1 className="text-xs text-[var(--text)]">Loading...</h1>,
+});
 
 const AddButton = ({
   title,
@@ -56,6 +59,9 @@ const AddButton = ({
     deduction: () => <MandDeducForm onClose={() => {}} />,
     loan: () => <LoanDeducForm onClose={() => {}} />,
     event: () => <EventForm onClose={onClose} />,
+    schedule: () => (
+      <ScheduleForm onClose={onClose} setSnackbar={setSnackbar} />
+    ),
   };
 
   const onClose = () => {
@@ -74,8 +80,8 @@ const AddButton = ({
       </button>
 
       {open && (
-        <div className="h-full w-full fixed top-0 left-0 bg-radial from-blue-500/50 from-5% to-transparent to-80% z-50 flex items-center justify-center">
-          <div className="relative w-[70%] sm:w-[60%] md:w-[50%] lg:w-[40%] xl:w-[30%] 2xl:w-[20%] bg-white rounded-md border-2 border-[var(--border)] p-4">
+        <div className="h-full w-full fixed top-0 left-0 bg-radial from-blue-500/50 from-5% to-transparent to-80% z-50 flex items-center justify-center overflow-auto">
+          <div className="relative w-[70%] sm:w-[60%] md:w-[50%] lg:w-[40%] xl:w-[40%] 2xl:w-[30%] bg-white rounded-md border-2 border-[var(--border)] p-4">
             {forms[table] ? forms[table]() : <h1>Form not found!</h1>}
             <div className="absolute top-4 right-4">
               <button

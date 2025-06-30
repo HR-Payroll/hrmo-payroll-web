@@ -1,4 +1,4 @@
-import { z, date, number, object, string, boolean } from "zod";
+import { z, date, number, object, string, boolean, array } from "zod";
 
 export const LoginSchema = object({
   email: string({ required_error: "Email is required" })
@@ -79,4 +79,19 @@ export const EventSchema = object({
   type: string().min(1, "Type is required"),
   applied: boolean().default(true).optional(),
   rule: number().default(1).optional(),
+});
+
+const validateTime = (inTime: Date, outTime: Date): boolean => {
+  return inTime.getTime() < outTime.getTime();
+};
+
+export const ScheduleSchema = object({
+  name: string().min(1, "Schedule name is required"),
+  inTime: date({ required_error: "In Time is required" }),
+  outTime: date({ required_error: "Out Time is required" }),
+  daysIncluded: array(string()).min(1, "Please include a day"),
+  readOnly: boolean().default(false).optional(),
+}).refine((data) => validateTime(data.inTime, data.outTime), {
+  message: "In Time must be less than Out Time",
+  path: ["inTime"],
 });

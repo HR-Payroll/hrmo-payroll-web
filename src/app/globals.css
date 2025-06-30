@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 :root {
-  --slate: #F8FAFB;
+  --slate: #f8fafb;
   --accent: #0000ff;
-  --border: #ECEEF6;
+  --border: #eceef6;
   --text: #333333;
   --error: #ff0000;
   --success: #008000;
@@ -11,7 +11,11 @@
   --lightcheck: #66bb6a;
   --wrong: #d32f2f;
   --lightwrong: #f44336;
-  --bluetext: #4F73DF;
+  --bluetext: #4f73df;
+}
+
+@theme inline {
+  --color-red: var(--wrong);
 }
 
 .react-calendar {
@@ -48,7 +52,7 @@ input::-webkit-inner-spin-button {
 }
 
 td:nth-child(odd) {
-  background-color: #ECEEF6;
+  background-color: #eceef6;
   font-weight: 700;
   text-align: right;
 }
@@ -58,7 +62,8 @@ td:nth-child(even) {
   place-content: start;
 }
 
-th, td {
+th,
+td {
   padding-top: 20px;
   padding-bottom: 0px;
   padding-left: 20px;

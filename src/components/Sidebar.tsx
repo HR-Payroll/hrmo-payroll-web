@@ -37,6 +37,7 @@ const SidebarItem = ({ href, icon, label, isCollapsed }: SidebarItemProps) => {
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isPayrollExpanded, setIsPayrollExpanded] = useState(false);
+  const [isSettingsExpanded, setIsSettingsExpanded] = useState(false);
 
   const payrollItems = [
     {
@@ -57,6 +58,24 @@ const Sidebar = () => {
     {
       label: "Summary",
       link: "/summary",
+      icon: "",
+    },
+  ];
+
+  const settingsItems = [
+    {
+      label: "General Settings",
+      link: "/general",
+      icon: "",
+    },
+    {
+      label: "Holidays & Events",
+      link: "/holidays",
+      icon: "",
+    },
+    {
+      label: "Work Schedules",
+      link: "/schedules",
       icon: "",
     },
   ];
@@ -160,12 +179,52 @@ const Sidebar = () => {
               })}
           </div>
         </div>
-        <SidebarItem
+        <div>
+          <button
+            onClick={() => setIsSettingsExpanded(!isSettingsExpanded)}
+            className="flex items-center gap-4 px-4 py-3 w-full hover:bg-blue-100 border-l-[10px] border-l-transparent hover:border-blue-500 focus:text-[var(--accent)] cursor-pointer transition-all ease-in-out duration-700"
+          >
+            <MdOutlineSettings size={20} />
+            {!isCollapsed && (
+              <span className="text-sm font-medium">Settings</span>
+            )}
+            {!isCollapsed &&
+              (isSettingsExpanded ? (
+                <MdOutlineKeyboardArrowUp
+                  size={20}
+                  className="ml-auto cursor-pointer"
+                />
+              ) : (
+                <MdOutlineKeyboardArrowDown
+                  size={20}
+                  className="ml-auto cursor-pointer"
+                />
+              ))}
+          </button>
+          <div className={`${isSettingsExpanded ? "block" : "hidden"} ml-6`}>
+            {!isCollapsed &&
+              settingsItems.map((item) => {
+                return (
+                  <Link
+                    key={item.label}
+                    href={`/dashboard/settings${item.link}`}
+                    className="flex items-center gap-4 px-4 min-h-10 hover:bg-blue-100 border-l-[10px] border-l-transparent hover:border-blue-500 focus:border-blue-500 focus:bg-blue-100 focus:border-l-[10px] focus:text-[var(--accent)] transition-all ease-in-out duration-700"
+                  >
+                    <MdOutlineHorizontalRule size={16} />
+                    {!isCollapsed && (
+                      <span className="text-sm font-normal">{item.label}</span>
+                    )}
+                  </Link>
+                );
+              })}
+          </div>
+        </div>
+        {/* <SidebarItem
           href="/dashboard/settings"
           icon={<MdOutlineSettings size={20} />}
           label="Settings"
           isCollapsed={isCollapsed}
-        />
+        /> */}
       </nav>
     </div>
   );

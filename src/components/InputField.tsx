@@ -34,7 +34,7 @@ const InputField = ({
         className="w-full bg-transparent rounded-md ring-2 ring-[var(--border)] focus:outline-2 focus:outline-blue-200 p-2"
       />
       {error?.message && (
-        <p className="text-[var(--red)] text-xs">{error?.message.toString()}</p>
+        <p className="text-red text-xs">{error?.message.toString()}</p>
       )}
     </div>
   );

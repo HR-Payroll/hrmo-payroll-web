@@ -47,7 +47,4 @@ export const tableStyle = {
     fontFamily: "Arimo, sans-serif",
     color: "#333",
   },
-  "& .MuiTablePagination-displayedRows, & .MuiTablePagination-selectLabel": {
-    fontSize: "14px",
-  },
 };
