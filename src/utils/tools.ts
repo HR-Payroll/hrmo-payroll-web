@@ -23,7 +23,7 @@ const paginationUtil = (
   };
 };
 
-const isArrayEqual = (arr1: string[], arr2: string[]): boolean => {
+const isArrayEqual = (arr1: any[], arr2: any[]): boolean => {
   if (arr1.length !== arr2.length) return false;
   return arr1.every((val, idx) => val === arr2[idx]);
 };

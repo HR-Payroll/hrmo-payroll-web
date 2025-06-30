@@ -8,6 +8,7 @@ import TableFilters from "@/components/TableFilters";
 import AddButton from "@/components/AddButton";
 import EmployeesTable from "@/components/tables/EmployeesTable";
 import UploadEmployees from "@/components/Uploads/UploadEmployees";
+import { getAllSchedules } from "@/data/schedule";
 
 const Employees = async (props: {
   searchParams?: Promise<{
@@ -22,6 +23,7 @@ const Employees = async (props: {
   const { search, page, limit, category, department } = params as any;
 
   const departments = (await getAllDepartment()) as any;
+  const schedules = (await getAllSchedules()) as any;
   const employees = (await getPaginatedEmployee(
     search,
     Number(page || 0),
@@ -64,6 +66,7 @@ const Employees = async (props: {
         <EmployeesTable
           employees={employees.items}
           departments={departments}
+          schedules={schedules}
           reload={reload}
           limit={employees.pageSize}
           rowCount={employees.pageRange}

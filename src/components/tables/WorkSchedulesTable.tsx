@@ -50,6 +50,16 @@ function WorkSchedulesTable({
     modal: false,
   });
 
+  const days: Record<number, string> = {
+    0: "Sunday",
+    1: "Monday",
+    2: "Tuesday",
+    3: "Wednesday",
+    4: "Thursday",
+    5: "Friday",
+    6: "Saturday",
+  };
+
   useEffect(() => {
     setData(schedules);
   }, [schedules]);
@@ -117,10 +127,10 @@ function WorkSchedulesTable({
         console.log(params);
         return (
           <div className="flex flex-row items-center justify-center gap-1 h-full">
-            {params.value.map((day: string) => (
+            {params.value.map((day: number) => (
               <Chip
                 key={day}
-                label={day.slice(0, 3)}
+                label={days[day].slice(0, 3)}
                 size="small"
                 variant="outlined"
               />
@@ -128,11 +138,6 @@ function WorkSchedulesTable({
           </div>
         );
       },
-      // valueGetter: (params: any) => {
-      //   return params.daysIncluded
-      //     ? params.daysIncluded.join(", ")
-      //     : "No days included";
-      // },
     },
     {
       field: "action",

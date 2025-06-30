@@ -93,12 +93,38 @@ export const getPaginatedEmployee = async (
           },
         },
         {
+          $lookup: {
+            from: "Schedule",
+            let: { schedule: "$schedule" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $cond: {
+                      if: {
+                        $or: [
+                          { $eq: ["$schedule", null] },
+                          { $eq: [{ $type: "$schedule" }, "missing"] },
+                        ],
+                      },
+                      then: { $eq: ["$name", "Regular"] },
+                      else: { $eq: ["$_id", "$$schedule"] },
+                    },
+                  },
+                },
+              },
+            ],
+            as: "schedules",
+          },
+        },
+        {
           $project: {
             _id: 1,
             name: 1,
             recordNo: 1,
             department: { $arrayElemAt: ["$departments", 0] },
             category: 1,
+            schedule: { $arrayElemAt: ["$schedules", 0] },
             createdAt: 1,
             updatedAt: 1,
           },

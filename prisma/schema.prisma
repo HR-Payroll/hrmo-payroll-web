@@ -97,7 +97,7 @@ model Schedule {
   name         String   @unique
   inTime       DateTime
   outTime      DateTime
-  daysIncluded String[]
+  daysIncluded Int[]
   readOnly     Boolean  @default(false)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt

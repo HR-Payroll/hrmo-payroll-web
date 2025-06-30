@@ -38,7 +38,7 @@ function LoginForm() {
         setIsLoggingIn(false);
       })
       .catch((err) => {
-        setServerError(err.message || "Invalid login credentials");
+        setServerError("Something went wrong. Please try again later.");
         setIsLoggingIn(false);
       });
   }

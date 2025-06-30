@@ -97,6 +97,31 @@ export const getAllSummary = async (
           },
         },
         {
+          $lookup: {
+            from: "Schedule",
+            let: { schedule: "$employee.schedule" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $cond: {
+                      if: {
+                        $or: [
+                          { $eq: ["$schedule", null] },
+                          { $eq: [{ $type: "$schedule" }, "missing"] },
+                        ],
+                      },
+                      then: { $eq: ["$name", "Regular"] },
+                      else: { $eq: ["$_id", "$$schedule"] },
+                    },
+                  },
+                },
+              },
+            ],
+            as: "schedules",
+          },
+        },
+        {
           $project: {
             _id: 0,
             recordNo: 1,
@@ -104,6 +129,7 @@ export const getAllSummary = async (
             employee: 1,
             category: 1,
             department: { $arrayElemAt: ["$departments", 0] },
+            schedule: { $arrayElemAt: ["$schedules", 0] },
             items: 1,
             count: 1,
           },

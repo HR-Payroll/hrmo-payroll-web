@@ -27,18 +27,18 @@ function ScheduleForm({
   const [serverError, setServerError] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [option, setOption] = useState<"Regular" | "Custom">("Regular");
-  const [daysIncluded, setDaysIncluded] = useState<string[]>(
+  const [daysIncluded, setDaysIncluded] = useState<number[]>(
     edit ? edit.data.daysIncluded : []
   );
 
   const days = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
+    { label: "Sunday", value: 0 },
+    { label: "Monday", value: 1 },
+    { label: "Tuesday", value: 2 },
+    { label: "Wednesday", value: 3 },
+    { label: "Thursday", value: 4 },
+    { label: "Friday", value: 5 },
+    { label: "Saturday", value: 6 },
   ];
 
   const {
@@ -96,7 +96,7 @@ function ScheduleForm({
 
   useEffect(() => {
     const regularDays = days.filter(
-      (day) => day !== "Saturday" && day !== "Sunday"
+      (day) => day.value !== 0 && day.value !== 6
     );
 
     if (
@@ -115,10 +115,10 @@ function ScheduleForm({
     setValue("inTime", onChangeTime(data?.inTime, 8));
     setValue("outTime", onChangeTime(data?.outTime, 17));
 
-    if (option === "Regular") setDays(regularDays);
+    if (option === "Regular") setDays(regularDays.map((day) => day.value));
   }, []);
 
-  const setDays = (value: string[]) => {
+  const setDays = (value: number[]) => {
     setValue("daysIncluded", value, { shouldValidate: true });
     setDaysIncluded(value);
   };
@@ -191,9 +191,9 @@ function ScheduleForm({
                 setOption(opt as "Regular" | "Custom");
                 if (opt === "Regular") {
                   const value = days.filter(
-                    (day) => day !== "Sunday" && day !== "Saturday"
+                    (day) => day.value !== 0 && day.value !== 6
                   );
-                  setDays(value);
+                  setDays(value.map((day) => day.value));
                 } else {
                   setDays([]);
                 }
@@ -209,17 +209,17 @@ function ScheduleForm({
         <div className="flex flex-wrap gap-2">
           {days.map((day) => (
             <Chip
-              key={day}
-              label={day}
+              key={day.value}
+              label={day.label}
               disabled={option === "Regular"}
               onClick={() => {
-                const value = daysIncluded.includes(day)
-                  ? daysIncluded.filter((d) => d !== day)
-                  : [...daysIncluded, day];
+                const value = daysIncluded.includes(day.value)
+                  ? daysIncluded.filter((d) => d !== day.value)
+                  : [...daysIncluded, day.value];
 
                 setDays(value);
               }}
-              variant={daysIncluded.includes(day) ? "filled" : "outlined"}
+              variant={daysIncluded.includes(day.value) ? "filled" : "outlined"}
               color="primary"
               className="disabled:cursor-not-allowed "
             />

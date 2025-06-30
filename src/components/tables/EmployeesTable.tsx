@@ -19,6 +19,7 @@ import {
 function EmployeesTable({
   departments,
   employees,
+  schedules,
   reload,
   loading,
   page = 0,
@@ -27,6 +28,7 @@ function EmployeesTable({
 }: {
   departments: any[];
   employees?: any[];
+  schedules: any[];
   reload?: VoidFunction;
   loading?: boolean;
   page?: number;
@@ -47,6 +49,7 @@ function EmployeesTable({
   });
 
   useEffect(() => {
+    console.log("EmployeesTable mounted with employees:", employees);
     setData(employees);
     setLoading(false);
   }, [employees]);
@@ -172,6 +175,28 @@ function EmployeesTable({
         };
 
         return dept[row];
+      },
+    },
+    {
+      field: "schedule",
+      headerName: "Schedule",
+      headerClassName: "custom-header",
+      flex: 1,
+      align: "center",
+      headerAlign: "center",
+      type: "singleSelect",
+      valueOptions: schedules.map((item) => item.name) || [],
+      editable: true,
+      valueSetter: (value, row) => {
+        const schedule = schedules.find((sched: any) => sched.name === value);
+
+        return {
+          ...row,
+          schedule,
+        };
+      },
+      valueGetter: (value) => {
+        return value ? value["name"] : "N/A";
       },
     },
     {
