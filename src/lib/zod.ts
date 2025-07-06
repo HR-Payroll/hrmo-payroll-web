@@ -25,6 +25,7 @@ export const EmployeeSchema = object({
     }),
   category: string().min(1, "Category is required"),
   department: string().optional(),
+  schedule: string().optional(),
 });
 
 export const RateSchema = object({

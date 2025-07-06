@@ -31,10 +31,12 @@ const AddButton = ({
   table,
   data,
   reload,
+  schedules,
 }: {
   title: string;
   table: string;
   data?: any;
+  schedules?: any[];
   reload?: VoidFunction;
 }) => {
   const [open, setOpen] = useState(false);
@@ -53,6 +55,7 @@ const AddButton = ({
         }}
         departments={data}
         onClose={onClose}
+        schedules={schedules || []}
       />
     ),
     rate: () => <CompRateForm onClose={() => {}} />,

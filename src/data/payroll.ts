@@ -7,6 +7,7 @@ import { paginationUtil } from "@/utils/tools";
 import { prisma } from "../../prisma/prisma";
 import { format } from "date-fns";
 import { getEventsByDateRange } from "@/actions/events";
+import { getSettings } from "@/actions/settings";
 
 export const getAllSummary = async (
   from: Date,
@@ -51,8 +52,51 @@ export const getAllSummary = async (
         {
           $lookup: {
             from: "Employee",
-            localField: "recordNo",
-            foreignField: "recordNo",
+            let: { recordNo: "$recordNo" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $eq: ["$recordNo", "$$recordNo"],
+                  },
+                },
+              },
+              {
+                $lookup: {
+                  from: "Schedule",
+                  let: { scheduleId: "$employee.schedule" },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: {
+                          $cond: {
+                            if: {
+                              $or: [
+                                { $eq: ["$$scheduleId", null] },
+                                { $eq: [{ $type: "$$scheduleId" }, "missing"] },
+                              ],
+                            },
+                            then: { $eq: ["$name", "Regular"] },
+                            else: { $eq: ["$_id", "$$scheduleId"] },
+                          },
+                        },
+                      },
+                    },
+                  ],
+                  as: "schedules",
+                },
+              },
+              {
+                $project: {
+                  _id: 1,
+                  name: 1,
+                  category: 1,
+                  department: 1,
+                  schedule: { $arrayElemAt: ["$schedules", 0] },
+                  rate: 1,
+                },
+              },
+            ],
             as: "employee",
           },
         },
@@ -97,31 +141,6 @@ export const getAllSummary = async (
           },
         },
         {
-          $lookup: {
-            from: "Schedule",
-            let: { schedule: "$employee.schedule" },
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $cond: {
-                      if: {
-                        $or: [
-                          { $eq: ["$schedule", null] },
-                          { $eq: [{ $type: "$schedule" }, "missing"] },
-                        ],
-                      },
-                      then: { $eq: ["$name", "Regular"] },
-                      else: { $eq: ["$_id", "$$schedule"] },
-                    },
-                  },
-                },
-              },
-            ],
-            as: "schedules",
-          },
-        },
-        {
           $project: {
             _id: 0,
             recordNo: 1,
@@ -129,7 +148,6 @@ export const getAllSummary = async (
             employee: 1,
             category: 1,
             department: { $arrayElemAt: ["$departments", 0] },
-            schedule: { $arrayElemAt: ["$schedules", 0] },
             items: 1,
             count: 1,
           },
@@ -140,10 +158,16 @@ export const getAllSummary = async (
     });
 
     const result = reports as any;
+    const settings = await getSettings();
+
     const items = Array.isArray(result)
       ? result.map((report: any) => {
           const { earnings, deductions, net, totalDays, late } =
-            computeTotalDaysAndLate(report.items, report.employee);
+            computeTotalDaysAndLate({
+              dates: report.items,
+              settings,
+              employee: report.employee,
+            });
           return {
             ...report,
             earnings,
@@ -222,8 +246,51 @@ export const getPaginatedSummary = async (
         {
           $lookup: {
             from: "Employee",
-            localField: "recordNo",
-            foreignField: "recordNo",
+            let: { recordNo: "$recordNo" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $eq: ["$recordNo", "$$recordNo"],
+                  },
+                },
+              },
+              {
+                $lookup: {
+                  from: "Schedule",
+                  let: { scheduleId: "$employee.schedule" },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: {
+                          $cond: {
+                            if: {
+                              $or: [
+                                { $eq: ["$$scheduleId", null] },
+                                { $eq: [{ $type: "$$scheduleId" }, "missing"] },
+                              ],
+                            },
+                            then: { $eq: ["$name", "Regular"] },
+                            else: { $eq: ["$_id", "$$scheduleId"] },
+                          },
+                        },
+                      },
+                    },
+                  ],
+                  as: "schedules",
+                },
+              },
+              {
+                $project: {
+                  _id: 1,
+                  name: 1,
+                  category: 1,
+                  department: 1,
+                  schedule: { $arrayElemAt: ["$schedules", 0] },
+                  rate: 1,
+                },
+              },
+            ],
             as: "employee",
           },
         },
@@ -268,16 +335,17 @@ export const getPaginatedSummary = async (
       events.items || []
     );
 
-    console.log(totalBusinessDays);
+    const settings = await getSettings();
 
     const items = Array.isArray(result[0].items)
       ? result[0].items.map((report: any) => {
           const { earnings, deductions, net, totalDays } =
-            computeTotalDaysAndLate(
-              report.items,
-              report.employee,
-              totalBusinessDays
-            );
+            computeTotalDaysAndLate({
+              dates: report.items,
+              settings,
+              employee: report.employee,
+              businessDays: totalBusinessDays,
+            });
           return {
             ...report,
             earnings,
@@ -362,16 +430,18 @@ export const getSummaryById = async (id: string, from: Date, to: Date) => {
       }, {});
 
     const events = await getEventsByDateRange(from, to);
+    const settings = await getSettings();
     const totalBusinessDays = getTotalBusinessDays(
       from,
       to,
       events.items || []
     );
-    reports = computeTotalDaysAndLateSingle(
+    reports = computeTotalDaysAndLateSingle({
       reports,
-      result.employee,
-      totalBusinessDays
-    );
+      settings,
+      employee: result.employee,
+      businessDays: totalBusinessDays,
+    });
 
     return { ...result, items: reports };
   } catch (error: any) {

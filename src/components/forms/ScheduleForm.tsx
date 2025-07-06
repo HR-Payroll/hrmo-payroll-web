@@ -95,9 +95,7 @@ function ScheduleForm({
   };
 
   useEffect(() => {
-    const regularDays = days.filter(
-      (day) => day.value !== 0 && day.value !== 6
-    );
+    const regularDays = days;
 
     if (
       edit?.data.daysIncluded &&
@@ -190,9 +188,7 @@ function ScheduleForm({
               onClick={() => {
                 setOption(opt as "Regular" | "Custom");
                 if (opt === "Regular") {
-                  const value = days.filter(
-                    (day) => day.value !== 0 && day.value !== 6
-                  );
+                  const value = days;
                   setDays(value.map((day) => day.value));
                 } else {
                   setDays([]);

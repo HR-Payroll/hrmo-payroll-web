@@ -1,4 +1,5 @@
 "use server";
+import { Settings } from "@/types";
 import { prisma } from "../../prisma/prisma";
 
 export const getSettings = async () => {
@@ -35,6 +36,22 @@ export const syncHolidaySettings = async (sync: string) => {
       });
       return { success: true, data: newSettings };
     }
+  } catch (error) {
+    console.error("Error updating settings:", error);
+    return { success: false, error: "Failed to update settings." };
+  }
+};
+
+export const updateGracePeriod = async (
+  settings: Settings,
+  gracePeriod: number
+) => {
+  try {
+    const newSettings = await prisma.settings.update({
+      where: { id: settings.id },
+      data: { gracePeriod },
+    });
+    return { success: true, data: newSettings };
   } catch (error) {
     console.error("Error updating settings:", error);
     return { success: false, error: "Failed to update settings." };

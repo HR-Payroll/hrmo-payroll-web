@@ -20,15 +20,7 @@ async function General() {
         />
       </div>
       <div>
-        <SettingsTable departments={departments} />
-      </div>
-      <div className="flex flex-row gap-x-4 items-center justify-end font-semibold mt-4 px-4">
-        <button className="rounded-md bg-blue-200 hover:bg-blue-300 active:bg-blue-400 active:text-white py-2 px-6 text-[var(--accent)] cursor-pointer">
-          Apply
-        </button>
-        <button className="rounded-md bg-[var(--border)] hover:bg-slate-300 active:bg-slate-400 active:text-white py-2 px-6 cursor-pointer">
-          Cancel
-        </button>
+        <SettingsTable departments={departments} settings={settings} />
       </div>
     </div>
   );

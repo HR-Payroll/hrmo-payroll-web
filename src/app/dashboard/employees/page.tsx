@@ -55,6 +55,7 @@ const Employees = async (props: {
             <UploadEmployees departments={departments} reload={reload} />
             <AddButton
               data={departments}
+              schedules={schedules}
               table="employee"
               title="Add Employee"
               reload={reload}

@@ -44,7 +44,9 @@ const SettingsDeptFilter = ({
       </select>
       of
       <select className="outline-none rounded-md border-2 border-[var(--border)] py-1 px-2 cursor-pointer">
-        <option value="">All Departments</option>
+        <option key="0" value="">
+          All Departments
+        </option>
         {filteredDepartments.map((item) => {
           const categoryLabels = {
             REGULAR: "Regular",

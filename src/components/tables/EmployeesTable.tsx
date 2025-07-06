@@ -222,6 +222,7 @@ function EmployeesTable({
                       name: row.name,
                       category: row.category,
                       department: row.department._id.$oid,
+                      schedule: row.schedule._id.$oid,
                     });
                   }}
                   className="w-full flex items-center justify-center p-1 cursor-pointer"
@@ -285,6 +286,7 @@ function EmployeesTable({
       name?: string;
       category?: string;
       department?: any;
+      schedule?: any;
     }
   ) => {
     try {

@@ -95,7 +95,7 @@ export const getPaginatedEmployee = async (
         {
           $lookup: {
             from: "Schedule",
-            let: { schedule: "$schedule" },
+            let: { scheduleId: "$schedule" },
             pipeline: [
               {
                 $match: {
@@ -103,12 +103,12 @@ export const getPaginatedEmployee = async (
                     $cond: {
                       if: {
                         $or: [
-                          { $eq: ["$schedule", null] },
-                          { $eq: [{ $type: "$schedule" }, "missing"] },
+                          { $eq: ["$$scheduleId", null] },
+                          { $eq: [{ $type: "$$scheduleId" }, "missing"] },
                         ],
                       },
                       then: { $eq: ["$name", "Regular"] },
-                      else: { $eq: ["$_id", "$$schedule"] },
+                      else: { $eq: ["$_id", "$$scheduleId"] },
                     },
                   },
                 },

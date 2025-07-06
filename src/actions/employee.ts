@@ -10,7 +10,7 @@ export const createEmployee = async (data: z.infer<typeof EmployeeSchema>) => {
     return { error: "Invalid input fields" };
   }
 
-  const { recordNo, name, category, department } = validateData;
+  const { recordNo, name, category, department, schedule } = validateData;
 
   try {
     await prisma.employee.create({
@@ -19,6 +19,7 @@ export const createEmployee = async (data: z.infer<typeof EmployeeSchema>) => {
         name: name,
         category: category,
         department: department,
+        schedule: schedule,
       },
     });
 
@@ -35,6 +36,7 @@ export const updateEmployee = async (
     name?: string;
     category?: string;
     department?: any;
+    schedule?: any;
   }
 ) => {
   try {

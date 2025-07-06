@@ -1,11 +1,17 @@
 import { format } from "date-fns";
 import { getBusinessDays, getTotalHolidays } from "./holidays";
 
-export const computeTotalDaysAndLate = (
-  dates: any[],
-  employee?: any,
-  businessDays = 10
-) => {
+export const computeTotalDaysAndLate = ({
+  dates,
+  settings,
+  employee,
+  businessDays = 10,
+}: {
+  dates: any[];
+  settings: any;
+  employee?: any;
+  businessDays?: number;
+}) => {
   const days = dates
     .map((item: any) => item.timestamp)
     .reduce((acc: any, dateTime: any) => {
@@ -16,6 +22,19 @@ export const computeTotalDaysAndLate = (
       acc[date].push(new Date(dateTime));
       return acc;
     }, {});
+
+  const gracePeriod = settings.gracePeriod || 10;
+  const schedule = employee?.schedule || REGULAR_SCHEDULE;
+
+  console.log(settings);
+
+  Object.keys(days).forEach((date) => {
+    const dayOfWeek = new Date(date).getDay();
+
+    if (!schedule.daysIncluded.includes(dayOfWeek)) {
+      delete days[date];
+    }
+  });
 
   const inOut = Object.keys(days).map((date) => {
     const times = days[date].sort(
@@ -77,11 +96,20 @@ export const computeTotalDaysAndLate = (
   };
 };
 
-export const computeTotalDaysAndLateSingle = (
-  reports: any,
-  employee: any,
-  businessDays = 10
-) => {
+export const computeTotalDaysAndLateSingle = ({
+  reports,
+  employee,
+  settings,
+  businessDays = 10,
+}: {
+  reports: any;
+  employee: any;
+  settings: any;
+  businessDays?: number;
+}) => {
+  const gracePeriod = settings.gracePeriod || 10;
+  const schedule = employee?.schedule || REGULAR_SCHEDULE;
+
   return Object.keys(reports)
     .sort((a: any, b: any) => new Date(b).getTime() - new Date(a).getTime())
     .map((date) => {
