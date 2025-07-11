@@ -38,42 +38,44 @@ const Employees = async (props: {
   }
 
   return (
-    <div className="w-full bg-white rounded-md border-2 border-[var(--border)] text-[var(--text)] p-4">
-      <div className="absolute top-4 -ml-4">
+    <div className="container">
+      <header className="absolute top-4 -ml-4">
         <PageInfo
           title="Employees"
           info="Manage your company's employees in this page. You can add, edit, or delete employee details here."
         />
-      </div>
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-y-4">
-        <div>
+      </header>
+
+      <main className="space-y-4">
+        <section className="flex flex-col md:flex-row items-center justify-between gap-4">
           <TableSearch />
-        </div>
-        <div className="flex flex-col md:flex-row items-center justify-center gap-4 cursor-pointer">
-          <TableFilters departments={departments} />
-          <div className="flex flex-row items-center justify-center gap-4 cursor-pointer">
-            <UploadEmployees departments={departments} reload={reload} />
-            <AddButton
-              data={departments}
-              schedules={schedules}
-              table="employee"
-              title="Add Employee"
-              reload={reload}
-            />
+          <div className="flex flex-col md:flex-row items-center gap-4">
+            <TableFilters departments={departments} />
+            <div className="flex items-center gap-4">
+              <UploadEmployees departments={departments} reload={reload} />
+              <AddButton
+                data={departments}
+                schedules={schedules}
+                table="employee"
+                title="Add Employee"
+                reload={reload}
+              />
+            </div>
           </div>
-        </div>
-      </div>
-      <div className="w-full mt-4">
-        <EmployeesTable
-          employees={employees.items}
-          departments={departments}
-          schedules={schedules}
-          reload={reload}
-          limit={employees.pageSize}
-          rowCount={employees.pageRange}
-          page={employees.page}
-        />
-      </div>
+        </section>
+
+        <section>
+          <EmployeesTable
+            employees={employees.items}
+            departments={departments}
+            schedules={schedules}
+            reload={reload}
+            limit={employees.pageSize}
+            rowCount={employees.pageRange}
+            page={employees.page}
+          />
+        </section>
+      </main>
     </div>
   );
 };

@@ -32,36 +32,38 @@ const Departments = async (props: {
   }
 
   return (
-    <div className="w-full bg-white rounded-md border-2 border-[var(--border)] text-[var(--text)] p-4">
-      <div className="absolute top-4 -ml-4">
+    <div className="container">
+      <header className="absolute top-4 -ml-4">
         <PageInfo
           title="Departments"
           info="Manage your company's departments in this page. You can add, edit, or delete department details here."
         />
-      </div>
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-y-4">
-        <div>
+      </header>
+
+      <main className="space-y-4">
+        <section className="flex flex-col md:flex-row items-center justify-between gap-4">
           <TableSearch />
-        </div>
-        <div className="flex flex-row items-center gap-4 cursor-pointer">
-          <UploadDepartments reload={reload} />
-          <AddButton
-            table="department"
-            title="Add Department"
+          <div className="flex items-center gap-4">
+            <UploadDepartments reload={reload} />
+            <AddButton
+              table="department"
+              title="Add Department"
+              reload={reload}
+            />
+          </div>
+        </section>
+
+        <section>
+          <DepartmentTable
+            departments={departments.items}
             reload={reload}
+            isLoading={isLoading}
+            limit={departments.pageSize}
+            rowCount={departments.pageRange}
+            page={departments.page}
           />
-        </div>
-      </div>
-      <div className="w-full mt-4">
-        <DepartmentTable
-          departments={departments.items}
-          reload={reload}
-          isLoading={isLoading}
-          limit={departments.pageSize}
-          rowCount={departments.pageRange}
-          page={departments.page}
-        />
-      </div>
+        </section>
+      </main>
     </div>
   );
 };
