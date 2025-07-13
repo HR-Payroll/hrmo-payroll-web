@@ -44,44 +44,44 @@ const Summary = async (props: {
   }
 
   return (
-    <div className="w-full bg-white rounded-md border-2 border-[var(--border)] text-[var(--text)] p-4">
-      <div className="absolute top-4 -ml-4">
+    <div className="container">
+      <header className="absolute top-4 -ml-4">
         <PageInfo
           title="Payroll Register"
           info="View the summary of the employee's payroll register here. You can download the file in excel format."
         />
-      </div>
-      <div className="flex flex-col gap-y-4">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-y-4">
-          <div>
+      </header>
+
+      <main className="space-y-4">
+        <section className="flex flex-col gap-4">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <TableSearch />
-          </div>
-          <div>
             <DownloadSummary />
           </div>
-        </div>
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-y-4">
-          <DateFilter from={dateFrom} />
-          <div className="flex flex-col sm:flex-row items-center justify-center">
-            <span className="hidden sm:block text-sm font-medium pr-4">
-              Filters
-            </span>
-            <TableFilters departments={departments} />
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <DateFilter from={dateFrom} />
+            <div className="flex flex-col md:flex-row items-center">
+              <span className="hidden md:block text-sm font-medium pr-4">
+                Filters
+              </span>
+              <TableFilters departments={departments} />
+            </div>
           </div>
-        </div>
-      </div>
-      <div className="w-full mt-4">
-        <SummaryTable
-          summary={summary.items || []}
-          departments={departments}
-          reload={reload}
-          from={dateFrom}
-          to={dateTo}
-          limit={summary.pageSize}
-          rowCount={summary.pageRange}
-          page={summary.page}
-        />
-      </div>
+        </section>
+
+        <section>
+          <SummaryTable
+            summary={summary.items || []}
+            departments={departments}
+            reload={reload}
+            from={dateFrom}
+            to={dateTo}
+            limit={summary.pageSize}
+            rowCount={summary.pageRange}
+            page={summary.page}
+          />
+        </section>
+      </main>
     </div>
   );
 };

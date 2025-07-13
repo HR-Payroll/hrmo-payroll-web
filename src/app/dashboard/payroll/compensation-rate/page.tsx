@@ -20,30 +20,32 @@ const CompensationRate = async () => {
   }
 
   return (
-    <div className="w-full bg-white rounded-md border-2 border-[var(--border)] text-[var(--text)] p-4">
-      <div className="absolute top-4 -ml-4">
+    <div className="container">
+      <header className="absolute top-4 -ml-4">
         <PageInfo
           title="Payroll Register"
           info="Manage your employee's compensation rate for the payroll register in this page."
         />
-      </div>
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-y-4">
-        <div>
+      </header>
+
+      <main className="space-y-4">
+        <section className="flex flex-col md:flex-row items-center justify-between gap-4">
           <TableSearch />
-        </div>
-        <div className="flex flex-col md:flex-row items-center justify-center gap-4 cursor-pointer">
-          <TableFilters departments={departments} />
-          <UploadButton />
-        </div>
-      </div>
-      <div className="w-full mt-4">
-        <CompensationRateTable
-          departments={departments}
-          employees={employee}
-          rates={rates}
-          reload={reload}
-        />
-      </div>
+          <div className="flex flex-col md:flex-row items-center gap-4">
+            <TableFilters departments={departments} />
+            <UploadButton />
+          </div>
+        </section>
+
+        <section>
+          <CompensationRateTable
+            departments={departments}
+            employees={employee}
+            rates={rates}
+            reload={reload}
+          />
+        </section>
+      </main>
     </div>
   );
 };

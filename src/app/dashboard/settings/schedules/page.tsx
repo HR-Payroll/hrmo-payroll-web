@@ -1,10 +1,10 @@
-import AddButton from "@/components/AddButton";
-import PageInfo from "@/components/PageInfo";
-import WorkSchedulesTable from "@/components/tables/WorkSchedulesTable";
-import TableSearch from "@/components/TableSearch";
-import { getPaginatedSchedule } from "@/data/schedule";
-import { revalidatePath } from "next/cache";
 import React from "react";
+import { revalidatePath } from "next/cache";
+import { getPaginatedSchedule } from "@/data/schedule";
+import PageInfo from "@/components/PageInfo";
+import AddButton from "@/components/AddButton";
+import TableSearch from "@/components/TableSearch";
+import WorkSchedulesTable from "@/components/tables/WorkSchedulesTable";
 
 async function Schedules(props: {
   searchParams?: Promise<{
@@ -28,28 +28,30 @@ async function Schedules(props: {
   }
 
   return (
-    <div className="w-full flex flex-col bg-white rounded-md border-2 border-[var(--border)] text-[var(--text)] text-sm gap-2 p-4">
-      <div className="absolute top-4 -ml-4">
+    <div className="container flex flex-col text-sm gap-2">
+      <header className="absolute top-4 -ml-4">
         <PageInfo
           title="Work Schedules"
           info="Manage your work schedules in this page."
         />
-      </div>
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-y-4">
-        <div>
+      </header>
+
+      <main className="space-y-4">
+        <section className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <TableSearch />
-        </div>
-        <div className="flex flex-row gap-x-4">
           <AddButton title="Add Schedule" table="schedule" reload={reload} />
-        </div>
-      </div>
-      <WorkSchedulesTable
-        reload={reload}
-        schedules={schedules.items || []}
-        limit={schedules.pageSize}
-        rowCount={schedules.pageRange}
-        page={schedules.page}
-      />
+        </section>
+
+        <section>
+          <WorkSchedulesTable
+            reload={reload}
+            schedules={schedules.items || []}
+            limit={schedules.pageSize}
+            rowCount={schedules.pageRange}
+            page={schedules.page}
+          />
+        </section>
+      </main>
     </div>
   );
 }

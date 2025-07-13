@@ -30,39 +30,43 @@ const SingleSummaryPage = async ({
   const summary = (await getSummaryById(id, dateFrom, dateTo)) as any;
 
   return (
-    <div className="flex-1 rounded-md bg-white border-2 border-[var(--border)] gap-4 m-4 mt-10 sm:mt-0 p-4 text-[var(--text)]">
-      <div className="absolute top-4 -ml-4">
+    <div className="card gap-4 m-4 mt-10 md:mt-0">
+      <header className="absolute top-4 -ml-4">
         <PageInfo
           title="Summary"
           info="Manage your company’s employee reports in this page. You can view employee date and time records here."
         />
-      </div>
-      <div className="flex flex-col gap-y-4">
-        <div className="flex flex-row items-center gap-2">
-          <Link
-            href={`/dashboard/payroll/summary`}
-            className="rounded-full bg-[var(--border)] hover:bg-blue-200 active:bg-blue-300 active:text-[var(--accent)] text-[var(--text)] p-2 cursor-pointer"
-          >
-            <MdArrowBackIosNew size={12} />
-          </Link>
-          <DynamicHeader
-            label={
-              summary
-                ? summary.name.ref
-                  ? summary.name.name
-                  : `${summary.name.name} (no ref)`
-                : "N/A"
-            }
-          />
-        </div>
-        <div className="flex flex-row items-center justify-between">
-          <DateFilter from={dateFrom} />
-          <DownloadButton />
-        </div>
-      </div>
-      <div className="mt-4">
-        <ViewSummary summary={summary.items} />
-      </div>
+      </header>
+
+      <main className="space-y-4">
+        <section className="flex flex-col gap-4">
+          <div className="flex items-center gap-2">
+            <Link
+              href={`/dashboard/payroll/summary`}
+              className="rounded-full bg-[var(--border)] hover:bg-blue-200 active:bg-blue-300 active:text-[var(--accent)] text-[var(--text)] p-2 cursor-pointer"
+            >
+              <MdArrowBackIosNew size={12} />
+            </Link>
+            <DynamicHeader
+              label={
+                summary
+                  ? summary.name.ref
+                    ? summary.name.name
+                    : `${summary.name.name} (no ref)`
+                  : "N/A"
+              }
+            />
+          </div>
+          <div className="flex items-center justify-between">
+            <DateFilter from={dateFrom} />
+            <DownloadButton />
+          </div>
+        </section>
+
+        <section>
+          <ViewSummary summary={summary.items} />
+        </section>
+      </main>
     </div>
   );
 };

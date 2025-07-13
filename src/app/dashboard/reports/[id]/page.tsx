@@ -30,46 +30,50 @@ const SingleReportPage = async ({
   const report = (await getReportById(id, dateFrom, dateTo)) as any;
 
   return (
-    <div className="flex-1 bg-white rounded-md border-2 border-[var(--border)] text-[var(--text)] p-4">
-      <div className="absolute top-4 -ml-4">
+    <div className="card">
+      <header className="absolute top-4 -ml-4">
         <PageInfo
           title="Reports"
           info="Manage your company’s employee reports in this page. You can view employee date and time records here."
         />
-      </div>
-      <div className="flex flex-col gap-y-4">
-        <div className="flex flex-row items-center gap-2">
-          <Link
-            href={`/dashboard/reports`}
-            className="rounded-full bg-[var(--border)] hover:bg-blue-200 active:bg-blue-300 active:text-[var(--accent)] text-[var(--text)] p-2 cursor-pointer"
-          >
-            <MdArrowBackIosNew size={12} />
-          </Link>
-          <DynamicHeader
-            label={
-              report
-                ? report.name.ref
-                  ? report.name.name
-                  : `${report.name.name} (no ref)`
-                : "N/A"
-            }
-          />
-        </div>
-        <div className="flex flex-row items-center justify-between">
-          <DateFilter from={dateFrom} />
-          <DownloadSingleReport
+      </header>
+
+      <main className="space-y-4">
+        <section className="flex flex-col gap-4">
+          <div className="flex items-center gap-2">
+            <Link
+              href={`/dashboard/reports`}
+              className="rounded-full bg-[var(--border)] hover:bg-blue-200 active:bg-blue-300 active:text-[var(--accent)] text-[var(--text)] p-2 cursor-pointer"
+            >
+              <MdArrowBackIosNew size={12} />
+            </Link>
+            <DynamicHeader
+              label={
+                report
+                  ? report.name.ref
+                    ? report.name.name
+                    : `${report.name.name} (no ref)`
+                  : "N/A"
+              }
+            />
+          </div>
+          <div className="flex items-center justify-between">
+            <DateFilter from={dateFrom} />
+            <DownloadSingleReport
+              reports={report ? report.items : []}
+              employee={report ? report.employee : null}
+              numDays={report ? report.totalDays : 0}
+            />
+          </div>
+        </section>
+
+        <section>
+          <ViewReport
             reports={report ? report.items : []}
-            employee={report ? report.employee : null}
-            numDays={report ? report.totalDays : 0}
+            name={report ? report.name : "N/A"}
           />
-        </div>
-      </div>
-      <div className="w-full mt-4">
-        <ViewReport
-          reports={report ? report.items : []}
-          name={report ? report.name : "N/A"}
-        />
-      </div>
+        </section>
+      </main>
     </div>
   );
 };

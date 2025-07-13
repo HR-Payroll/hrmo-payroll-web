@@ -5,8 +5,9 @@ import "./globals.css";
 const arimo = Arimo({ variable: "--font-arimo", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "HRMO Payroll Management",
-  description: "By Precious Hope T. Jumuad",
+  title: "HRMO Payroll Management System",
+  description:
+    "An automated system that integrates with DTR/biometrics to streamline payroll and boost efficiency.",
 };
 
 export default function RootLayout({

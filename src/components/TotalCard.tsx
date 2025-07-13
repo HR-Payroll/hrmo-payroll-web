@@ -13,7 +13,7 @@ const TotalCard = ({
   growth: string;
 }) => {
   return (
-    <div className="flex-1 rounded-md bg-white border-2 border-[var(--border)] p-4 text-[var(--text)]">
+    <div className="card">
       <div className="justify-self-start pb-2 text-sm">
         <p>{type}</p>
       </div>

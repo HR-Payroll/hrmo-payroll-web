@@ -47,46 +47,48 @@ const Reports = async (props: {
   }
 
   return (
-    <div className="w-full bg-white rounded-md border-2 border-[var(--border)] text-[var(--text)] p-4">
-      <div className="absolute top-4 -ml-4">
+    <div className="container">
+      <header className="absolute top-4 -ml-4">
         <PageInfo
           title="Reports"
           info="Manage your company's employee reports in this page. You can view employee daily time record here."
         />
-      </div>
-      <div className="flex flex-col gap-y-4">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-y-4">
-          <div>
+      </header>
+
+      <main className="space-y-4">
+        <section className="flex flex-col gap-4">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <TableSearch />
+            <div className="flex gap-4">
+              <UploadReports />
+              <DownloadButton />
+            </div>
           </div>
-          <div className="flex flex-row gap-x-4">
-            <UploadReports />
-            <DownloadButton />
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <DateFilter from={dateFrom} />
+            <div className="flex flex-col md:flex-row items-center">
+              <span className="hidden md:block text-sm font-medium pr-4">
+                Filters
+              </span>
+              <TableFilters departments={departments} />
+            </div>
           </div>
-        </div>
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-y-4">
-          <DateFilter from={dateFrom} />
-          <div className="flex flex-col sm:flex-row items-center justify-center">
-            <span className="hidden sm:block text-sm font-medium pr-4">
-              Filters
-            </span>
-            <TableFilters departments={departments} />
-          </div>
-        </div>
-      </div>
-      <div className="w-full mt-4">
-        <ReportTable
-          employees={employees}
-          departments={departments}
-          reload={reload}
-          reports={reports.items || []}
-          from={dateFrom}
-          to={dateTo}
-          limit={reports.pageSize}
-          rowCount={reports.pageRange}
-          page={reports.page}
-        />
-      </div>
+        </section>
+
+        <section>
+          <ReportTable
+            employees={employees}
+            departments={departments}
+            reload={reload}
+            reports={reports.items || []}
+            from={dateFrom}
+            to={dateTo}
+            limit={reports.pageSize}
+            rowCount={reports.pageRange}
+            page={reports.page}
+          />
+        </section>
+      </main>
     </div>
   );
 };
