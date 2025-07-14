@@ -1,5 +1,6 @@
 import { format } from "date-fns";
 import { getBusinessDays, getTotalHolidays } from "./holidays";
+import { REGULAR_SCHEDULE } from "@/data/constants";
 
 export const computeTotalDaysAndLate = ({
   dates,
@@ -25,8 +26,10 @@ export const computeTotalDaysAndLate = ({
 
   const gracePeriod = settings.gracePeriod || 10;
   const schedule = employee?.schedule || REGULAR_SCHEDULE;
-
-  console.log(settings);
+  const inTime = new Date(schedule.inTime.$date);
+  const outTime = new Date(schedule.outTime.$date);
+  const workingHours =
+    (outTime.getTime() - inTime.getTime()) / (1000 * 60 * 60) - 1;
 
   Object.keys(days).forEach((date) => {
     const dayOfWeek = new Date(date).getDay();
@@ -45,12 +48,17 @@ export const computeTotalDaysAndLate = ({
       (times[times.length - 1].getTime() - times[0].getTime()) /
       (1000 * 60 * 60);
 
-    const cutoff = new Date(times[0]);
-    cutoff.setHours(8, 10, 0, 0);
+    console.log("Total Hours:", totalHours);
+    console.log("Working Hours:", workingHours);
+
+    const cutoff = inTime;
+    cutoff.setMinutes(cutoff.getMinutes() + gracePeriod);
+
     const lateness = times[0].getTime() - cutoff.getTime();
     const totalDays = Math.min(
       1,
-      Math.floor(totalHours / 8) + (totalHours % 8) / 8
+      Math.floor(totalHours / workingHours) +
+        (totalHours % workingHours) / workingHours
     );
     const totalLate = lateness > 0 ? Math.floor(lateness / (1000 * 60)) : 0;
     const deductions = (totalLate / 480) * 300;
@@ -179,6 +187,14 @@ const getTotalDeduction = (employee: any) => {
   return deductionList.reduce((sum: number, deduction: string) => {
     return sum + employee[deduction] || 0;
   }, 0);
+};
+
+const timeStringToDate = (timeString: string): Date => {
+  console.log("Time String:", timeString);
+  const [hours, minutes] = timeString.split(":").map(Number);
+  const date = new Date();
+  date.setHours(hours, minutes, 0, 0);
+  return date;
 };
 
 export const getTotalBusinessDays = (from: Date, to: Date, events: any[]) => {

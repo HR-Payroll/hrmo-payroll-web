@@ -2,6 +2,7 @@ import { prisma } from "@/../prisma/prisma";
 import { computeTotalDaysAndLate } from "@/utils/computations";
 import { format } from "date-fns";
 import { paginationUtil } from "@/utils/tools";
+import { getSettings } from "@/actions/settings";
 
 export const getAllReport = async (
   from: Date,
@@ -34,8 +35,51 @@ export const getAllReport = async (
         {
           $lookup: {
             from: "Employee",
-            localField: "recordNo",
-            foreignField: "recordNo",
+            let: { recordNo: "$recordNo" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $eq: ["$recordNo", "$$recordNo"],
+                  },
+                },
+              },
+              {
+                $lookup: {
+                  from: "Schedule",
+                  let: { scheduleId: "$employee.schedule" },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: {
+                          $cond: {
+                            if: {
+                              $or: [
+                                { $eq: ["$$scheduleId", null] },
+                                { $eq: [{ $type: "$$scheduleId" }, "missing"] },
+                              ],
+                            },
+                            then: { $eq: ["$name", "Regular"] },
+                            else: { $eq: ["$_id", "$$scheduleId"] },
+                          },
+                        },
+                      },
+                    },
+                  ],
+                  as: "schedules",
+                },
+              },
+              {
+                $project: {
+                  _id: 1,
+                  name: 1,
+                  category: 1,
+                  department: 1,
+                  schedule: { $arrayElemAt: ["$schedules", 0] },
+                  rate: 1,
+                },
+              },
+            ],
             as: "employee",
           },
         },
@@ -63,12 +107,15 @@ export const getAllReport = async (
       ],
     });
 
+    const settings = await getSettings();
+
     const temp = Array.isArray(reports)
       ? reports.map((report: any) => {
-          const { totalDays, late } = computeTotalDaysAndLate(
-            report.items,
-            report.employee
-          );
+          const { totalDays, late } = computeTotalDaysAndLate({
+            dates: report.items,
+            employee: report.employee,
+            settings,
+          });
           return {
             ...report,
             numDays: totalDays,
@@ -144,8 +191,51 @@ export const getPaginatedReport = async (
         {
           $lookup: {
             from: "Employee",
-            localField: "recordNo",
-            foreignField: "recordNo",
+            let: { recordNo: "$recordNo" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $eq: ["$recordNo", "$$recordNo"],
+                  },
+                },
+              },
+              {
+                $lookup: {
+                  from: "Schedule",
+                  let: { scheduleId: "$employee.schedule" },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: {
+                          $cond: {
+                            if: {
+                              $or: [
+                                { $eq: ["$$scheduleId", null] },
+                                { $eq: [{ $type: "$$scheduleId" }, "missing"] },
+                              ],
+                            },
+                            then: { $eq: ["$name", "Regular"] },
+                            else: { $eq: ["$_id", "$$scheduleId"] },
+                          },
+                        },
+                      },
+                    },
+                  ],
+                  as: "schedules",
+                },
+              },
+              {
+                $project: {
+                  _id: 1,
+                  name: 1,
+                  category: 1,
+                  department: 1,
+                  schedule: { $arrayElemAt: ["$schedules", 0] },
+                  rate: 1,
+                },
+              },
+            ],
             as: "employee",
           },
         },
@@ -182,12 +272,16 @@ export const getPaginatedReport = async (
 
     const result = reports as any;
     const length = result[0].totalCount[0] ? result[0].totalCount[0].count : 0;
+
+    const settings = await getSettings();
+
     const items = Array.isArray(result[0].items)
       ? result[0].items.map((report: any) => {
-          const { totalDays, late } = computeTotalDaysAndLate(
-            report.items,
-            report.employee
-          );
+          const { totalDays, late } = computeTotalDaysAndLate({
+            dates: report.items,
+            employee: report.employee,
+            settings,
+          });
           return {
             ...report,
             numDays: totalDays,
@@ -237,8 +331,51 @@ export const getReportById = async (id: string, from: Date, to: Date) => {
         {
           $lookup: {
             from: "Employee",
-            localField: "recordNo",
-            foreignField: "recordNo",
+            let: { recordNo: "$recordNo" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $eq: ["$recordNo", "$$recordNo"],
+                  },
+                },
+              },
+              {
+                $lookup: {
+                  from: "Schedule",
+                  let: { scheduleId: "$employee.schedule" },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: {
+                          $cond: {
+                            if: {
+                              $or: [
+                                { $eq: ["$$scheduleId", null] },
+                                { $eq: [{ $type: "$$scheduleId" }, "missing"] },
+                              ],
+                            },
+                            then: { $eq: ["$name", "Regular"] },
+                            else: { $eq: ["$_id", "$$scheduleId"] },
+                          },
+                        },
+                      },
+                    },
+                  ],
+                  as: "schedules",
+                },
+              },
+              {
+                $project: {
+                  _id: 1,
+                  name: 1,
+                  category: 1,
+                  department: 1,
+                  schedule: { $arrayElemAt: ["$schedules", 0] },
+                  rate: 1,
+                },
+              },
+            ],
             as: "employee",
           },
         },
@@ -260,11 +397,13 @@ export const getReportById = async (id: string, from: Date, to: Date) => {
     });
 
     const result = report[0] as any;
+    const settings = await getSettings();
 
-    const { totalDays } = computeTotalDaysAndLate(
-      result.items,
-      result.employee
-    );
+    const { totalDays } = computeTotalDaysAndLate({
+      dates: result.items,
+      employee: result.employee,
+      settings,
+    });
 
     let reports = result.items
       .map((item: any) => item.timestamp)
