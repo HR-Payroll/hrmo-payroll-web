@@ -13,7 +13,7 @@ export const LoginSchema = object({
 export const DepartmentSchema = object({
   name: string().min(1, "Department name is required"),
   category: string().min(1, "Category is required"),
-  index: string(),
+  index: string().optional(),
 });
 
 export const EmployeeSchema = object({

@@ -11,9 +11,11 @@ import { z } from "zod";
 const DepartmentForm = ({
   data,
   onClose,
+  setSnackbar,
 }: {
   data?: any;
   onClose: Function;
+  setSnackbar: Function;
 }) => {
   const [serverError, setServerError] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState<boolean>(false);
@@ -40,13 +42,42 @@ const DepartmentForm = ({
     setServerError(null);
     setIsAdding(true);
 
+    data = {
+      ...data,
+      index: `${data.name
+        .toString()
+        .toLowerCase()
+        .replace(/\s+/g, "")
+        .replace(/[^a-zA-Z0-9]/g, "")}-${data.category
+        .toLowerCase()
+        .replace(/\s+/g, "")
+        .replace(/[^a-zA-Z0-9]/g, "")}`,
+    };
+
     try {
       const result = await createDepartment(data);
       setIsAdding(false);
-      console.log(result);
+      if (result && result.error) {
+        setIsAdding(false);
+        return setSnackbar({
+          message: result.error,
+          type: "error",
+          modal: true,
+        });
+      }
+
+      setSnackbar({
+        message: result.success,
+        type: "success",
+        modal: true,
+      });
       onClose();
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      setSnackbar({
+        message: error.message,
+        type: "error",
+        modal: true,
+      });
       setIsAdding(false);
     }
   };

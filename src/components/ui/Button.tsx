@@ -4,10 +4,12 @@ function Button({
   label,
   type,
   isLoading,
+  onClick,
 }: {
   label: string;
   type?: "submit" | "reset" | "button";
   isLoading: boolean;
+  onClick?: () => void;
 }) {
   return (
     <button
