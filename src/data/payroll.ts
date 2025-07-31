@@ -396,8 +396,51 @@ export const getSummaryById = async (id: string, from: Date, to: Date) => {
         {
           $lookup: {
             from: "Employee",
-            localField: "recordNo",
-            foreignField: "recordNo",
+            let: { recordNo: "$recordNo" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $eq: ["$recordNo", "$$recordNo"],
+                  },
+                },
+              },
+              {
+                $lookup: {
+                  from: "Schedule",
+                  let: { scheduleId: "$employee.schedule" },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: {
+                          $cond: {
+                            if: {
+                              $or: [
+                                { $eq: ["$$scheduleId", null] },
+                                { $eq: [{ $type: "$$scheduleId" }, "missing"] },
+                              ],
+                            },
+                            then: { $eq: ["$name", "Regular"] },
+                            else: { $eq: ["$_id", "$$scheduleId"] },
+                          },
+                        },
+                      },
+                    },
+                  ],
+                  as: "schedules",
+                },
+              },
+              {
+                $project: {
+                  _id: 1,
+                  name: 1,
+                  category: 1,
+                  department: 1,
+                  schedule: { $arrayElemAt: ["$schedules", 0] },
+                  rate: 1,
+                },
+              },
+            ],
             as: "employee",
           },
         },
