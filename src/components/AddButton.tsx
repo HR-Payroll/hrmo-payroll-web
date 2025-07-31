@@ -47,7 +47,14 @@ const AddButton = ({
   });
 
   const forms: { [key: string]: () => JSX.Element } = {
-    department: () => <DepartmentForm onClose={onClose} />,
+    department: () => (
+      <DepartmentForm
+        onClose={onClose}
+        setSnackbar={(params: any) => {
+          setSnackbar(params);
+        }}
+      />
+    ),
     employee: () => (
       <EmployeeForm
         setSnackbar={(params: any) => {
