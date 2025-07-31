@@ -424,9 +424,9 @@ export const getReportById = async (id: string, from: Date, to: Date) => {
         );
 
         let filterTimes = times;
-        if (times.length > 4) {
-          filterTimes = [times[0], times[1], times[2], times[times.length - 1]];
-        }
+        // if (times.length > 4) {
+        //   filterTimes = [times[0], times[1], times[2], times[times.length - 1]];
+        // }
 
         const items = filterTimes
           .slice(0, 4)
