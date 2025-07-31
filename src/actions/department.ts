@@ -16,7 +16,7 @@ export const createDepartment = async (
 
   try {
     await prisma.department.create({
-      data: { name, category, index },
+      data: { name, category, index: index as string },
     });
 
     return { success: "Department has been successfully added!" };
