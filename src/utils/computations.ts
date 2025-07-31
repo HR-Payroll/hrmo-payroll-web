@@ -124,6 +124,8 @@ export const computeTotalDaysAndLateSingle = ({
     .map((date, index: number) => {
       // If there are more than 4 timestamps for the date, keep only the first and last
 
+      console.log("Date:", date);
+
       const times = reports[date].sort(
         (a: Date, b: Date) => a.getTime() - b.getTime()
       );
