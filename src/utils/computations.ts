@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import { getBusinessDays, getTotalHolidays } from "./holidays";
 import { REGULAR_SCHEDULE } from "@/data/constants";
+import { dateTz } from "./dateFormatter";
 
 export const computeTotalDaysAndLate = ({
   dates,
@@ -16,11 +17,12 @@ export const computeTotalDaysAndLate = ({
   const days = dates
     .map((item: any) => item.timestamp)
     .reduce((acc: any, dateTime: any) => {
-      const date = format(new Date(dateTime), "yyyy-MM-dd HH:mm:ss").split(
-        " "
-      )[0];
+      const date = format(
+        dateTz(new Date(dateTime), 8),
+        "yyyy-MM-dd HH:mm:ss"
+      ).split(" ")[0];
       acc[date] = acc[date] || [];
-      acc[date].push(new Date(dateTime));
+      acc[date].push(dateTz(new Date(dateTime), 8));
       return acc;
     }, {});
 
@@ -31,7 +33,7 @@ export const computeTotalDaysAndLate = ({
   // console.log("Out Time:", schedule.outTime.$date);
 
   Object.keys(days).forEach((date) => {
-    const dayOfWeek = new Date(date).getDay();
+    const dayOfWeek = dateTz(new Date(date), 8).getDay();
 
     if (!schedule.daysIncluded.includes(dayOfWeek)) {
       delete days[date];
@@ -43,8 +45,14 @@ export const computeTotalDaysAndLate = ({
       (a: Date, b: Date) => a.getTime() - b.getTime()
     );
 
-    const inTime = new Date(date + "T" + schedule.inTime.$date.split("T")[1]);
-    const outTime = new Date(date + "T" + schedule.outTime.$date.split("T")[1]);
+    const inTime = dateTz(
+      new Date(date + "T" + schedule.inTime.$date.split("T")[1]),
+      8
+    );
+    const outTime = dateTz(
+      new Date(date + "T" + schedule.outTime.$date.split("T")[1]),
+      8
+    );
     const workingHours =
       (outTime.getTime() - inTime.getTime()) / (1000 * 60 * 60) - 1;
 
@@ -120,7 +128,10 @@ export const computeTotalDaysAndLateSingle = ({
   const schedule = employee?.schedule || REGULAR_SCHEDULE;
 
   const sortedReports = Object.keys(reports)
-    .sort((a: any, b: any) => new Date(b).getTime() - new Date(a).getTime())
+    .sort(
+      (a: any, b: any) =>
+        dateTz(new Date(b), 8).getTime() - dateTz(new Date(a), 8).getTime()
+    )
     .map((date, index: number) => {
       // If there are more than 4 timestamps for the date, keep only the first and last
 
@@ -130,9 +141,13 @@ export const computeTotalDaysAndLateSingle = ({
         (a: Date, b: Date) => a.getTime() - b.getTime()
       );
 
-      const inTime = new Date(date + "T" + schedule.inTime.$date.split("T")[1]);
-      const outTime = new Date(
-        date + "T" + schedule.outTime.$date.split("T")[1]
+      const inTime = dateTz(
+        new Date(date + "T" + schedule.inTime.$date.split("T")[1]),
+        8
+      );
+      const outTime = dateTz(
+        new Date(date + "T" + schedule.outTime.$date.split("T")[1]),
+        8
       );
       const totalHours =
         (outTime.getTime() - inTime.getTime()) / (1000 * 60 * 60) - 1;
@@ -221,8 +236,8 @@ const timeStringToDate = (timeString: string): Date => {
 };
 
 export const getTotalBusinessDays = (from: Date, to: Date, events: any[]) => {
-  from = new Date(from);
-  to = new Date(to);
+  from = dateTz(new Date(from), 8);
+  to = dateTz(new Date(to), 8);
 
   return getBusinessDays(from, to) - getTotalHolidays(events);
 };

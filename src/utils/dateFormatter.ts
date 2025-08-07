@@ -30,3 +30,8 @@ export const dateQuery = (from?: string, to?: string) => {
 
   return { currentDate, dateFrom, dateTo };
 };
+
+export const dateTz = (date: Date, offsetHours: number): Date => {
+  const utcTime = date.getTime() + date.getTimezoneOffset() * 60000;
+  return new Date(utcTime + offsetHours * 3600000);
+};
