@@ -440,8 +440,6 @@ export const getReportById = async (id: string, from: Date, to: Date) => {
             return acc;
           }, {});
 
-        console.log("Date: ", date);
-        console.log("Items:", items);
         return {
           date,
           name: result.name,

@@ -2,7 +2,8 @@
 import React from "react";
 import { tableStyle } from "@/lib/themes";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { format } from "date-fns";
+import { format } from "date-fns-tz";
+import { dateTz } from "@/utils/dateFormatter";
 
 function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
   const columns: GridColDef[] = [
@@ -33,7 +34,9 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
       align: "center",
       headerAlign: "center",
       valueGetter: (params: any) => {
-        return params ? format(params, "hh:mm aa") : "";
+        return params
+          ? format(dateTz(params), "hh:mm aa", { timeZone: "Asia/Manila" })
+          : "";
       },
     },
     {
@@ -44,7 +47,9 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
       align: "center",
       headerAlign: "center",
       valueGetter: (params: any) => {
-        return params ? format(params, "hh:mm aa") : "";
+        return params
+          ? format(dateTz(params), "hh:mm aa", { timeZone: "Asia/Manila" })
+          : "";
       },
     },
     {
@@ -55,7 +60,9 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
       align: "center",
       headerAlign: "center",
       valueGetter: (params: any) => {
-        return params ? format(params, "hh:mm aa") : "";
+        return params
+          ? format(dateTz(params), "hh:mm aa", { timeZone: "Asia/Manila" })
+          : "";
       },
     },
     {
@@ -66,7 +73,9 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
       align: "center",
       headerAlign: "center",
       valueGetter: (params: any) => {
-        return params ? format(params, "hh:mm aa") : "";
+        return params
+          ? format(dateTz(params), "hh:mm aa", { timeZone: "Asia/Manila" })
+          : "";
       },
     },
   ];
@@ -93,16 +102,6 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
       sx={tableStyle}
     />
   );
-}
-
-function getTimeZoneValue(): string {
-  if (
-    typeof Intl !== "undefined" &&
-    Intl.DateTimeFormat().resolvedOptions().timeZone
-  ) {
-    return Intl.DateTimeFormat().resolvedOptions().timeZone;
-  }
-  return "UTC";
 }
 
 export default ViewReport;
