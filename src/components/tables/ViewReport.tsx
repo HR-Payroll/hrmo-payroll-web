@@ -2,7 +2,7 @@
 import React from "react";
 import { tableStyle } from "@/lib/themes";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { format } from "date-fns-tz";
+import { format } from "date-fns";
 
 function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
   const columns: GridColDef[] = [
@@ -33,9 +33,7 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
       align: "center",
       headerAlign: "center",
       valueGetter: (params: any) => {
-        return params
-          ? format(params, "hh:mm aa", { timeZone: "Asia/Manila" })
-          : "";
+        return params ? format(params, "hh:mm aa") : "";
       },
     },
     {
@@ -46,9 +44,7 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
       align: "center",
       headerAlign: "center",
       valueGetter: (params: any) => {
-        return params
-          ? format(params, "hh:mm aa", { timeZone: "Asia/Manila" })
-          : "";
+        return params ? format(params, "hh:mm aa") : "";
       },
     },
     {
@@ -59,9 +55,7 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
       align: "center",
       headerAlign: "center",
       valueGetter: (params: any) => {
-        return params
-          ? format(params, "hh:mm aa", { timeZone: "Asia/Manila" })
-          : "";
+        return params ? format(params, "hh:mm aa") : "";
       },
     },
     {
@@ -72,9 +66,7 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
       align: "center",
       headerAlign: "center",
       valueGetter: (params: any) => {
-        return params
-          ? format(params, "hh:mm aa", { timeZone: "Asia/Manila" })
-          : "";
+        return params ? format(params, "hh:mm aa") : "";
       },
     },
   ];
