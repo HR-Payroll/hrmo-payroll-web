@@ -2,10 +2,9 @@
 import React from "react";
 import { tableStyle } from "@/lib/themes";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { format, fromZonedTime } from "date-fns-tz";
+import { format } from "date-fns";
 
 function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
-  const timeZone = getTimeZoneValue();
   const columns: GridColDef[] = [
     {
       field: "date",
@@ -34,9 +33,7 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
       align: "center",
       headerAlign: "center",
       valueGetter: (params: any) => {
-        return params
-          ? format(fromZonedTime(params, timeZone), "hh:mm aa")
-          : "";
+        return params ? format(params, "hh:mm aa") : "";
       },
     },
     {
@@ -47,9 +44,7 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
       align: "center",
       headerAlign: "center",
       valueGetter: (params: any) => {
-        return params
-          ? format(fromZonedTime(params, timeZone), "hh:mm aa")
-          : "";
+        return params ? format(params, "hh:mm aa") : "";
       },
     },
     {
@@ -60,9 +55,7 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
       align: "center",
       headerAlign: "center",
       valueGetter: (params: any) => {
-        return params
-          ? format(fromZonedTime(params, timeZone), "hh:mm aa")
-          : "";
+        return params ? format(params, "hh:mm aa") : "";
       },
     },
     {
@@ -73,9 +66,7 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
       align: "center",
       headerAlign: "center",
       valueGetter: (params: any) => {
-        return params
-          ? format(fromZonedTime(params, timeZone), "hh:mm aa")
-          : "";
+        return params ? format(params, "hh:mm aa") : "";
       },
     },
   ];
