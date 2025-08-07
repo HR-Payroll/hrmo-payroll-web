@@ -425,7 +425,7 @@ export const getReportById = async (id: string, from: Date, to: Date) => {
       )
       .map((date) => {
         const times = reports[date].sort(
-          (a: Date, b: Date) => a.getTime() - b.getTime()
+          (a: Date, b: Date) => dateTz(a).getTime() - dateTz(b).getTime()
         );
 
         let filterTimes = times;

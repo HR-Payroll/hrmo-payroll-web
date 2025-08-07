@@ -42,7 +42,7 @@ export const computeTotalDaysAndLate = ({
 
   const inOut = Object.keys(days).map((date) => {
     const times = days[date].sort(
-      (a: Date, b: Date) => a.getTime() - b.getTime()
+      (a: Date, b: Date) => dateTz(a).getTime() - dateTz(b).getTime()
     );
 
     const inTime = dateTz(
@@ -136,7 +136,7 @@ export const computeTotalDaysAndLateSingle = ({
       console.log("Date:", date);
 
       const times = reports[date].sort(
-        (a: Date, b: Date) => a.getTime() - b.getTime()
+        (a: Date, b: Date) => dateTz(a).getTime() - dateTz(b).getTime()
       );
 
       const inTime = dateTz(
