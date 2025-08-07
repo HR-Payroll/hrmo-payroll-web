@@ -1,3 +1,5 @@
+import { toZonedTime } from "date-fns-tz";
+
 export const stringToDate = (date: string) => {
   const [datePart, timePart] = date.split(" ");
   const [year, month, day] = datePart.split("-").map(Number);
@@ -31,7 +33,6 @@ export const dateQuery = (from?: string, to?: string) => {
   return { currentDate, dateFrom, dateTo };
 };
 
-export const dateTz = (date: Date, offsetHours: number): Date => {
-  const utcTime = date.getTime() + date.getTimezoneOffset() * 60000;
-  return new Date(utcTime + offsetHours * 3600000);
+export const dateTz = (date: Date): Date => {
+  return toZonedTime(date, "Asia/Manila");
 };

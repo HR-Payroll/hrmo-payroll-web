@@ -410,18 +410,18 @@ export const getReportById = async (id: string, from: Date, to: Date) => {
       .map((item: any) => item.timestamp)
       .reduce((acc: any, dateTime: any) => {
         const date = format(
-          dateTz(new Date(dateTime), 8),
+          dateTz(new Date(dateTime)),
           "yyyy-MM-dd HH:mm:ss"
         ).split(" ")[0];
         acc[date] = acc[date] || [];
-        acc[date].push(dateTz(new Date(dateTime), 8));
+        acc[date].push(dateTz(new Date(dateTime)));
         return acc;
       }, {});
 
     reports = Object.keys(reports)
       .sort(
         (a: any, b: any) =>
-          dateTz(new Date(b), 8).getTime() - dateTz(new Date(a), 8).getTime()
+          dateTz(new Date(b)).getTime() - dateTz(new Date(a)).getTime()
       )
       .map((date) => {
         const times = reports[date].sort(
