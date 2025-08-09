@@ -1,9 +1,8 @@
 "use client";
-import React, { useEffect } from "react";
+import React from "react";
 import { tableStyle } from "@/lib/themes";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { format } from "date-fns-tz";
-import { dateTzUTC, formatTime } from "@/utils/dateFormatter";
+import { formatTime } from "@/utils/dateFormatter";
 
 function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
   const columns: GridColDef[] = [
@@ -34,9 +33,7 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
       align: "center",
       headerAlign: "center",
       valueGetter: (params: any) => {
-        return params
-          ? format(params, "hh:mm aa", { timeZone: "Asia/Manila" })
-          : "";
+        return params ? formatTime(params, "hh:mm aa") : "";
       },
     },
     {
@@ -47,9 +44,7 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
       align: "center",
       headerAlign: "center",
       valueGetter: (params: any) => {
-        return params
-          ? format(params, "hh:mm aa", { timeZone: "Asia/Manila" })
-          : "";
+        return params ? formatTime(params, "hh:mm aa") : "";
       },
     },
     {
@@ -60,9 +55,7 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
       align: "center",
       headerAlign: "center",
       valueGetter: (params: any) => {
-        return params
-          ? format(params, "hh:mm aa", { timeZone: "Asia/Manila" })
-          : "";
+        return params ? formatTime(params, "hh:mm aa") : "";
       },
     },
     {
@@ -73,36 +66,10 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
       align: "center",
       headerAlign: "center",
       valueGetter: (params: any) => {
-        return params
-          ? format(params, "hh:mm aa", { timeZone: "Asia/Manila" })
-          : "";
+        return params ? formatTime(params, "hh:mm aa") : "";
       },
     },
   ];
-
-  useEffect(() => {
-    console.log("ViewReport component mounted with reports:", reports);
-
-    reports?.forEach((report) => {
-      console.log("Employee Name:", report.name);
-      console.log(
-        "Time In 1:",
-        report.r1 ? formatTime(report.r1, "hh:mm aa") : "N/A"
-      );
-      console.log(
-        "Time Out 1:",
-        report.r2 ? formatTime(report.r2, "hh:mm aa") : "N/A"
-      );
-      console.log(
-        "Time In 2:",
-        report.r3 ? formatTime(report.r3, "hh:mm aa") : "N/A"
-      );
-      console.log(
-        "Time Out 2:",
-        report.r4 ? formatTime(report.r4, "hh:mm aa") : "N/A"
-      );
-    });
-  }, [reports]);
 
   return (
     <DataGrid
