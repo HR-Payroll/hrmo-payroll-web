@@ -1,4 +1,5 @@
-import { toZonedTime } from "date-fns-tz";
+import { toZonedTime, format, toDate } from "date-fns-tz";
+import { subHours } from "date-fns";
 
 export const stringToDate = (date: string) => {
   const [datePart, timePart] = date.split(" ");
@@ -33,6 +34,17 @@ export const dateQuery = (from?: string, to?: string) => {
   return { currentDate, dateFrom, dateTo };
 };
 
+const TIMEZONE = "Asia/Manila";
+
 export const dateTz = (date: Date): Date => {
-  return toZonedTime(date, "Asia/Manila");
+  return toDate(date, { timeZone: TIMEZONE });
 };
+
+export function formatTime(
+  date: Date | string,
+  pattern = "yyyy-MM-dd hh:mmaaa"
+) {
+  if (!date) return "";
+  const d = typeof date === "string" ? new Date(date) : date;
+  return format(subHours(d, 8), pattern, { timeZone: TIMEZONE });
+}
