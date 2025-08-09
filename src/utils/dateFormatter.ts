@@ -1,5 +1,5 @@
-import { toZonedTime, format, toDate } from "date-fns-tz";
-import { subHours } from "date-fns";
+import { toZonedTime, format } from "date-fns-tz";
+import { subHours, toDate } from "date-fns";
 
 export const stringToDate = (date: string) => {
   const [datePart, timePart] = date.split(" ");
@@ -37,7 +37,7 @@ export const dateQuery = (from?: string, to?: string) => {
 const TIMEZONE = "Asia/Manila";
 
 export const dateTz = (date: Date): Date => {
-  return toDate(date, { timeZone: TIMEZONE });
+  return toZonedTime(date, TIMEZONE);
 };
 
 export function formatTime(
@@ -48,3 +48,11 @@ export function formatTime(
   const d = typeof date === "string" ? new Date(date) : date;
   return format(subHours(d, 8), pattern, { timeZone: TIMEZONE });
 }
+
+export const dateTzUTC = (date: Date): Date => {
+  return toDate(date);
+};
+
+// export const dateTzUTC = (date: Date): Date => {
+//   return utcToZonedTime(utcDate, 'Asia/Manila');
+// }
