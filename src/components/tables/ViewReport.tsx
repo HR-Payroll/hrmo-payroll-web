@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { tableStyle } from "@/lib/themes";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { format } from "date-fns";
@@ -71,6 +71,10 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
       },
     },
   ];
+
+  useEffect(() => {
+    console.log("ViewReport component mounted with reports:", reports);
+  }, [reports]);
 
   return (
     <DataGrid
