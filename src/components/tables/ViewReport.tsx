@@ -4,6 +4,10 @@ import { tableStyle } from "@/lib/themes";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { format } from "date-fns-tz";
 import { dateTz } from "@/utils/dateFormatter";
+import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone.js";
+
+dayjs.extend(timezone);
 
 function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
   const columns: GridColDef[] = [
@@ -34,7 +38,7 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
       align: "center",
       headerAlign: "center",
       valueGetter: (params: any) => {
-        return params ? format(new Date(params), "hh:mm aa") : "";
+        return params ? dayjs(new Date(params)).format("hh:mm aa") : "";
       },
     },
     {
@@ -45,7 +49,9 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
       align: "center",
       headerAlign: "center",
       valueGetter: (params: any) => {
-        return params ? format(new Date(params), "hh:mm aa") : "";
+        return params
+          ? dayjs(new Date(params)).tz("Asia/Manila").format("hh:mm aa")
+          : "";
       },
     },
     {
@@ -56,7 +62,7 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
       align: "center",
       headerAlign: "center",
       valueGetter: (params: any) => {
-        return params ? format(new Date(params), "hh:mm aa") : "";
+        return params ? dayjs(params).format("hh:mm aa") : "";
       },
     },
     {
@@ -67,7 +73,7 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
       align: "center",
       headerAlign: "center",
       valueGetter: (params: any) => {
-        return params ? format(new Date(params), "hh:mm aa") : "";
+        return params ? dayjs(params).tz("Asia/Manila").format("hh:mm aa") : "";
       },
     },
   ];
