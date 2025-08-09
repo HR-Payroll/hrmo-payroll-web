@@ -74,6 +74,27 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
 
   useEffect(() => {
     console.log("ViewReport component mounted with reports:", reports);
+
+    reports?.forEach((report) => {
+      console.log("Report Date:", dateTz(report.date));
+      console.log("Employee Name:", report.name);
+      console.log(
+        "Time In 1:",
+        report.r1 ? format(report.r1, "hh:mm aa") : "N/A"
+      );
+      console.log(
+        "Time Out 1:",
+        report.r2 ? format(report.r2, "hh:mm aa") : "N/A"
+      );
+      console.log(
+        "Time In 2:",
+        report.r3 ? format(report.r3, "hh:mm aa") : "N/A"
+      );
+      console.log(
+        "Time Out 2:",
+        report.r4 ? format(report.r4, "hh:mm aa") : "N/A"
+      );
+    });
   }, [reports]);
 
   return (
