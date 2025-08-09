@@ -46,7 +46,11 @@ export function formatTime(
 ) {
   if (!date) return "";
   const d = typeof date === "string" ? new Date(date) : date;
-  return format(subHours(d, 8), pattern, { timeZone: TIMEZONE });
+  return format(
+    process.env.NODE_ENV === "production" ? subHours(d, 8) : d,
+    pattern,
+    { timeZone: TIMEZONE }
+  );
 }
 
 export const dateTzUTC = (date: Date): Date => {
