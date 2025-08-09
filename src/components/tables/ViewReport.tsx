@@ -2,7 +2,7 @@
 import React, { useEffect } from "react";
 import { tableStyle } from "@/lib/themes";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { format } from "date-fns";
+import { format } from "date-fns-tz";
 import { dateTz } from "@/utils/dateFormatter";
 
 function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
@@ -80,19 +80,25 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
       console.log("Employee Name:", report.name);
       console.log(
         "Time In 1:",
-        report.r1 ? format(report.r1, "hh:mm aa") : "N/A"
+        report.r1 ? format(report.r1, "hh:mm aa", { timeZone: "UTC" }) : "N/A"
       );
       console.log(
         "Time Out 1:",
-        report.r2 ? format(report.r2, "hh:mm aa") : "N/A"
+        report.r2
+          ? format(report.r2, "hh:mm aa", { timeZone: "Asia/Manila" })
+          : "N/A"
       );
       console.log(
         "Time In 2:",
-        report.r3 ? format(report.r3, "hh:mm aa") : "N/A"
+        report.r3
+          ? format(dateTz(report.r3), "hh:mm aa", { timeZone: "Asia/Manila" })
+          : "N/A"
       );
       console.log(
         "Time Out 2:",
-        report.r4 ? format(report.r4, "hh:mm aa") : "N/A"
+        report.r4
+          ? format(dateTz(report.r4), "hh:mm aa", { timeZone: "UTC" })
+          : "N/A"
       );
     });
   }, [reports]);
