@@ -88,11 +88,16 @@ const validateTime = (inTime: Date, outTime: Date): boolean => {
 
 export const ScheduleSchema = object({
   name: string().min(1, "Schedule name is required"),
-  inTime: date({ required_error: "In Time is required" }),
-  outTime: date({ required_error: "Out Time is required" }),
-  daysIncluded: array(number()).min(1, "Please include a day"),
+  daysIncluded: array(
+    object({
+      label: string().min(1, "Day label is required"),
+      value: number().min(0, "Day value must be a positive integer"),
+      inTime: date({ required_error: "In Time is required" }),
+      outTime: date({ required_error: "Out Time is required" }),
+    }).refine((data) => validateTime(data.inTime, data.outTime), {
+      message: "In Time must be less than Out Time",
+      path: ["inTime"],
+    })
+  ).min(1, "Please include a day"),
   readOnly: boolean().default(false).optional(),
-}).refine((data) => validateTime(data.inTime, data.outTime), {
-  message: "In Time must be less than Out Time",
-  path: ["inTime"],
 });

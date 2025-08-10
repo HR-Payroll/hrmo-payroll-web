@@ -12,6 +12,7 @@ type InputFieldProps = {
   error?: FieldError;
   setValue: UseFormSetValue<any>;
   validator?: () => boolean;
+  disabled?: boolean;
 };
 
 const TimePickerField = ({
@@ -21,6 +22,7 @@ const TimePickerField = ({
   error,
   setValue,
   validator,
+  disabled = false,
 }: InputFieldProps) => {
   return (
     <div className="flex flex-col text-sm gap-2 text-[var(--text)]">
@@ -31,6 +33,7 @@ const TimePickerField = ({
             textField: {
               size: "small",
               variant: "outlined",
+              disabled,
             },
           }}
           onAccept={(value) => {
@@ -40,6 +43,7 @@ const TimePickerField = ({
             setValue(name, value, { shouldValidate: true });
           }}
           defaultValue={defaultValue}
+          disabled={disabled}
         />
       </LocalizationProvider>
       {error?.message && <p className="text-red text-xs">{error.message}</p>}

@@ -5,7 +5,7 @@ import "./globals.css";
 const arimo = Arimo({ variable: "--font-arimo", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "HRMO Payroll Management System",
+  title: "HRMO Payroll Management System | Jasaan",
   description:
     "An automated system that integrates with DTR/biometrics to streamline payroll and boost efficiency.",
 };

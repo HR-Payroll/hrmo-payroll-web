@@ -12,6 +12,7 @@
   --wrong: #d32f2f;
   --lightwrong: #f44336;
   --bluetext: #4f73df;
+  --highlight: #1877d1;
 }
 
 @utility container {
@@ -24,6 +25,7 @@
 
 @theme inline {
   --color-red: var(--wrong);
+  --color-highlight: var(--highlight);
 }
 
 .react-calendar {
