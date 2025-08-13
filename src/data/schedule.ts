@@ -22,8 +22,7 @@ export const getAllSchedules = async () => {
           $project: {
             _id: 1,
             name: 1,
-            inTime: 1,
-            outTime: 1,
+            option: 1,
             daysIncluded: 1,
             readOnly: 1,
             createdAt: 1,
@@ -63,9 +62,8 @@ export const getPaginatedSchedule = async (
           $project: {
             _id: 1,
             name: 1,
-            inTime: 1,
-            outTime: 1,
             daysIncluded: 1,
+            option: 1,
             readOnly: 1,
             createdAt: 1,
             updatedAt: 1,

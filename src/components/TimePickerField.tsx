@@ -42,7 +42,7 @@ const TimePickerField = ({
           onChange={(value) => {
             setValue(name, value, { shouldValidate: true });
           }}
-          defaultValue={defaultValue}
+          value={defaultValue}
           disabled={disabled}
         />
       </LocalizationProvider>

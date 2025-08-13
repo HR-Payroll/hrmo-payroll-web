@@ -7,9 +7,16 @@ export interface Settings {
 export interface ScheduleDay {
   label: string;
   value: number;
-  inTime: Date;
-  outTime: Date;
+  inTime: string;
+  outTime: string;
   included?: boolean;
+}
+
+export interface Schedule {
+  name: string;
+  daysIncluded: ScheduleDay[];
+  readOnly: boolean;
+  option: string;
 }
 
 export type DaysKey =

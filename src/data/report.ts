@@ -1,5 +1,8 @@
 import { prisma } from "@/../prisma/prisma";
-import { computeTotalDaysAndLate } from "@/utils/computations";
+import {
+  computeTotalDaysAndLate,
+  computeTotalDaysAndLateSingle,
+} from "@/utils/computations";
 import { format } from "date-fns";
 import { paginationUtil } from "@/utils/tools";
 import { getSettings } from "@/actions/settings";
@@ -48,7 +51,7 @@ export const getAllReport = async (
               {
                 $lookup: {
                   from: "Schedule",
-                  let: { scheduleId: "$employee.schedule" },
+                  let: { scheduleId: "$schedule" },
                   pipeline: [
                     {
                       $match: {
@@ -204,7 +207,7 @@ export const getPaginatedReport = async (
               {
                 $lookup: {
                   from: "Schedule",
-                  let: { scheduleId: "$employee.schedule" },
+                  let: { scheduleId: "$schedule" },
                   pipeline: [
                     {
                       $match: {
@@ -302,7 +305,6 @@ export const getReportById = async (id: string, from: Date, to: Date) => {
   try {
     to.setDate(to.getDate() + 1);
 
-    console.log(from, to);
     const report = await prisma.report.aggregateRaw({
       pipeline: [
         {
@@ -344,7 +346,7 @@ export const getReportById = async (id: string, from: Date, to: Date) => {
               {
                 $lookup: {
                   from: "Schedule",
-                  let: { scheduleId: "$employee.schedule" },
+                  let: { scheduleId: "$schedule" },
                   pipeline: [
                     {
                       $match: {
@@ -400,12 +402,6 @@ export const getReportById = async (id: string, from: Date, to: Date) => {
     const result = report[0] as any;
     const settings = await getSettings();
 
-    const { totalDays } = computeTotalDaysAndLate({
-      dates: result.items,
-      employee: result.employee,
-      settings,
-    });
-
     let reports = result.items
       .map((item: any) => item.timestamp)
       .reduce((acc: any, dateTime: any) => {
@@ -418,36 +414,61 @@ export const getReportById = async (id: string, from: Date, to: Date) => {
         return acc;
       }, {});
 
-    reports = Object.keys(reports)
-      .sort(
-        (a: any, b: any) =>
-          dateTz(new Date(b)).getTime() - dateTz(new Date(a)).getTime()
-      )
-      .map((date) => {
-        const times = reports[date].sort(
-          (a: Date, b: Date) => dateTz(a).getTime() - dateTz(b).getTime()
-        );
+    const { sortedReports, totalDays } = computeTotalDaysAndLateSingle({
+      reports,
+      employee: result.employee,
+      settings,
+      ref: result.name,
+    });
 
-        let filterTimes = times;
-        if (times.length > 4) {
-          filterTimes = [times[0], times[1], times[2], times[times.length - 1]];
-        }
+    // const { totalDays } = computeTotalDaysAndLate({
+    //   dates: result.items,
+    //   employee: result.employee,
+    //   settings,
+    // });
 
-        const items = filterTimes
-          .slice(0, 4)
-          .reduce((acc: any, time: any, index: number) => {
-            acc[`r${index + 1}`] = time;
-            return acc;
-          }, {});
+    // let reports = result.items
+    //   .map((item: any) => item.timestamp)
+    //   .reduce((acc: any, dateTime: any) => {
+    //     const date = format(
+    //       dateTz(new Date(dateTime)),
+    //       "yyyy-MM-dd HH:mm:ss"
+    //     ).split(" ")[0];
+    //     acc[date] = acc[date] || [];
+    //     acc[date].push(dateTz(new Date(dateTime)));
+    //     return acc;
+    //   }, {});
 
-        return {
-          date,
-          name: result.name,
-          ...items,
-        };
-      });
+    // reports = Object.keys(reports)
+    //   .sort(
+    //     (a: any, b: any) =>
+    //       dateTz(new Date(b)).getTime() - dateTz(new Date(a)).getTime()
+    //   )
+    //   .map((date) => {
+    //     const times = reports[date].sort(
+    //       (a: Date, b: Date) => dateTz(a).getTime() - dateTz(b).getTime()
+    //     );
 
-    return { ...result, items: reports, totalDays };
+    //     let filterTimes = times;
+    //     if (times.length > 4) {
+    //       filterTimes = [times[0], times[1], times[2], times[times.length - 1]];
+    //     }
+
+    //     const items = filterTimes
+    //       .slice(0, 4)
+    //       .reduce((acc: any, time: any, index: number) => {
+    //         acc[`r${index + 1}`] = time;
+    //         return acc;
+    //       }, {});
+
+    //     return {
+    //       date,
+    //       name: result.name,
+    //       ...items,
+    //     };
+    //   });
+
+    return { ...result, items: sortedReports, totalDays };
   } catch (error: any) {
     console.log(error);
   }

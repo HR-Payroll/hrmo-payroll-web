@@ -96,8 +96,7 @@ model Settings {
 model Schedule {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
   name         String   @unique
-  inTime       DateTime
-  outTime      DateTime
+  option       String
   daysIncluded String
   readOnly     Boolean  @default(false)
   createdAt    DateTime @default(now())

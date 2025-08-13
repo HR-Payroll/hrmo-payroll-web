@@ -1,10 +1,13 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { tableStyle } from "@/lib/themes";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { formatTime } from "@/utils/dateFormatter";
 
 function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
+  useEffect(() => {
+    console.log("Reports:", reports);
+  }, [reports]);
   const columns: GridColDef[] = [
     {
       field: "date",
@@ -68,6 +71,14 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
       valueGetter: (params: any) => {
         return params ? formatTime(params, "hh:mm aa") : "";
       },
+    },
+    {
+      field: "remarks",
+      headerName: "Remarks",
+      headerClassName: "custom-header",
+      flex: 1,
+      align: "center",
+      headerAlign: "center",
     },
   ];
 

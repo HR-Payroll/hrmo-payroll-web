@@ -11,7 +11,7 @@ import Button from "../ui/Button";
 import { createSchedule, updateSchedule } from "@/actions/schedule";
 import { isArrayEqual } from "@/utils/tools";
 import { MdOutlineClose } from "react-icons/md";
-import { DaysKey, ScheduleDay } from "@/types";
+import { DaysKey, Schedule, ScheduleDay } from "@/types";
 import { formatTime } from "@/utils/dateFormatter";
 
 function ScheduleForm({
@@ -24,15 +24,17 @@ function ScheduleForm({
   data?: any;
   onClose: Function;
   setSnackbar: Function;
-  edit?: { id: string; data: z.infer<typeof ScheduleSchema> };
+  edit?: { id: string; data: Schedule };
   reload?: VoidFunction;
 }) {
   const [serverError, setServerError] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState<boolean>(false);
-  const [option, setOption] = useState<"Regular" | "Custom">("Regular");
+  const [option, setOption] = useState<"Regular" | "Custom" | "Straight Time">(
+    "Regular"
+  );
   const [selectTime, setSelectTime] = useState<string | null>(null);
-  const [daysIncluded, setDaysIncluded] = useState<ScheduleDay[]>(
-    edit ? edit.data.daysIncluded : []
+  const [daysIncluded, setDaysIncluded] = useState<string | ScheduleDay[]>(
+    edit ? edit.data.daysIncluded : ""
   );
   const [regularIn, setRegularIn] = useState<Date>(new Date());
   const [regularOut, setRegularOut] = useState<Date>(new Date());
@@ -45,7 +47,7 @@ function ScheduleForm({
         value: 0,
         inTime: regularIn,
         outTime: regularOut,
-        included: true,
+        included: false,
       },
       Monday: {
         value: 1,
@@ -81,7 +83,7 @@ function ScheduleForm({
         value: 6,
         inTime: regularIn,
         outTime: regularOut,
-        included: true,
+        included: false,
       },
     }
   );
@@ -97,25 +99,28 @@ function ScheduleForm({
     defaultValues: {
       name: edit ? edit.data.name : "",
       readOnly: false,
-      daysIncluded: edit ? edit.data.daysIncluded : [],
+      daysIncluded: edit ? JSON.stringify(edit.data.daysIncluded) : "",
     },
   });
 
   const onSubmit = async (data: z.infer<typeof ScheduleSchema>) => {
-    console.log(data);
+    const scheduleData = {
+      ...data,
+      option,
+    };
     setServerError(null);
     setIsAdding(true);
 
     try {
       if (edit) {
-        await updateSchedule(edit.id, data);
+        await updateSchedule(edit.id, scheduleData);
         setSnackbar({
           message: "Schedule has been updated successfully!",
           type: "success",
           modal: true,
         });
       } else {
-        await createSchedule(data);
+        await createSchedule(scheduleData);
         setSnackbar({
           message: "Schedule has been created successfully!",
           type: "success",
@@ -132,26 +137,52 @@ function ScheduleForm({
         type: "error",
         modal: true,
       });
-      console.log(error);
       setIsAdding(false);
     }
   };
 
   useEffect(() => {
-    //const regularDays = days;
+    if (edit) {
+      const days = edit.data.daysIncluded;
+      const opt = edit.data.option as "Regular" | "Custom";
+      setOption(opt);
 
-    // if (
-    //   edit?.data.daysIncluded &&
-    //   !isArrayEqual(edit.data.daysIncluded, regularDays)
-    // ) {
-    //   setOption("Custom");
-    // }
+      if (opt === "Regular") {
+        const regIn = new Date((days[0] as ScheduleDay).inTime);
+        const regOut = new Date((days[0] as ScheduleDay).outTime);
+        setRegularIn(regIn);
+        setRegularOut(regOut);
 
-    // if (edit) {
-    //   setValue("inTime", new Date(edit?.data.inTime));
-    //   setValue("outTime", new Date(edit?.data.outTime));
-    //   return;
-    // }
+        setRegularTime("inTime", regIn);
+        setRegularTime("outTime", regOut);
+      } else {
+        setSchedule(
+          Object.keys(schedule).reduce((acc, key) => {
+            const isIncluded =
+              Array.isArray(days) &&
+              days.some((d: any) => d.value === schedule[key as DaysKey].value);
+            const matchedDay = isIncluded
+              ? days.find(
+                  (d: any) => d.value === schedule[key as DaysKey].value
+                )
+              : null;
+            acc[key as DaysKey] = {
+              ...schedule[key as DaysKey],
+              inTime: matchedDay
+                ? new Date(matchedDay.inTime)
+                : onChangeTime(new Date(), 8),
+              outTime: matchedDay
+                ? new Date(matchedDay.outTime)
+                : onChangeTime(new Date(), 17),
+              included: isIncluded,
+            };
+            return acc;
+          }, {} as typeof schedule)
+        );
+      }
+
+      return;
+    }
 
     setRegularIn(onChangeTime(new Date(), 8));
     setRegularOut(onChangeTime(new Date(), 17));
@@ -161,33 +192,20 @@ function ScheduleForm({
         acc[key as DaysKey] = {
           ...schedule[key as DaysKey],
           inTime: onChangeTime(new Date(), 8),
-          outTime: onChangeTime(new Date(), 18),
+          outTime: onChangeTime(new Date(), 17),
         };
         return acc;
       }, {} as typeof schedule)
     );
-
-    console.log("Schedule initialized", schedule);
-    console.log(regularIn, regularOut);
-    // if (option === "Regular")
-    //   setDays(
-    //     regularDays.map((day) => {
-    //       return {
-    //         label: day.label,
-    //         value: day.value,
-    //         inTime: onChangeTime(data?.inTime, 8),
-    //         outTime: onChangeTime(data?.outTime, 17),
-    //       };
-    //     })
-    //   );
   }, []);
 
-  const setDays = (
-    value: { label: string; value: number; inTime: Date; outTime: Date }[]
-  ) => {
-    setValue("daysIncluded", value, { shouldValidate: true });
-    setDaysIncluded(value);
-  };
+  useEffect(() => {
+    const scheds = Object.keys(schedule)
+      .map((key: string) => schedule[key as DaysKey])
+      .filter((item) => item.included) as any;
+
+    setValue("daysIncluded", JSON.stringify(scheds), { shouldValidate: true });
+  }, [schedule]);
 
   const onChangeTime = (time?: Date, dt?: number) => {
     const currentDate = new Date();
@@ -216,6 +234,19 @@ function ScheduleForm({
     return schedule[day as keyof typeof schedule]?.included || false;
   };
 
+  const setRegularTime = (field: "inTime" | "outTime", time: Date) => {
+    setSchedule(
+      Object.keys(schedule).reduce((acc, key) => {
+        acc[key as DaysKey] = {
+          ...schedule[key as DaysKey],
+          included: !["Sunday", "Saturday"].includes(key),
+          [field]: onChangeTime(time),
+        };
+        return acc;
+      }, {} as typeof schedule)
+    );
+  };
+
   const inputTimeSelect = () => {
     return (
       <div className="p-4 w-[300px] bg-white rounded-md flex flex-col items-center justify-center gap-2 pb-8">
@@ -230,7 +261,7 @@ function ScheduleForm({
                     included: !schedule[(selectTime as DaysKey) || ""].included,
                   },
                 });
-                setDays(daysIncluded.filter((day) => day.label !== selectTime));
+                //setDays(daysIncluded.filter((day) => day.label !== selectTime));
               }}
             />
             <span className="text-[var(--text)] font-medium text-base">
@@ -312,17 +343,21 @@ function ScheduleForm({
       <div className="flex flex-col text-sm gap-2 text-[var(--text)]">
         <label className="text-left">Schedule Option</label>
         <div className="flex flex-wrap gap-2">
-          {["Regular", "Custom"].map((opt) => (
+          {["Regular", "Custom", "Straight Time"].map((opt) => (
             <Chip
               key={opt}
               label={opt}
               onClick={() => {
-                setOption(opt as "Regular" | "Custom");
+                setOption(opt as "Regular" | "Custom" | "Straight Time");
                 setSchedule(
                   Object.keys(schedule).reduce((acc, key) => {
                     acc[key as DaysKey] = {
                       ...schedule[key as DaysKey],
-                      included: opt === "Regular",
+                      included:
+                        opt === "Regular" &&
+                        !["Sunday", "Saturday"].includes(key),
+                      inTime: onChangeTime(regularIn),
+                      outTime: onChangeTime(regularOut),
                     };
                     return acc;
                   }, {} as typeof schedule)
@@ -337,19 +372,25 @@ function ScheduleForm({
       {option === "Regular" && (
         <div className="flex flex-col text-sm gap-2 text-[var(--text)]">
           <TimePickerField
+            key={`regular-in-time`}
             name="inTime"
             label="Time In"
-            defaultValue={onChangeTime(regularIn, 8)}
-            setValue={setValue}
-            // error={errors?.inTime}
+            defaultValue={regularIn}
+            setValue={(_, value) => {
+              setRegularIn(value);
+              setRegularTime("inTime", value);
+            }}
           />
           <TimePickerField
+            key={`regular-out-time`}
             name="outTime"
             label="Time Out"
-            defaultValue={onChangeTime(regularOut, 17)}
+            defaultValue={regularOut}
             validator={() => false}
-            setValue={setValue}
-            //error={errors?.outTime}
+            setValue={(_, value) => {
+              setRegularOut(value);
+              setRegularTime("outTime", value);
+            }}
           />
         </div>
       )}
@@ -383,11 +424,11 @@ function ScheduleForm({
             </button>
           ))}
         </div>
-        {/* {errors?.daysIncluded?.message && (
+        {errors?.daysIncluded?.message && (
           <p className="text-red text-xs">
             {errors?.daysIncluded?.message.toString()}
           </p>
-        )} */}
+        )}
       </div>
       <div className="mt-4">
         <Button

@@ -20,6 +20,8 @@ import { deleteSchedule } from "@/actions/schedule";
 import ScheduleForm from "../forms/ScheduleForm";
 import { ScheduleSchema } from "@/lib/zod";
 import { z } from "zod";
+import { formatTime } from "@/utils/dateFormatter";
+import { Schedule } from "@/types";
 
 function WorkSchedulesTable({
   schedules,
@@ -37,11 +39,11 @@ function WorkSchedulesTable({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [data, setData] = useState(schedules);
+  const [data, setData] = useState<any[]>([]);
   const [pageSize, setPageSize] = useState(limit);
   const [isEditing, setEditing] = useState<{
     id: string;
-    data: z.infer<typeof ScheduleSchema>;
+    data: Schedule;
   } | null>(null);
   const [isDelete, setDelete] = useState<string | null>(null);
   const [snackbar, setSnackbar] = useState({
@@ -61,7 +63,33 @@ function WorkSchedulesTable({
   };
 
   useEffect(() => {
-    setData(schedules);
+    const sched = schedules.map((item) => {
+      return { ...item, daysIncluded: JSON.parse(item.daysIncluded) };
+    });
+
+    const formattedSched = sched.map((item) => {
+      return {
+        ...item,
+        inTime:
+          item.option === "Regular"
+            ? formatTime(new Date(item.daysIncluded[0].inTime), " hh:mm aa")
+            : item.daysIncluded
+                .map((day: any) =>
+                  formatTime(new Date(day.inTime), " hh:mm aa")
+                )
+                .toString(),
+        outTime:
+          item.option === "Regular"
+            ? formatTime(new Date(item.daysIncluded[0].outTime), " hh:mm aa")
+            : item.daysIncluded
+                .map((day: any) =>
+                  formatTime(new Date(day.outTime), " hh:mm aa")
+                )
+                .toString(),
+      };
+    });
+
+    setData(formattedSched);
   }, [schedules]);
 
   const onChangeFilter = (key: string, value: string) => {
@@ -84,7 +112,7 @@ function WorkSchedulesTable({
       field: "name",
       headerName: "Schedule",
       headerClassName: "custom-header",
-      flex: 1.5,
+      flex: 1,
       align: "center",
       headerAlign: "center",
       editable: false,
@@ -93,26 +121,19 @@ function WorkSchedulesTable({
       field: "inTime",
       headerName: "Time In",
       headerClassName: "custom-header",
-      flex: 1,
+      flex: 1.5,
       align: "center",
       headerAlign: "center",
       editable: false,
-      valueGetter: (params: any) => {
-        return params ? format(new Date(params.$date), "hh:mm aa") : "";
-      },
     },
     {
       field: "outTime",
       headerName: "Time Out",
       headerClassName: "custom-header",
-      flex: 1,
+      flex: 1.5,
       align: "center",
       headerAlign: "center",
       editable: false,
-      valueGetter: (params: any) => {
-        console.log(params);
-        return params ? format(new Date(params.$date), "hh:mm aa") : "";
-      },
     },
     {
       field: "daysIncluded",
@@ -127,10 +148,10 @@ function WorkSchedulesTable({
         console.log(params);
         return (
           <div className="flex flex-row items-center justify-center gap-1 h-full">
-            {params.value.map((day: number) => (
+            {params.value.map((day: any) => (
               <Chip
-                key={day}
-                label={days[day].slice(0, 3)}
+                key={day.value}
+                label={days[day.value].slice(0, 3)}
                 size="small"
                 variant="outlined"
               />
