@@ -10,6 +10,7 @@ export interface ScheduleDay {
   inTime: string;
   outTime: string;
   included?: boolean;
+  type?: "IN" | "OUT";
 }
 
 export interface Schedule {

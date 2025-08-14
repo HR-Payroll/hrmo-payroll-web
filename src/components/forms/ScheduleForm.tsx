@@ -6,7 +6,7 @@ import { FieldError, useForm } from "react-hook-form";
 import { z } from "zod";
 import InputField from "../InputField";
 import TimePickerField from "../TimePickerField";
-import { Backdrop, Chip, Radio } from "@mui/material";
+import { Backdrop, Checkbox, Chip, Radio } from "@mui/material";
 import Button from "../ui/Button";
 import { createSchedule, updateSchedule } from "@/actions/schedule";
 import { isArrayEqual } from "@/utils/tools";
@@ -33,11 +33,9 @@ function ScheduleForm({
     "Regular"
   );
   const [selectTime, setSelectTime] = useState<string | null>(null);
-  const [daysIncluded, setDaysIncluded] = useState<string | ScheduleDay[]>(
-    edit ? edit.data.daysIncluded : ""
-  );
   const [regularIn, setRegularIn] = useState<Date>(new Date());
   const [regularOut, setRegularOut] = useState<Date>(new Date());
+  const [lastType, setLastType] = useState<"IN" | "OUT" | null>(null);
   const [schedule, setSchedule] = useReducer(
     (prev, next) => {
       return { ...prev, ...next };
@@ -48,42 +46,49 @@ function ScheduleForm({
         inTime: regularIn,
         outTime: regularOut,
         included: false,
+        type: undefined as "IN" | "OUT" | undefined,
       },
       Monday: {
         value: 1,
         inTime: regularIn,
         outTime: regularOut,
         included: true,
+        type: undefined as "IN" | "OUT" | undefined,
       },
       Tuesday: {
         value: 2,
         inTime: regularIn,
         outTime: regularOut,
         included: true,
+        type: undefined as "IN" | "OUT" | undefined,
       },
       Wednesday: {
         value: 3,
         inTime: regularIn,
         outTime: regularOut,
         included: true,
+        type: undefined as "IN" | "OUT" | undefined,
       },
       Thursday: {
         value: 4,
         inTime: regularIn,
         outTime: regularOut,
         included: true,
+        type: undefined as "IN" | "OUT" | undefined,
       },
       Friday: {
         value: 5,
         inTime: regularIn,
         outTime: regularOut,
         included: true,
+        type: undefined as "IN" | "OUT" | undefined,
       },
       Saturday: {
         value: 6,
         inTime: regularIn,
         outTime: regularOut,
         included: false,
+        type: undefined as "IN" | "OUT" | undefined,
       },
     }
   );
@@ -144,7 +149,7 @@ function ScheduleForm({
   useEffect(() => {
     if (edit) {
       const days = edit.data.daysIncluded;
-      const opt = edit.data.option as "Regular" | "Custom";
+      const opt = edit.data.option as "Regular" | "Custom" | "Straight Time";
       setOption(opt);
 
       if (opt === "Regular") {
@@ -175,6 +180,7 @@ function ScheduleForm({
                 ? new Date(matchedDay.outTime)
                 : onChangeTime(new Date(), 17),
               included: isIncluded,
+              type: opt === "Straight Time" ? matchedDay?.type : undefined,
             };
             return acc;
           }, {} as typeof schedule)
@@ -234,6 +240,18 @@ function ScheduleForm({
     return schedule[day as keyof typeof schedule]?.included || false;
   };
 
+  const numDaysIncluded = () =>
+    Object.values(schedule).filter((day) => day.included).length;
+
+  const isDayTypeDisabled = (item: "IN" | "OUT") => {
+    return (
+      !isDayIncluded(selectTime || "") ||
+      (numDaysIncluded() > 0 &&
+        isDayIncluded(selectTime || "") &&
+        lastType === item)
+    );
+  };
+
   const setRegularTime = (field: "inTime" | "outTime", time: Date) => {
     setSchedule(
       Object.keys(schedule).reduce((acc, key) => {
@@ -252,7 +270,7 @@ function ScheduleForm({
       <div className="p-4 w-[300px] bg-white rounded-md flex flex-col items-center justify-center gap-2 pb-8">
         <div className="flex flex-row justify-between w-full items-center">
           <div className="flex flex-row items-center">
-            <Radio
+            <Checkbox
               checked={isDayIncluded(selectTime || "")}
               onClick={() => {
                 setSchedule({
@@ -320,6 +338,80 @@ function ScheduleForm({
           //error={errors?.outTime}
           disabled={!isDayIncluded(selectTime || "")}
         />
+      </div>
+    );
+  };
+
+  const inputStraightTimeSelect = () => {
+    return (
+      <div className="p-4 w-[300px] bg-white rounded-md flex flex-col items-center justify-center gap-2 pb-8">
+        <div className="flex flex-row justify-between w-full items-center">
+          <div className="flex flex-row items-center">
+            <Checkbox
+              checked={isDayIncluded(selectTime || "")}
+              onClick={() => {
+                setSchedule({
+                  [(selectTime as DaysKey) || ""]: {
+                    ...schedule[(selectTime as DaysKey) || ""],
+                    included: !schedule[(selectTime as DaysKey) || ""].included,
+                    type: !schedule[(selectTime as DaysKey) || ""].included
+                      ? schedule[(selectTime as DaysKey) || ""].type
+                      : undefined,
+                  },
+                });
+                //setDays(daysIncluded.filter((day) => day.label !== selectTime));
+              }}
+            />
+            <span className="text-[var(--text)] font-medium text-base">
+              {selectTime || ""}
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => {
+              const type = schedule[selectTime as DaysKey].type;
+              if (type === "IN" || type === "OUT") setLastType(type);
+              else schedule[selectTime as DaysKey].included = false;
+              setSelectTime(null);
+            }}
+            className="rounded-full hover:bg-blue-100 active:bg-blue-200 active:text-[var(--accent)] text-[var(--text)] text-base p-2 cursor-pointer"
+          >
+            <MdOutlineClose />
+          </button>
+        </div>
+
+        <div className="flex flex-col w-full h-full text-[var(--text)] gap-1">
+          <p className="pb-2 text-sm font-medium px-3">Any time of the day.</p>
+          <div className="flex flex-row items-center gap-8  w-full h-full">
+            {["IN", "OUT"].map((item) => (
+              <div className="flex flex-row items-center">
+                <Radio
+                  checked={
+                    isDayIncluded(selectTime || "") &&
+                    schedule[selectTime as DaysKey].type === item
+                  }
+                  disabled={isDayTypeDisabled(item as "IN" | "OUT")}
+                  onClick={() => {
+                    setSchedule({
+                      [(selectTime as DaysKey) || ""]: {
+                        ...schedule[(selectTime as DaysKey) || ""],
+                        type: item as "IN" | "OUT",
+                      },
+                    });
+                  }}
+                />
+                <p
+                  className={`${
+                    isDayTypeDisabled(item as "IN" | "OUT") && "text-gray-400"
+                  } text-center text-base font-medium `}
+                >
+                  {item}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   };
@@ -403,7 +495,25 @@ function ScheduleForm({
                 setSelectTime(day);
               }}
               type="button"
-              disabled={option === "Regular"}
+              disabled={
+                option === "Regular" ||
+                (option === "Straight Time" &&
+                  (() => {
+                    const includedIndices = Object.keys(schedule)
+                      .map((d, idx) =>
+                        schedule[d as DaysKey].included ? idx : -1
+                      )
+                      .filter((idx) => idx !== -1)
+                      .sort((a, b) => a - b);
+
+                    if (includedIndices.length < 2) return false;
+                    const dayIdx = Object.keys(schedule).indexOf(day);
+                    return (
+                      dayIdx > includedIndices[0] &&
+                      dayIdx < includedIndices[includedIndices.length - 1]
+                    );
+                  })())
+              }
               key={day}
               className={`${
                 isDayIncluded(day)
@@ -411,16 +521,30 @@ function ScheduleForm({
                   : " border-gray-200  enabled:hover:bg-gray-100"
               } p-2 disabled:opacity-50 enabled:cursor-pointer border flex flex-col items-start gap-1 rounded-md select-none  active:bg-gray-100`}
             >
-              <h1 className="text-sm font-medium">{day}</h1>
-              <div className="flex flex-col text-xs items-start">
-                <p>
-                  In: {formatTime(schedule[day as DaysKey].inTime, "hh:mm aa")}
-                </p>
-                <p>
-                  Out:{" "}
-                  {formatTime(schedule[day as DaysKey].outTime, "hh:mm aa")}
-                </p>
-              </div>
+              {option !== "Straight Time" ? (
+                <>
+                  <h1 className="text-sm font-medium">{day}</h1>
+                  <div className="flex flex-col text-xs items-start">
+                    <p>
+                      In:{" "}
+                      {formatTime(schedule[day as DaysKey].inTime, "hh:mm aa")}
+                    </p>
+                    <p>
+                      Out:{" "}
+                      {formatTime(schedule[day as DaysKey].outTime, "hh:mm aa")}
+                    </p>
+                  </div>
+                </>
+              ) : (
+                <div className="flex flex-row items-center justify-center min-w-[90px] gap-1">
+                  <h1 className="text-sm font-medium">{day}:</h1>
+                  <p className="text-sm font-bold">
+                    {schedule[day as DaysKey].included
+                      ? schedule[day as DaysKey].type
+                      : "N/A"}
+                  </p>
+                </div>
+              )}
             </button>
           ))}
         </div>
@@ -450,7 +574,7 @@ function ScheduleForm({
           // setSelectTime(null);
         }}
       >
-        {inputTimeSelect()}
+        {option === "Custom" ? inputTimeSelect() : inputStraightTimeSelect()}
       </Backdrop>
     </form>
   );

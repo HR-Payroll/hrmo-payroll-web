@@ -8,6 +8,7 @@ import { getReportById } from "@/data/report";
 import { MdArrowBackIosNew } from "react-icons/md";
 import { dateQuery } from "@/utils/dateFormatter";
 import DownloadSingleReport from "@/components/Downloads/DownloadSingleReport";
+import BackButton from "@/components/ui/BackButton";
 
 const SingleReportPage = async ({
   params,
@@ -41,12 +42,7 @@ const SingleReportPage = async ({
       <main className="space-y-4">
         <section className="flex flex-col gap-4">
           <div className="flex items-center gap-2">
-            <Link
-              href={`/dashboard/reports`}
-              className="rounded-full bg-[var(--border)] hover:bg-blue-200 active:bg-blue-300 active:text-[var(--accent)] text-[var(--text)] p-2 cursor-pointer"
-            >
-              <MdArrowBackIosNew size={12} />
-            </Link>
+            <BackButton to={`/dashboard/reports`} />
             <DynamicHeader
               label={
                 report

@@ -53,6 +53,18 @@ function ReportTable({
     router.push(`${pathname}${path}`);
   };
 
+  const generateLink = (recordNo: string): string => {
+    let url = `/dashboard/reports/${recordNo}`;
+    const params = Object.fromEntries(searchParams.entries());
+
+    Object.keys(params).forEach((key, index) => {
+      if (index === 0) url += `?${key}=${params[key]}`;
+      else url += `&${key}=${params[key]}`;
+    });
+
+    return url;
+  };
+
   const columns: GridColDef[] = [
     {
       field: "recordNo",
@@ -141,10 +153,7 @@ function ReportTable({
         return (
           <div className="flex items-center justify-center gap-2 mt-1 text-base">
             <Link
-              href={`/dashboard/reports/${params.row.recordNo}?from=${format(
-                from,
-                "yyyy-MM-dd"
-              )}&to=${format(to, "yyyy-MM-dd")}`}
+              href={generateLink(params.row.recordNo)}
               className="flex items-center justify-center rounded-full bg-[var(--border)] hover:bg-blue-200 active:bg-blue-300 active:text-[var(--accent)] text-[var(--text)] p-1 cursor-pointer"
             >
               <MdOutlineRemoveRedEye size={16} />

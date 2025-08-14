@@ -414,7 +414,7 @@ export const getReportById = async (id: string, from: Date, to: Date) => {
         return acc;
       }, {});
 
-    const { sortedReports, totalDays } = computeTotalDaysAndLateSingle({
+    const { items, totalDays } = computeTotalDaysAndLateSingle({
       reports,
       employee: result.employee,
       settings,
@@ -468,7 +468,7 @@ export const getReportById = async (id: string, from: Date, to: Date) => {
     //     };
     //   });
 
-    return { ...result, items: sortedReports, totalDays };
+    return { ...result, items, totalDays };
   } catch (error: any) {
     console.log(error);
   }

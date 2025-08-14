@@ -40,8 +40,6 @@ export const computeTotalDaysAndLate = ({
     }
   }
 
-  console.log("Schedule:", schedule);
-
   Object.keys(days).forEach((date) => {
     const dayOfWeek = dateTz(new Date(date)).getDay();
 
@@ -50,85 +48,89 @@ export const computeTotalDaysAndLate = ({
     }
   });
 
-  const inOut = Object.keys(days).map((date) => {
-    const times = days[date].sort(
-      (a: Date, b: Date) => dateTz(a).getTime() - dateTz(b).getTime()
+  let inOut: any[] = [];
+
+  if (schedule.option !== "Straight Time") {
+    inOut = Object.keys(days).map((date) => {
+      const times = days[date].sort(
+        (a: Date, b: Date) => dateTz(a).getTime() - dateTz(b).getTime()
+      );
+
+      return regularComputation(date, schedule, times, gracePeriod);
+    }) as any;
+
+    const total = inOut.reduce(
+      (sum: number, num: any) => sum + num.totalDays,
+      0
+    );
+    const late = inOut.reduce((sum: number, num: any) => sum + num.late, 0);
+    const lateDeductions = inOut.reduce(
+      (sum: number, num: any) => sum + num.deductions,
+      0
     );
 
-    const dayOfWeek = dateTz(new Date(date)).getDay();
-    const daySchedule = schedule.daysIncluded.find(
-      (d: any) => d.value === dayOfWeek
-    );
+    //temporary calculations
+    let earnings = 0;
 
-    if (!daySchedule) return;
+    if (employee.type === "MONTHLY") {
+      earnings = Math.min(
+        (employee.rate / 2 / businessDays) * total,
+        employee.rate / 2
+      );
+    } else {
+      earnings = employee ? total * employee.rate : 0;
+    }
 
-    const inTimeStr = daySchedule.inTime;
-    const outTimeStr = daySchedule.outTime;
-
-    const inTime = dateTz(new Date(date + "T" + inTimeStr.split("T")[1]));
-    const outTime = dateTz(new Date(date + "T" + outTimeStr.split("T")[1]));
-
-    console.log("In Time:", format(inTime, "yyyy-MM-dd HH:mm:ss"));
-    console.log("Out Time:", format(outTime, "yyyy-MM-dd HH:mm:ss"));
-
-    const workingHours =
-      (outTime.getTime() - inTime.getTime()) / (1000 * 60 * 60) - 1;
-
-    const totalHours =
-      (times[times.length - 1].getTime() - times[0].getTime()) /
-      (1000 * 60 * 60);
-
-    const cutoff = inTime;
-    cutoff.setMinutes(cutoff.getMinutes() + gracePeriod);
-
-    const lateness = times[0].getTime() - cutoff.getTime();
-    const totalDays = Math.min(
-      1,
-      Math.floor(totalHours / workingHours) +
-        (totalHours % workingHours) / workingHours
-    );
-    const totalLate = lateness > 0 ? Math.floor(lateness / (1000 * 60)) : 0;
-    const deductions = (totalLate / 480) * 300;
+    const deductions = employee
+      ? getTotalDeduction(employee) + lateDeductions
+      : 0;
+    const net = earnings - deductions;
 
     return {
-      totalDays,
-      late: totalLate,
-      deductions,
+      totalDays: total % 1 === 0 ? total.toFixed(0) : total.toFixed(1),
+      late: late % 1 === 0 ? late.toFixed(0) : late.toFixed(1),
+      earnings: earnings % 1 === 0 ? earnings.toFixed(0) : earnings.toFixed(1),
+      deductions:
+        deductions % 1 === 0 ? deductions.toFixed(0) : deductions.toFixed(1),
+      net: net % 1 === 0 ? net.toFixed(0) : net.toFixed(1),
     };
-  }) as any;
-
-  const total = inOut.reduce((sum: number, num: any) => sum + num.totalDays, 0);
-  const late = inOut.reduce((sum: number, num: any) => sum + num.late, 0);
-  const lateDeductions = inOut.reduce(
-    (sum: number, num: any) => sum + num.deductions,
-    0
-  );
-
-  //temporary calculations
-  let earnings = 0;
-
-  if (employee.type === "MONTHLY") {
-    earnings = Math.min(
-      (employee.rate / 2 / businessDays) * total,
-      employee.rate / 2
-    );
   } else {
-    earnings = employee ? total * employee.rate : 0;
+    const dateKeys = Object.keys(days).sort();
+    if (dateKeys.length < 2) {
+      return {
+        totalDays: 0,
+        late: 0,
+        earnings: 0,
+        deductions: 0,
+        net: 0,
+      };
+    }
+    const firstDate = dateTz(new Date(dateKeys[0]));
+    const lastDate = dateTz(new Date(dateKeys[dateKeys.length - 1]));
+    // Count all days between first and last (inclusive), filter by schedule.daysIncluded
+    let totalDays = 0;
+    let current = new Date(firstDate);
+    while (current <= lastDate) {
+      const dayOfWeek = current.getDay();
+      totalDays += 1;
+      current.setDate(current.getDate() + 1);
+    }
+    let earnings = 0;
+
+    earnings = employee ? totalDays * employee.rate : 0;
+
+    const deductions = employee ? getTotalDeduction(employee) : 0;
+    const net = earnings - deductions;
+    return {
+      totalDays:
+        totalDays % 1 === 0 ? totalDays.toFixed(0) : totalDays.toFixed(1),
+      late: 0,
+      earnings: earnings % 1 === 0 ? earnings.toFixed(0) : earnings.toFixed(1),
+      deductions:
+        deductions % 1 === 0 ? deductions.toFixed(0) : deductions.toFixed(1),
+      net: net % 1 === 0 ? net.toFixed(0) : net.toFixed(1),
+    };
   }
-
-  const deductions = employee
-    ? getTotalDeduction(employee) + lateDeductions
-    : 0;
-  const net = earnings - deductions;
-
-  return {
-    totalDays: total % 1 === 0 ? total.toFixed(0) : total.toFixed(1),
-    late: late % 1 === 0 ? late.toFixed(0) : late.toFixed(1),
-    earnings: earnings % 1 === 0 ? earnings.toFixed(0) : earnings.toFixed(1),
-    deductions:
-      deductions % 1 === 0 ? deductions.toFixed(0) : deductions.toFixed(1),
-    net: net % 1 === 0 ? net.toFixed(0) : net.toFixed(1),
-  };
 };
 
 export const computeTotalDaysAndLateSingle = ({
@@ -137,12 +139,14 @@ export const computeTotalDaysAndLateSingle = ({
   settings,
   businessDays = 10,
   ref,
+  filter = false,
 }: {
   reports: any;
   employee: any;
   settings: any;
   businessDays?: number;
   ref?: any;
+  filter?: boolean;
 }) => {
   const gracePeriod = settings.gracePeriod || 10;
   let schedule: Schedule = employee?.schedule || REGULAR_SCHEDULE;
@@ -155,6 +159,16 @@ export const computeTotalDaysAndLateSingle = ({
     } catch (e) {
       schedule = { ...schedule, daysIncluded: [] };
     }
+  }
+
+  if (filter) {
+    Object.keys(reports).forEach((date) => {
+      const dayOfWeek = dateTz(new Date(date)).getDay();
+
+      if (!schedule.daysIncluded.map((d) => d.value).includes(dayOfWeek)) {
+        delete reports[date];
+      }
+    });
   }
 
   const sortedReports = Object.keys(reports)
@@ -207,7 +221,6 @@ export const computeTotalDaysAndLateSingle = ({
       const totalLate = lateness > 0 ? Math.floor(lateness / (1000 * 60)) : 0;
       const deductions = (totalLate / 480) * 300;
 
-      // OVERTIME/UNDERTIME calculation
       let overtime = 0;
       let undertime = 0;
       if (inTime && outTime && times.length > 1) {
@@ -221,7 +234,6 @@ export const computeTotalDaysAndLateSingle = ({
         }
       }
 
-      // Remarks logic
       if (!remarks) {
         if (totalLate > 0) remarks = "LATE";
         // if (overtime > 1)
@@ -273,7 +285,7 @@ export const computeTotalDaysAndLateSingle = ({
     0
   );
 
-  return { sortedReports, totalDays: total };
+  return { items: sortedReports, totalDays: total };
 };
 
 const getTotalDeduction = (employee: any) => {
@@ -316,4 +328,48 @@ export const getTotalBusinessDays = (from: Date, to: Date, events: any[]) => {
   to = dateTz(new Date(to));
 
   return getBusinessDays(from, to) - getTotalHolidays(events);
+};
+
+const regularComputation = (
+  date: string,
+  schedule: Schedule,
+  times: Date[],
+  gracePeriod: number
+) => {
+  const dayOfWeek = dateTz(new Date(date)).getDay();
+  const daySchedule = schedule.daysIncluded.find(
+    (d: any) => d.value === dayOfWeek
+  );
+
+  if (!daySchedule) return;
+
+  const inTimeStr = daySchedule.inTime;
+  const outTimeStr = daySchedule.outTime;
+
+  const inTime = dateTz(new Date(date + "T" + inTimeStr.split("T")[1]));
+  const outTime = dateTz(new Date(date + "T" + outTimeStr.split("T")[1]));
+
+  const workingHours =
+    (outTime.getTime() - inTime.getTime()) / (1000 * 60 * 60) - 1;
+
+  const totalHours =
+    (times[times.length - 1].getTime() - times[0].getTime()) / (1000 * 60 * 60);
+
+  const cutoff = inTime;
+  cutoff.setMinutes(cutoff.getMinutes() + gracePeriod);
+
+  const lateness = times[0].getTime() - cutoff.getTime();
+  const totalDays = Math.min(
+    1,
+    Math.floor(totalHours / workingHours) +
+      (totalHours % workingHours) / workingHours
+  );
+  const totalLate = lateness > 0 ? Math.floor(lateness / (1000 * 60)) : 0;
+  const deductions = (totalLate / 480) * 300;
+
+  return {
+    totalDays,
+    late: totalLate,
+    deductions,
+  };
 };

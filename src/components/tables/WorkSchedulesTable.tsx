@@ -73,19 +73,27 @@ function WorkSchedulesTable({
         inTime:
           item.option === "Regular"
             ? formatTime(new Date(item.daysIncluded[0].inTime), " hh:mm aa")
-            : item.daysIncluded
+            : item.option === "Custom"
+            ? item.daysIncluded
                 .map((day: any) =>
                   formatTime(new Date(day.inTime), " hh:mm aa")
                 )
-                .toString(),
+                .toString()
+            : item.daysIncluded
+                .filter((day: any) => day.type === "IN")
+                .map((day: any) => ` ${days[day.value]}`),
         outTime:
           item.option === "Regular"
             ? formatTime(new Date(item.daysIncluded[0].outTime), " hh:mm aa")
-            : item.daysIncluded
+            : item.option === "Custom"
+            ? item.daysIncluded
                 .map((day: any) =>
                   formatTime(new Date(day.outTime), " hh:mm aa")
                 )
-                .toString(),
+                .toString()
+            : item.daysIncluded
+                .filter((day: any) => day.type === "OUT")
+                .map((day: any) => ` ${days[day.value]}`),
       };
     });
 

@@ -8,6 +8,7 @@ import DownloadButton from "@/components/DownloadButton";
 import ViewSummary from "@/components/tables/ViewSummary";
 import { getSummaryById } from "@/data/payroll";
 import { dateQuery } from "@/utils/dateFormatter";
+import BackButton from "@/components/ui/BackButton";
 
 const SingleSummaryPage = async ({
   params,
@@ -41,12 +42,7 @@ const SingleSummaryPage = async ({
       <main className="space-y-4">
         <section className="flex flex-col gap-4">
           <div className="flex items-center gap-2">
-            <Link
-              href={`/dashboard/payroll/summary`}
-              className="rounded-full bg-[var(--border)] hover:bg-blue-200 active:bg-blue-300 active:text-[var(--accent)] text-[var(--text)] p-2 cursor-pointer"
-            >
-              <MdArrowBackIosNew size={12} />
-            </Link>
+            <BackButton to={`/dashboard/payroll/summary`} />
             <DynamicHeader
               label={
                 summary

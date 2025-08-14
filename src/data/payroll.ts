@@ -481,14 +481,16 @@ export const getSummaryById = async (id: string, from: Date, to: Date) => {
       to,
       events.items || []
     );
-    reports = computeTotalDaysAndLateSingle({
+    const { items } = computeTotalDaysAndLateSingle({
       reports,
       settings,
       employee: result.employee,
       businessDays: totalBusinessDays,
+      ref: result.name,
+      filter: true,
     });
 
-    return { ...result, items: reports };
+    return { ...result, items };
   } catch (error: any) {
     console.log(error);
   }
