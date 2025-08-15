@@ -9,11 +9,13 @@ export const computeTotalDaysAndLate = ({
   settings,
   employee,
   businessDays = 10,
+  filter,
 }: {
   dates: any[];
   settings: any;
   employee?: any;
   businessDays?: number;
+  filter: { from: Date; to: Date };
 }) => {
   const days = dates
     .map((item: any) => item.timestamp)
@@ -107,7 +109,57 @@ export const computeTotalDaysAndLate = ({
     }
     const firstDate = dateTz(new Date(dateKeys[0]));
     const lastDate = dateTz(new Date(dateKeys[dateKeys.length - 1]));
-    // Count all days between first and last (inclusive), filter by schedule.daysIncluded
+
+    const { requiredDates, totalWorkingDays } = getTheRequiredDaysPerWeek(
+      schedule,
+      filter
+    );
+    const requiredDaysPerWeek = groupDatesPerWeek(requiredDates);
+
+    const weeks: { [week: string]: string[] } = groupDatesPerWeek(dateKeys);
+
+    const missingDaysCount = Object.keys(requiredDaysPerWeek).reduce(
+      (acc: number, week: string) => {
+        const required = requiredDaysPerWeek[week] || [];
+        const actual = weeks[week] || [];
+        const missing = required.filter((day) => !actual.includes(day));
+        return acc + missing.length;
+      },
+      0
+    );
+
+    const workingDaysDeduction = totalWorkingDays - missingDaysCount * 2.5;
+
+    // For each week, check if the actual days match the scheduled days, and if there are delays
+    const workingDaysPerSched = Object.keys(weeks).map((week: string) => {
+      const actualDays = weeks[week].map((item) =>
+        dateTz(new Date(item)).getDay()
+      );
+      // Get scheduled days for this week (e.g., [1, 5] for Monday and Friday)
+      const scheduledDays = (schedule.daysIncluded || [])
+        .filter((d: any) => d.included)
+        .map((d: any) => d.value)
+        .sort((a: number, b: number) => a - b);
+
+      // For each actual day, find the closest previous scheduled day
+      actualDays.forEach((actualDay) => {
+        // Find the scheduled day that is <= actualDay, or the last scheduled day if none
+        let prevSchedDay = scheduledDays
+          .filter((d: number) => d <= actualDay)
+          .pop();
+        if (prevSchedDay === undefined)
+          prevSchedDay = scheduledDays[scheduledDays.length - 1];
+
+        const delay = actualDay - prevSchedDay;
+        if (delay > 0) {
+          // Here you can subtract or record the delay as needed
+          console.log(
+            `Delay of ${delay} day(s) for actual day ${actualDay} in week ${week}`
+          );
+        }
+      });
+    });
+
     let totalDays = 0;
     let current = new Date(firstDate);
     while (current <= lastDate) {
@@ -115,12 +167,15 @@ export const computeTotalDaysAndLate = ({
       totalDays += 1;
       current.setDate(current.getDate() + 1);
     }
+
     let earnings = 0;
 
     earnings = employee ? totalDays * employee.rate : 0;
 
     const deductions = employee ? getTotalDeduction(employee) : 0;
-    const net = earnings - deductions;
+    let net = earnings - deductions;
+    net = net < 0 ? 0 : net;
+
     return {
       totalDays:
         totalDays % 1 === 0 ? totalDays.toFixed(0) : totalDays.toFixed(1),
@@ -187,39 +242,84 @@ export const computeTotalDaysAndLateSingle = ({
         (d: any) => d.value === dayOfWeek
       );
 
+      let filterTimes = times;
+      if (times.length > 4) {
+        filterTimes = [times[0], times[1], times[2], times[times.length - 1]];
+      }
+
+      const items = filterTimes
+        .slice(0, 4)
+        .reduce((acc: any, time: any, index: number) => {
+          acc[`r${index + 1}`] = time;
+          return acc;
+        }, {});
+
       let remarks = "";
 
       if (!daySchedule) {
-        remarks = "UNSCHEDULED";
+        remarks = "UNSCHED";
+
+        return {
+          date,
+          ...items,
+          name: ref,
+          earnings: 0,
+          deductions: 0,
+          net: 0,
+          remarks,
+          totalDays: 0,
+          totalHours: 0,
+          minsLate: 0,
+        };
+      }
+
+      if (times.length < 2) {
+        remarks = "INC";
+
+        return {
+          date,
+          ...items,
+          name: ref,
+          earnings: 0,
+          deductions: 0,
+          net: 0,
+          remarks,
+          totalDays: 0,
+          totalHours: 0,
+          minsLate: 0,
+        };
       }
 
       const inTimeStr = daySchedule?.inTime;
       const outTimeStr = daySchedule?.outTime;
 
-      const inTime = inTimeStr
-        ? dateTz(new Date(date + "T" + inTimeStr.split("T")[1]))
-        : undefined;
-      const outTime = outTimeStr
-        ? dateTz(new Date(date + "T" + outTimeStr.split("T")[1]))
-        : undefined;
+      const inTime = dateTz(new Date(date + "T" + inTimeStr?.split("T")[1]));
+      const outTime = dateTz(new Date(date + "T" + outTimeStr?.split("T")[1]));
 
-      let totalHours = 0;
-      if (inTime && outTime) {
-        totalHours =
-          (outTime.getTime() - inTime.getTime()) / (1000 * 60 * 60) - 1;
-      }
+      const workingHours =
+        (outTime.getTime() - inTime.getTime()) / (1000 * 60 * 60) - 1;
+
+      const totalHours =
+        (times[times.length - 1].getTime() - times[0].getTime()) /
+        (1000 * 60 * 60);
 
       const cutoff = inTime ? new Date(inTime) : undefined;
       if (cutoff) cutoff.setMinutes(cutoff.getMinutes() + gracePeriod);
 
       const lateness =
         cutoff && times[0] ? times[0].getTime() - cutoff.getTime() : 0;
+
       const totalDays = Math.min(
         1,
-        Math.floor(totalHours / 8) + (totalHours % 8) / 8
+        Math.floor(totalHours / workingHours) +
+          (totalHours % workingHours) / workingHours
       );
-      const totalLate = lateness > 0 ? Math.floor(lateness / (1000 * 60)) : 0;
-      const deductions = (totalLate / 480) * 300;
+
+      let totalLate = lateness > 0 ? Math.floor(lateness / (1000 * 60)) : 0;
+      totalLate;
+
+      let deductions = (totalLate / 480) * 300;
+      console.log("Deductions:", deductions);
 
       let overtime = 0;
       let undertime = 0;
@@ -251,19 +351,8 @@ export const computeTotalDaysAndLateSingle = ({
         earnings = employee ? totalDays * employee.rate : 0;
       }
 
-      const net = employee ? earnings - deductions : 0;
-
-      let filterTimes = times;
-      if (times.length > 4) {
-        filterTimes = [times[0], times[1], times[2], times[times.length - 1]];
-      }
-
-      const items = filterTimes
-        .slice(0, 4)
-        .reduce((acc: any, time: any, index: number) => {
-          acc[`r${index + 1}`] = time;
-          return acc;
-        }, {});
+      let net = employee ? earnings - deductions : 0;
+      net = net < 0 ? 0 : net;
 
       return {
         date,
@@ -275,8 +364,10 @@ export const computeTotalDaysAndLateSingle = ({
           deductions % 1 === 0 ? deductions.toFixed(0) : deductions.toFixed(1),
         net: net % 1 === 0 ? net.toFixed(0) : net.toFixed(1),
         remarks,
-        totalDays:
-          totalDays % 1 === 0 ? totalDays.toFixed(0) : totalDays.toFixed(1),
+        totalDays,
+        totalHours:
+          totalHours % 1 === 0 ? totalHours.toFixed(0) : totalHours.toFixed(1),
+        minsLate: totalLate,
       };
     });
 
@@ -285,7 +376,19 @@ export const computeTotalDaysAndLateSingle = ({
     0
   );
 
-  return { items: sortedReports, totalDays: total };
+  const totalMinsLate = sortedReports.reduce(
+    (sum: number, num: any) => sum + num.minsLate,
+    0
+  );
+
+  return {
+    items: sortedReports.sort((a: any, b: any) => a.date.localeCompare(b.date)),
+    totalDays: total % 1 === 0 ? total.toFixed(0) : total.toFixed(1),
+    totalMinsLate:
+      totalMinsLate % 1 === 0
+        ? totalMinsLate.toFixed(0)
+        : totalMinsLate.toFixed(1),
+  };
 };
 
 const getTotalDeduction = (employee: any) => {
@@ -349,6 +452,14 @@ const regularComputation = (
   const inTime = dateTz(new Date(date + "T" + inTimeStr.split("T")[1]));
   const outTime = dateTz(new Date(date + "T" + outTimeStr.split("T")[1]));
 
+  if (times.length < 2) {
+    return {
+      totalDays: 0,
+      late: 0,
+      deductions: 0,
+    };
+  }
+
   const workingHours =
     (outTime.getTime() - inTime.getTime()) / (1000 * 60 * 60) - 1;
 
@@ -365,11 +476,61 @@ const regularComputation = (
       (totalHours % workingHours) / workingHours
   );
   const totalLate = lateness > 0 ? Math.floor(lateness / (1000 * 60)) : 0;
-  const deductions = (totalLate / 480) * 300;
+  let deductions = (totalLate / 480) * 300;
 
   return {
     totalDays,
-    late: totalLate,
+    late: totalLate < 0 ? 0 : totalLate,
     deductions,
   };
+};
+
+const getTheRequiredDaysPerWeek = (
+  schedule: Schedule,
+  filter: { from: Date; to: Date }
+) => {
+  const { from, to } = filter;
+  const requiredDates: string[] = [];
+  let totalWorkingDays = 0;
+
+  for (let d = new Date(from); d < to; d.setDate(d.getDate() + 1)) {
+    const dayOfWeek = d.getDay();
+    const daySchedule = schedule.daysIncluded.find(
+      (day: any) => day.value === dayOfWeek
+    );
+
+    if (daySchedule && daySchedule.included) {
+      requiredDates.push(format(dateTz(new Date(d)), "yyyy-MM-dd"));
+    }
+
+    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+      totalWorkingDays++;
+    }
+  }
+
+  return { requiredDates, totalWorkingDays };
+};
+
+const groupDatesPerWeek = (dateKeys: string[]) => {
+  const weeks: { [week: string]: string[] } = {};
+  dateKeys.forEach((dateStr) => {
+    const date = dateTz(new Date(dateStr));
+    const year = date.getFullYear();
+    const jan4 = dateTz(new Date(year, 0, 4));
+    const jan4Day = jan4.getDay() || 7;
+    const weekStart = dateTz(new Date(jan4));
+    weekStart.setDate(jan4.getDate() - jan4Day + 1);
+    const diff = Math.floor(
+      (date.getTime() - weekStart.getTime()) / (7 * 24 * 60 * 60 * 1000)
+    );
+    const weekNum = diff + 1;
+    const weekKey = `${year}-W${weekNum.toString().padStart(2, "0")}`;
+    if (!weeks[weekKey]) weeks[weekKey] = [];
+
+    if (!weeks[weekKey].includes(dateStr)) {
+      weeks[weekKey].push(dateStr);
+    }
+  });
+
+  return weeks;
 };

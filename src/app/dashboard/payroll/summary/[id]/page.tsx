@@ -9,6 +9,7 @@ import ViewSummary from "@/components/tables/ViewSummary";
 import { getSummaryById } from "@/data/payroll";
 import { dateQuery } from "@/utils/dateFormatter";
 import BackButton from "@/components/ui/BackButton";
+import DownloadSingleSummary from "@/components/Downloads/DownloadSingleSummary";
 
 const SingleSummaryPage = async ({
   params,
@@ -55,7 +56,7 @@ const SingleSummaryPage = async ({
           </div>
           <div className="flex items-center justify-between">
             <DateFilter from={dateFrom} />
-            <DownloadButton />
+            {/* <DownloadSingleSummary summary={summary} employee={employee} /> */}
           </div>
         </section>
 

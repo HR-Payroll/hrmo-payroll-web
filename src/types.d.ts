@@ -18,6 +18,7 @@ export interface Schedule {
   daysIncluded: ScheduleDay[];
   readOnly: boolean;
   option: string;
+  straightTimeRegular?: boolean;
 }
 
 export type DaysKey =

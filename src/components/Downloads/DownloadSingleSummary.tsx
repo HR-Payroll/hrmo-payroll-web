@@ -1,24 +1,23 @@
 "use client";
-import React, { useEffect } from "react";
+import React from "react";
 import { MdOutlineFileDownload } from "react-icons/md";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { formatTime } from "@/utils/dateFormatter";
+import DownloadSingleReport from "./DownloadSingleReport";
 
-const DownloadSingleReport = ({
-  reports,
+const DownloadSingleSummary = ({
+  summary,
   employee,
-  numDays,
-  totalLate,
-}: {
-  reports: any[];
+}: //   numDays,
+{
+  summary: any;
   employee: any;
   numDays?: number;
-  totalLate?: number;
 }) => {
   const handleGeneratePDF = async () => {
-    const tableRows = reports.map((report) => {
-      const { date, name, r1, r2, r3, r4, remarks } = report;
+    const tableRows = summary.map((summary: any) => {
+      const { date, name, r1, r2, r3, r4, remarks } = summary;
       return [
         date,
         name["ref"] ? name["name"] : `${name["name"]} (no ref)`,
@@ -40,54 +39,17 @@ const DownloadSingleReport = ({
     const imgY = 10;
     doc.addImage(imgData, "PNG", imgX, imgY, imgWidth, imgHeight);
 
-    const title = "Daily Time Report (DTR)";
+    const title = "Daily Time Report";
     const textWidth = doc.getTextWidth(title);
     const xPosition = (pageWidth - textWidth) / 2;
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(12);
+    doc.setFontSize(14);
     doc.text(title, xPosition, 56);
 
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-
-    toHighLightText(
-      doc,
-      "Employee: ",
-      employee ? employee.name : "N/A",
-      15,
-      68
-    );
-
-    toHighLightText(
-      doc,
-      "Record No: ",
-      employee ? employee.recordNo : "N/A",
-      15,
-      74
-    );
-
-    const depWidth = doc.getTextWidth(
-      ` Department: ${employee.department.name || "N/A"}`
-    );
-    const catWidth = doc.getTextWidth(
-      ` Category: ${employee.category || "N/A"}`
-    );
-
-    toHighLightText(
-      doc,
-      "Category: ",
-      employee ? employee.category : "N/A",
-      pageWidth - (depWidth > catWidth ? depWidth - 16 : catWidth) - 16,
-      68
-    );
-
-    toHighLightText(
-      doc,
-      "Department: ",
-      employee.department.name || "N/A",
-      pageWidth - (depWidth > catWidth ? depWidth - 16 : catWidth) - 16,
-      74
-    );
+    doc.setFontSize(11);
+    doc.text(`Employee: ${employee ? employee.name : "N/A"}`, 15, 64);
+    doc.text(`Number of Days: ${employee ? employee.name : "N/A"}`, 15, 64);
+    // doc.text(`Number of Days: ${numDays || "N/A"}`, 15, 70);
 
     const tableColumn = [
       "Date",
@@ -99,49 +61,17 @@ const DownloadSingleReport = ({
       "Remarks",
     ];
 
-    let tableHeight = 82;
     autoTable(doc, {
       head: [tableColumn],
       body: tableRows,
-      startY: tableHeight,
-      styles: { fontSize: 10 },
-      headStyles: { fillColor: [191, 219, 254], textColor: [0, 0, 0] },
-      didDrawPage: (data) => {
-        tableHeight = data.cursor!.y;
-      },
+      startY: 76, // Position below the title
+      styles: { fontSize: 11 },
+      headStyles: { fillColor: [191, 219, 254], textColor: [0, 0, 0] }, // Custom header color
     });
-
-    toHighLightText(
-      doc,
-      "Number of Days: ",
-      `${numDays || "N/A"}`,
-      15,
-      tableHeight + 10
-    );
-    toHighLightText(
-      doc,
-      "Minutes of Late: ",
-      `${totalLate || "N/A"}`,
-      15,
-      tableHeight + 16
-    );
 
     //doc.save("User_Report.pdf");
     window.open(doc.output("bloburl"), "_blank");
   };
-
-  function toHighLightText(
-    doc: jsPDF,
-    label: string,
-    text: string,
-    xPosition: number,
-    yPosition: number
-  ) {
-    doc.text(label, xPosition, yPosition);
-    doc.setFont("helvetica", "bold");
-    doc.text(text, doc.getTextWidth(label) + xPosition, yPosition);
-    doc.setFont("helvetica", "normal");
-  }
 
   async function addImageProcess(src: string) {
     return new Promise<HTMLImageElement>((resolve, reject) => {
@@ -163,4 +93,4 @@ const DownloadSingleReport = ({
   );
 };
 
-export default DownloadSingleReport;
+export default DownloadSingleSummary;

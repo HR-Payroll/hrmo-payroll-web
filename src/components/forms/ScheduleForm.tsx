@@ -36,6 +36,8 @@ function ScheduleForm({
   const [regularIn, setRegularIn] = useState<Date>(new Date());
   const [regularOut, setRegularOut] = useState<Date>(new Date());
   const [lastType, setLastType] = useState<"IN" | "OUT" | null>(null);
+  const [straightTimeRegular, setStraightTimeRegular] =
+    useState<boolean>(false);
   const [schedule, setSchedule] = useReducer(
     (prev, next) => {
       return { ...prev, ...next };
@@ -105,6 +107,8 @@ function ScheduleForm({
       name: edit ? edit.data.name : "",
       readOnly: false,
       daysIncluded: edit ? JSON.stringify(edit.data.daysIncluded) : "",
+      option: edit ? edit.data.option : "Regular",
+      straightTimeRegular: edit ? edit.data.straightTimeRegular : false,
     },
   });
 
@@ -391,7 +395,7 @@ function ScheduleForm({
                     isDayIncluded(selectTime || "") &&
                     schedule[selectTime as DaysKey].type === item
                   }
-                  disabled={isDayTypeDisabled(item as "IN" | "OUT")}
+                  //disabled={isDayTypeDisabled(item as "IN" | "OUT")}
                   onClick={() => {
                     setSchedule({
                       [(selectTime as DaysKey) || ""]: {
@@ -434,7 +438,7 @@ function ScheduleForm({
 
       <div className="flex flex-col text-sm gap-2 text-[var(--text)]">
         <label className="text-left">Schedule Option</label>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 items-center">
           {["Regular", "Custom", "Straight Time"].map((opt) => (
             <Chip
               key={opt}
@@ -459,6 +463,18 @@ function ScheduleForm({
               color="primary"
             />
           ))}
+          {option === "Straight Time" && (
+            <div className="flex flex-row items-center">
+              <Checkbox
+                checked={straightTimeRegular}
+                onClick={() => {
+                  setValue("straightTimeRegular", !straightTimeRegular);
+                  setStraightTimeRegular(!straightTimeRegular);
+                }}
+              />
+              <p className="text-sm">Regular</p>
+            </div>
+          )}
         </div>
       </div>
       {option === "Regular" && (

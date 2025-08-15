@@ -94,11 +94,12 @@ model Settings {
 }
 
 model Schedule {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  name         String   @unique
-  option       String
-  daysIncluded String
-  readOnly     Boolean  @default(false)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id                  String   @id @default(auto()) @map("_id") @db.ObjectId
+  name                String   @unique
+  option              String
+  straightTimeRegular Boolean?
+  daysIncluded        String
+  readOnly            Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 }

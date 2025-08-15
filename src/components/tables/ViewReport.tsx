@@ -5,9 +5,6 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { formatTime } from "@/utils/dateFormatter";
 
 function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
-  useEffect(() => {
-    console.log("Reports:", reports);
-  }, [reports]);
   const columns: GridColDef[] = [
     {
       field: "date",

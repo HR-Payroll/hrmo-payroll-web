@@ -91,4 +91,5 @@ export const ScheduleSchema = object({
   daysIncluded: string().min(1, "Please include a day"),
   readOnly: boolean().default(false).optional(),
   option: string().optional(),
+  straightTimeRegular: boolean().optional(),
 });

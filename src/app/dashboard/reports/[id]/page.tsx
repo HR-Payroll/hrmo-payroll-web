@@ -30,6 +30,8 @@ const SingleReportPage = async ({
 
   const report = (await getReportById(id, dateFrom, dateTo)) as any;
 
+  console.log("Report:", report);
+
   return (
     <div className="card">
       <header className="absolute top-4 -ml-4">
@@ -59,6 +61,7 @@ const SingleReportPage = async ({
               reports={report ? report.items : []}
               employee={report ? report.employee : null}
               numDays={report ? report.totalDays : 0}
+              totalLate={report ? report.totalLate : 0}
             />
           </div>
         </section>

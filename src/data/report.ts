@@ -111,6 +111,7 @@ export const getAllReport = async (
       ],
     });
 
+    to.setDate(to.getDate() - 1);
     const settings = await getSettings();
 
     const temp = Array.isArray(reports)
@@ -119,6 +120,7 @@ export const getAllReport = async (
             dates: report.items,
             employee: report.employee,
             settings,
+            filter: { from, to },
           });
           return {
             ...report,
@@ -278,6 +280,7 @@ export const getPaginatedReport = async (
     const length = result[0].totalCount[0] ? result[0].totalCount[0].count : 0;
 
     const settings = await getSettings();
+    to.setDate(to.getDate() - 1);
 
     const items = Array.isArray(result[0].items)
       ? result[0].items.map((report: any) => {
@@ -285,6 +288,7 @@ export const getPaginatedReport = async (
             dates: report.items,
             employee: report.employee,
             settings,
+            filter: { from, to },
           });
           return {
             ...report,
@@ -369,13 +373,22 @@ export const getReportById = async (id: string, from: Date, to: Date) => {
                 },
               },
               {
+                $lookup: {
+                  from: "Department",
+                  localField: "department",
+                  foreignField: "_id",
+                  as: "department",
+                },
+              },
+              {
                 $project: {
                   _id: 1,
                   name: 1,
                   category: 1,
-                  department: 1,
+                  department: { $arrayElemAt: ["$department", 0] },
                   schedule: { $arrayElemAt: ["$schedules", 0] },
                   rate: 1,
+                  recordNo: 1,
                 },
               },
             ],
@@ -414,7 +427,7 @@ export const getReportById = async (id: string, from: Date, to: Date) => {
         return acc;
       }, {});
 
-    const { items, totalDays } = computeTotalDaysAndLateSingle({
+    const { items, totalDays, totalMinsLate } = computeTotalDaysAndLateSingle({
       reports,
       employee: result.employee,
       settings,
@@ -468,7 +481,7 @@ export const getReportById = async (id: string, from: Date, to: Date) => {
     //     };
     //   });
 
-    return { ...result, items, totalDays };
+    return { ...result, items, totalDays, totalLate: totalMinsLate };
   } catch (error: any) {
     console.log(error);
   }
