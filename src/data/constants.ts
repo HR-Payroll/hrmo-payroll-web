@@ -2,7 +2,7 @@ const currentDate = new Date();
 
 export const REGULAR_SCHEDULE = {
   name: "Regular",
-  daysIncluded: [1, 2, 3, 4, 5].map((day) => ({
+  daysIncluded: [0, 1, 2, 3, 4, 5, 6].map((day) => ({
     value: day,
     inTime: new Date(
       currentDate.getFullYear(),

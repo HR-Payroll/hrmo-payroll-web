@@ -256,7 +256,6 @@ export const computeTotalDaysAndLateSingle = ({
           filterTimes = [times[0], times[1], times[2], times[times.length - 1]];
         }
 
-        console.log(date);
         const items = filterTimes
           .slice(0, 4)
           .reduce((acc: any, time: any, index: number) => {

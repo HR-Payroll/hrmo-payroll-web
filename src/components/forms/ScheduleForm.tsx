@@ -261,7 +261,7 @@ function ScheduleForm({
       Object.keys(schedule).reduce((acc, key) => {
         acc[key as DaysKey] = {
           ...schedule[key as DaysKey],
-          included: !["Sunday", "Saturday"].includes(key),
+          included: true,
           [field]: onChangeTime(time),
         };
         return acc;
@@ -449,9 +449,7 @@ function ScheduleForm({
                   Object.keys(schedule).reduce((acc, key) => {
                     acc[key as DaysKey] = {
                       ...schedule[key as DaysKey],
-                      included:
-                        opt === "Regular" &&
-                        !["Sunday", "Saturday"].includes(key),
+                      included: opt === "Regular",
                       inTime: onChangeTime(regularIn),
                       outTime: onChangeTime(regularOut),
                     };
