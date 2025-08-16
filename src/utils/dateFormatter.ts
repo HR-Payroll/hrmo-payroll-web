@@ -36,8 +36,10 @@ export const dateQuery = (from?: string, to?: string) => {
 
 const TIMEZONE = "Asia/Manila";
 
-export const dateTz = (date: Date): Date => {
-  return toZonedTime(date, TIMEZONE);
+export const dateTz = (date: Date | string): Date => {
+  const d = typeof date === "string" ? new Date(date) : date;
+  // Always convert to Asia/Manila time regardless of server timezone
+  return toZonedTime(d, TIMEZONE);
 };
 
 export function formatTime(
