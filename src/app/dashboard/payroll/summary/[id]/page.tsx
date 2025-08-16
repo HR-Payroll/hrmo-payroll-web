@@ -46,7 +46,7 @@ const SingleSummaryPage = async ({
             <BackButton to={`/dashboard/payroll/summary`} />
             <DynamicHeader
               label={
-                summary
+                summary && summary.name
                   ? summary.name.ref
                     ? summary.name.name
                     : `${summary.name.name} (no ref)`

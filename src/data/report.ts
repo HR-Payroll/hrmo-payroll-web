@@ -414,6 +414,7 @@ export const getReportById = async (id: string, from: Date, to: Date) => {
 
     const result = report[0] as any;
     const settings = await getSettings();
+    to.setDate(to.getDate() - 1);
 
     let reports = result.items
       .map((item: any) => item.timestamp)
@@ -432,6 +433,7 @@ export const getReportById = async (id: string, from: Date, to: Date) => {
       employee: result.employee,
       settings,
       ref: result.name,
+      dates: { from, to },
     });
 
     // const { totalDays } = computeTotalDaysAndLate({

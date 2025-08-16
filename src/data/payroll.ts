@@ -160,6 +160,7 @@ export const getAllSummary = async (
 
     const result = reports as any;
     const settings = await getSettings();
+    to.setDate(to.getDate() - 1);
 
     const items = Array.isArray(result)
       ? result.map((report: any) => {
@@ -168,6 +169,7 @@ export const getAllSummary = async (
               dates: report.items,
               settings,
               employee: report.employee,
+              filter: { from: from, to: to },
             });
           return {
             ...report,
@@ -337,6 +339,7 @@ export const getPaginatedSummary = async (
     );
 
     const settings = await getSettings();
+    to.setDate(to.getDate() - 1);
 
     const items = Array.isArray(result[0].items)
       ? result[0].items.map((report: any) => {
@@ -346,6 +349,7 @@ export const getPaginatedSummary = async (
               settings,
               employee: report.employee,
               businessDays: totalBusinessDays,
+              filter: { from: from, to: to },
             });
           return {
             ...report,
@@ -461,6 +465,7 @@ export const getSummaryById = async (id: string, from: Date, to: Date) => {
     });
 
     const result = report[0] as any;
+    if (!result) return { ...result, items: [] };
 
     let reports = result.items
       .map((item: any) => item.timestamp)
@@ -476,6 +481,7 @@ export const getSummaryById = async (id: string, from: Date, to: Date) => {
 
     const events = await getEventsByDateRange(from, to);
     const settings = await getSettings();
+    to.setDate(to.getDate() - 1);
     const totalBusinessDays = getTotalBusinessDays(
       from,
       to,
@@ -488,6 +494,7 @@ export const getSummaryById = async (id: string, from: Date, to: Date) => {
       businessDays: totalBusinessDays,
       ref: result.name,
       filter: true,
+      dates: { from, to },
     });
 
     return { ...result, items };

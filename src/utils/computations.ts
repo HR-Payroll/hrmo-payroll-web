@@ -98,18 +98,15 @@ export const computeTotalDaysAndLate = ({
     };
   } else {
     const dateKeys = Object.keys(days).sort();
-    if (dateKeys.length < 2) {
-      return {
-        totalDays: 0,
-        late: 0,
-        earnings: 0,
-        deductions: 0,
-        net: 0,
-      };
-    }
-    const firstDate = dateTz(new Date(dateKeys[0]));
-    const lastDate = dateTz(new Date(dateKeys[dateKeys.length - 1]));
-
+    // if (dateKeys.length < 2) {
+    //   return {
+    //     totalDays: 0,
+    //     late: 0,
+    //     earnings: 0,
+    //     deductions: 0,
+    //     net: 0,
+    //   };
+    // }
     const { requiredDates, totalWorkingDays } = getTheRequiredDaysPerWeek(
       schedule,
       filter
@@ -128,48 +125,39 @@ export const computeTotalDaysAndLate = ({
       0
     );
 
-    const workingDaysDeduction = totalWorkingDays - missingDaysCount * 2.5;
+    const scheduledDays = (schedule.daysIncluded || [])
+      .filter((d: any) => d.included)
+      .map((d: any) => d.value)
+      .sort((a: number, b: number) => b - a);
 
-    // For each week, check if the actual days match the scheduled days, and if there are delays
-    const workingDaysPerSched = Object.keys(weeks).map((week: string) => {
+    const workingDaysDeduction = missingDaysCount * (5 / scheduledDays.length);
+    let totalDays = totalWorkingDays - workingDaysDeduction;
+
+    Object.keys(weeks).map((week: string) => {
       const actualDays = weeks[week].map((item) =>
         dateTz(new Date(item)).getDay()
       );
-      // Get scheduled days for this week (e.g., [1, 5] for Monday and Friday)
-      const scheduledDays = (schedule.daysIncluded || [])
-        .filter((d: any) => d.included)
-        .map((d: any) => d.value)
-        .sort((a: number, b: number) => a - b);
 
-      // For each actual day, find the closest previous scheduled day
       actualDays.forEach((actualDay) => {
-        // Find the scheduled day that is <= actualDay, or the last scheduled day if none
-        let prevSchedDay = scheduledDays
-          .filter((d: number) => d <= actualDay)
-          .pop();
-        if (prevSchedDay === undefined)
-          prevSchedDay = scheduledDays[scheduledDays.length - 1];
+        let nearestScheduledDay = 0;
 
-        const delay = actualDay - prevSchedDay;
-        if (delay > 0) {
-          // Here you can subtract or record the delay as needed
-          console.log(
-            `Delay of ${delay} day(s) for actual day ${actualDay} in week ${week}`
-          );
+        for (let i = 0; i < scheduledDays.length; i++) {
+          const item = scheduledDays[i];
+          console.log("Scheduled Day:", item);
+          if (actualDay >= item) {
+            nearestScheduledDay = item;
+            break;
+          }
         }
+
+        let diff = actualDay - nearestScheduledDay;
+        diff = diff < 0 ? 0 : diff;
+
+        totalDays -= diff;
       });
     });
 
-    let totalDays = 0;
-    let current = new Date(firstDate);
-    while (current <= lastDate) {
-      const dayOfWeek = current.getDay();
-      totalDays += 1;
-      current.setDate(current.getDate() + 1);
-    }
-
     let earnings = 0;
-
     earnings = employee ? totalDays * employee.rate : 0;
 
     const deductions = employee ? getTotalDeduction(employee) : 0;
@@ -195,6 +183,7 @@ export const computeTotalDaysAndLateSingle = ({
   businessDays = 10,
   ref,
   filter = false,
+  dates,
 }: {
   reports: any;
   employee: any;
@@ -202,6 +191,7 @@ export const computeTotalDaysAndLateSingle = ({
   businessDays?: number;
   ref?: any;
   filter?: boolean;
+  dates: { from: Date; to: Date };
 }) => {
   const gracePeriod = settings.gracePeriod || 10;
   let schedule: Schedule = employee?.schedule || REGULAR_SCHEDULE;
@@ -216,7 +206,7 @@ export const computeTotalDaysAndLateSingle = ({
     }
   }
 
-  if (filter) {
+  if (filter && schedule.option !== "Straight Time") {
     Object.keys(reports).forEach((date) => {
       const dayOfWeek = dateTz(new Date(date)).getDay();
 
@@ -224,6 +214,112 @@ export const computeTotalDaysAndLateSingle = ({
         delete reports[date];
       }
     });
+  }
+
+  if (schedule.option === "Straight Time") {
+    const { requiredDates, totalWorkingDays } = getTheRequiredDaysPerWeek(
+      schedule,
+      dates
+    );
+
+    const actualDates = Object.keys(reports);
+    const requiredDatesSet = new Set(requiredDates);
+
+    if (actualDates.length > requiredDates.length) {
+      // Filter out extra dates not in requiredDates
+      for (const date of actualDates) {
+        if (!requiredDatesSet.has(date)) {
+          delete reports[date];
+        }
+      }
+    }
+
+    const scheduledDays = (schedule.daysIncluded || [])
+      .filter((d: any) => d.included)
+      .map((d: any) => d.value)
+      .sort((a: number, b: number) => b - a);
+
+    const perDayEquivalent = 5 / scheduledDays.length;
+
+    const straightTimeReports = Object.keys(reports)
+      .sort(
+        (a: any, b: any) =>
+          dateTz(new Date(b)).getTime() - dateTz(new Date(a)).getTime()
+      )
+      .map((date, index: number) => {
+        const times = reports[date].sort(
+          (a: Date, b: Date) => dateTz(a).getTime() - dateTz(b).getTime()
+        );
+
+        let filterTimes = times;
+        if (times.length > 4) {
+          filterTimes = [times[0], times[1], times[2], times[times.length - 1]];
+        }
+
+        console.log(date);
+        const items = filterTimes
+          .slice(0, 4)
+          .reduce((acc: any, time: any, index: number) => {
+            acc[`r${index + 1}`] = time;
+            return acc;
+          }, {});
+
+        let totalDays = perDayEquivalent;
+        const dayOfWeek = dateTz(new Date(date)).getDay();
+
+        let nearestScheduledDay = 0;
+
+        for (let i = 0; i < scheduledDays.length; i++) {
+          const item = scheduledDays[i];
+          if (dayOfWeek >= item) {
+            nearestScheduledDay = item;
+            break;
+          }
+        }
+
+        let diff = dayOfWeek - nearestScheduledDay;
+        diff = diff < 0 ? 0 : diff;
+
+        totalDays -= diff;
+
+        console.log("Nearest Scheduled Day:", nearestScheduledDay);
+        console.log("Total Days:", totalDays);
+
+        let earnings = 0;
+        earnings = employee ? totalDays * employee.rate : 0;
+
+        const deductions = 0;
+        let net = earnings - deductions;
+        net = net < 0 ? 0 : net;
+
+        return {
+          date,
+          ...items,
+          name: ref,
+          remarks: "-",
+          totalDays,
+          minsLate: 0,
+          totalHours: "Straight Time",
+          earnings:
+            earnings % 1 === 0 ? earnings.toFixed(0) : earnings.toFixed(1),
+          deductions:
+            deductions % 1 === 0
+              ? deductions.toFixed(0)
+              : deductions.toFixed(1),
+          net: net % 1 === 0 ? net.toFixed(0) : net.toFixed(1),
+        };
+      });
+
+    const total = straightTimeReports.reduce(
+      (sum: number, num: any) => sum + num.totalDays,
+      0
+    );
+
+    return {
+      items: straightTimeReports,
+      totalDays: total % 1 === 0 ? total.toFixed(0) : total.toFixed(1),
+      totalMinsLate: 0,
+    };
   }
 
   const sortedReports = Object.keys(reports)
