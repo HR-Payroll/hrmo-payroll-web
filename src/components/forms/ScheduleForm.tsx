@@ -157,8 +157,8 @@ function ScheduleForm({
       setOption(opt);
 
       if (opt === "Regular") {
-        const regIn = new Date((days[0] as ScheduleDay).inTime);
-        const regOut = new Date((days[0] as ScheduleDay).outTime);
+        const regIn = dateTz(new Date((days[0] as ScheduleDay).inTime));
+        const regOut = dateTz(new Date((days[0] as ScheduleDay).outTime));
         setRegularIn(regIn);
         setRegularOut(regOut);
 
@@ -318,7 +318,7 @@ function ScheduleForm({
             setSchedule({
               [(selectTime as DaysKey) || ""]: {
                 ...schedule[(selectTime as DaysKey) || ""],
-                inTime: onChangeTime(new Date(value)),
+                inTime: onChangeTime(dateTz(value)),
               },
             });
           }}
@@ -339,7 +339,7 @@ function ScheduleForm({
             setSchedule({
               [(selectTime as DaysKey) || ""]: {
                 ...schedule[(selectTime as DaysKey) || ""],
-                outTime: onChangeTime(new Date(value)),
+                outTime: onChangeTime(dateTz(new Date(value))),
               },
             });
           }}
