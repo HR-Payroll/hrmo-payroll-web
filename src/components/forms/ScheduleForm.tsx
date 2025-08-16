@@ -389,7 +389,7 @@ function ScheduleForm({
           <p className="pb-2 text-sm font-medium px-3">Any time of the day.</p>
           <div className="flex flex-row items-center gap-8  w-full h-full">
             {["IN", "OUT"].map((item) => (
-              <div className="flex flex-row items-center">
+              <div key={item} className="flex flex-row items-center">
                 <Radio
                   checked={
                     isDayIncluded(selectTime || "") &&
