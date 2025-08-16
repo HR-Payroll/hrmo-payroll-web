@@ -7,9 +7,11 @@ import { uploadEmployee } from "@/actions/employee";
 
 const UploadEmployees = ({
   departments,
+  schedules,
   reload,
 }: {
   departments: any[];
+  schedules: any[];
   reload?: VoidFunction;
 }) => {
   const [isUploading, setUploading] = useState(false);

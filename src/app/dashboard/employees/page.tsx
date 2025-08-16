@@ -52,7 +52,11 @@ const Employees = async (props: {
           <div className="flex flex-col md:flex-row items-center gap-4">
             <TableFilters departments={departments} />
             <div className="flex items-center gap-4">
-              <UploadEmployees departments={departments} reload={reload} />
+              <UploadEmployees
+                schedules={schedules}
+                departments={departments}
+                reload={reload}
+              />
               <AddButton
                 data={departments}
                 schedules={schedules}

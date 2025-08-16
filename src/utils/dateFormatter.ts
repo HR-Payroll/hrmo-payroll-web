@@ -49,7 +49,7 @@ export function formatTime(
   if (!date) return "";
   const d = typeof date === "string" ? new Date(date) : date;
   return format(
-    process.env.NODE_ENV === "production" ? subHours(d, 8) : d,
+    d,
     pattern,
     { timeZone: TIMEZONE }
   );
