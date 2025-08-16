@@ -547,11 +547,17 @@ function ScheduleForm({
                   <div className="flex flex-col text-xs items-start">
                     <p>
                       In:{" "}
-                      {formatTime(schedule[day as DaysKey].inTime, "hh:mm aa")}
+                      {formatTime(
+                        dateTz(schedule[day as DaysKey].inTime),
+                        "hh:mm aa"
+                      )}
                     </p>
                     <p>
                       Out:{" "}
-                      {formatTime(schedule[day as DaysKey].outTime, "hh:mm aa")}
+                      {formatTime(
+                        dateTz(schedule[day as DaysKey].outTime),
+                        "hh:mm aa"
+                      )}
                     </p>
                   </div>
                 </>

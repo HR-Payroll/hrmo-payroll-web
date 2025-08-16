@@ -20,7 +20,7 @@ import { deleteSchedule } from "@/actions/schedule";
 import ScheduleForm from "../forms/ScheduleForm";
 import { ScheduleSchema } from "@/lib/zod";
 import { z } from "zod";
-import { formatTime } from "@/utils/dateFormatter";
+import { dateTz, formatTime } from "@/utils/dateFormatter";
 import { Schedule } from "@/types";
 
 function WorkSchedulesTable({
@@ -72,11 +72,14 @@ function WorkSchedulesTable({
         ...item,
         inTime:
           item.option === "Regular"
-            ? formatTime(new Date(item.daysIncluded[0].inTime), " hh:mm aa")
+            ? formatTime(
+                dateTz(new Date(item.daysIncluded[0].inTime)),
+                " hh:mm aa"
+              )
             : item.option === "Custom"
             ? item.daysIncluded
                 .map((day: any) =>
-                  formatTime(new Date(day.inTime), " hh:mm aa")
+                  formatTime(dateTz(new Date(day.inTime)), " hh:mm aa")
                 )
                 .toString()
             : item.daysIncluded
@@ -84,11 +87,14 @@ function WorkSchedulesTable({
                 .map((day: any) => ` ${days[day.value]}`),
         outTime:
           item.option === "Regular"
-            ? formatTime(new Date(item.daysIncluded[0].outTime), " hh:mm aa")
+            ? formatTime(
+                dateTz(new Date(item.daysIncluded[0].outTime)),
+                " hh:mm aa"
+              )
             : item.option === "Custom"
             ? item.daysIncluded
                 .map((day: any) =>
-                  formatTime(new Date(day.outTime), " hh:mm aa")
+                  formatTime(dateTz(new Date(day.outTime)), " hh:mm aa")
                 )
                 .toString()
             : item.daysIncluded
