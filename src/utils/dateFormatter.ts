@@ -1,4 +1,4 @@
-import { toZonedTime, format } from "date-fns-tz";
+import { toZonedTime, format, fromZonedTime } from "date-fns-tz";
 import { subHours, toDate } from "date-fns";
 
 export const stringToDate = (date: string) => {
@@ -39,7 +39,7 @@ const TIMEZONE = "Asia/Manila";
 export const dateTz = (date: Date | string): Date => {
   const d = typeof date === "string" ? new Date(date) : date;
   // Always convert to Asia/Manila time regardless of server timezone
-  return toZonedTime(d, TIMEZONE);
+  return fromZonedTime(d, TIMEZONE);
 };
 
 export function formatTime(
