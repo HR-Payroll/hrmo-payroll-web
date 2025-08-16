@@ -398,7 +398,7 @@ export const computeTotalDaysAndLateSingle = ({
         (times[times.length - 1].getTime() - times[0].getTime()) /
         (1000 * 60 * 60);
 
-      const cutoff = inTime ? new Date(inTime) : undefined;
+      const cutoff = inTime ? dateTz(new Date(inTime)) : undefined;
       if (cutoff) cutoff.setMinutes(cutoff.getMinutes() + gracePeriod);
 
       const lateness =
@@ -588,7 +588,7 @@ const getTheRequiredDaysPerWeek = (
   const requiredDates: string[] = [];
   let totalWorkingDays = 0;
 
-  for (let d = new Date(from); d < to; d.setDate(d.getDate() + 1)) {
+  for (let d = dateTz(new Date(from)); d < to; d.setDate(d.getDate() + 1)) {
     const dayOfWeek = d.getDay();
     const daySchedule = schedule.daysIncluded.find(
       (day: any) => day.value === dayOfWeek

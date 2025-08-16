@@ -103,6 +103,7 @@ function WorkSchedulesTable({
       };
     });
 
+    console.log("Formatted Schedules: ", formattedSched);
     setData(formattedSched);
   }, [schedules]);
 
