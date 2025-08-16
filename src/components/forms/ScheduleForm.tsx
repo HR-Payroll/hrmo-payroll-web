@@ -12,7 +12,7 @@ import { createSchedule, updateSchedule } from "@/actions/schedule";
 import { isArrayEqual } from "@/utils/tools";
 import { MdOutlineClose } from "react-icons/md";
 import { DaysKey, Schedule, ScheduleDay } from "@/types";
-import { formatTime } from "@/utils/dateFormatter";
+import { dateTz, formatTime } from "@/utils/dateFormatter";
 
 function ScheduleForm({
   data,
@@ -33,8 +33,8 @@ function ScheduleForm({
     "Regular"
   );
   const [selectTime, setSelectTime] = useState<string | null>(null);
-  const [regularIn, setRegularIn] = useState<Date>(new Date());
-  const [regularOut, setRegularOut] = useState<Date>(new Date());
+  const [regularIn, setRegularIn] = useState<Date>(dateTz(new Date()));
+  const [regularOut, setRegularOut] = useState<Date>(dateTz(new Date()));
   const [lastType, setLastType] = useState<"IN" | "OUT" | null>(null);
   const [straightTimeRegular, setStraightTimeRegular] =
     useState<boolean>(false);
@@ -178,10 +178,10 @@ function ScheduleForm({
             acc[key as DaysKey] = {
               ...schedule[key as DaysKey],
               inTime: matchedDay
-                ? new Date(matchedDay.inTime)
+                ? dateTz(new Date(matchedDay.inTime))
                 : onChangeTime(new Date(), 8),
               outTime: matchedDay
-                ? new Date(matchedDay.outTime)
+                ? dateTz(new Date(matchedDay.outTime))
                 : onChangeTime(new Date(), 17),
               included: isIncluded,
               type: opt === "Straight Time" ? matchedDay?.type : undefined,
@@ -218,25 +218,29 @@ function ScheduleForm({
   }, [schedule]);
 
   const onChangeTime = (time?: Date, dt?: number) => {
-    const currentDate = new Date();
+    const currentDate = dateTz(new Date());
 
     if (!time)
-      return new Date(
-        currentDate.getFullYear(),
-        currentDate.getMonth(),
-        currentDate.getDate(),
-        dt || 0,
-        0,
-        0
+      return dateTz(
+        new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth(),
+          currentDate.getDate(),
+          dt || 0,
+          0,
+          0
+        )
       );
 
-    return new Date(
-      time.getFullYear(),
-      time.getMonth(),
-      time.getDate(),
-      dt || time.getHours(),
-      dt ? 0 : time.getMinutes(),
-      0
+    return dateTz(
+      new Date(
+        time.getFullYear(),
+        time.getMonth(),
+        time.getDate(),
+        dt || time.getHours(),
+        dt ? 0 : time.getMinutes(),
+        0
+      )
     );
   };
 
@@ -483,8 +487,9 @@ function ScheduleForm({
             label="Time In"
             defaultValue={regularIn}
             setValue={(_, value) => {
-              setRegularIn(value);
-              setRegularTime("inTime", value);
+              const tz = dateTz(value);
+              setRegularIn(tz);
+              setRegularTime("inTime", tz);
             }}
           />
           <TimePickerField
@@ -494,8 +499,9 @@ function ScheduleForm({
             defaultValue={regularOut}
             validator={() => false}
             setValue={(_, value) => {
-              setRegularOut(value);
-              setRegularTime("outTime", value);
+              const tz = dateTz(value);
+              setRegularOut(tz);
+              setRegularTime("outTime", tz);
             }}
           />
         </div>
