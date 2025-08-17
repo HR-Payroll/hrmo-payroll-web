@@ -103,7 +103,6 @@ function WorkSchedulesTable({
       };
     });
 
-    console.log("Formatted Schedules: ", formattedSched);
     setData(formattedSched);
   }, [schedules]);
 
@@ -160,7 +159,6 @@ function WorkSchedulesTable({
       headerAlign: "center",
       editable: false,
       renderCell: (params: any) => {
-        console.log(params);
         return (
           <div className="flex flex-row items-center justify-center gap-1 h-full">
             {params.value.map((day: any) => (

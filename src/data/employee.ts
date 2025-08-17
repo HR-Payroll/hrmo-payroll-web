@@ -107,7 +107,7 @@ export const getPaginatedEmployee = async (
                           { $eq: [{ $type: "$$scheduleId" }, "missing"] },
                         ],
                       },
-                      then: { $eq: ["$name", "Regular"] },
+                      then: { $eq: ["$name", "REGULAR"] },
                       else: { $eq: ["$_id", "$$scheduleId"] },
                     },
                   },

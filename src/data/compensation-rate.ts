@@ -40,8 +40,6 @@ export const getAllRate = async () => {
         },
       ],
     });
-
-    console.log(rates);
     return rates;
   } catch (error: any) {
     console.log(error);

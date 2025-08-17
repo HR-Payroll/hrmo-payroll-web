@@ -83,41 +83,60 @@ export const uploadEmployee = async (
       ordered: false,
     });
 
-    await Promise.all([
-      prisma.$runCommandRaw({
-        update: "Employee",
-        updates: [
-          {
-            q: {
-              department: {
-                $type: "string",
+    await prisma.$runCommandRaw({
+      update: "Employee",
+      updates: [
+        {
+          q: {
+            department: {
+              $type: "string",
+            },
+          },
+          u: [
+            {
+              $set: {
+                department: { $toObjectId: "$department" },
               },
             },
-            u: [
-              {
-                $set: {
-                  department: { $toObjectId: "$department" },
-                },
-              },
-            ],
-            multi: true,
+          ],
+          multi: true,
+        },
+        {
+          q: {
+            createdAt: { $type: "string" },
           },
-          {
-            q: {
-              createdAt: { $type: "string" },
+          u: [
+            {
+              $set: {
+                createdAt: { $toDate: "$createdAt" },
+              },
             },
-            u: [
-              {
-                $set: {
-                  createdAt: { $toDate: "$createdAt" },
-                },
-              },
-            ],
-            multi: true,
+          ],
+          multi: true,
+        },
+      ],
+    });
+
+    await prisma.$runCommandRaw({
+      update: "Employee",
+      updates: [
+        {
+          q: {
+            schedule: {
+              $type: "string",
+            },
           },
-        ],
-      }),
-    ]);
+          u: [
+            {
+              $set: {
+                schedule: { $toObjectId: "$schedule" },
+              },
+            },
+          ],
+          multi: true,
+        },
+      ],
+    });
 
     return { success: "Employees has been uploaded successfully!" };
   } catch (error) {

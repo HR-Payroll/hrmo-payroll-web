@@ -61,7 +61,6 @@ function LoanDeductionsTable({
       editable: true,
       type: "number",
       preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
-        console.log(params.props.value);
         const hasError =
           params.props.value < 1 ? "Please input a valid deduction." : null;
         return { ...params.props, error: hasError };
@@ -86,7 +85,6 @@ function LoanDeductionsTable({
       editable: true,
       type: "number",
       preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
-        console.log(params.props.value);
         const hasError =
           params.props.value < 1 ? "Please input a valid deduction." : null;
         return { ...params.props, error: hasError };
@@ -111,7 +109,6 @@ function LoanDeductionsTable({
       editable: true,
       type: "number",
       preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
-        console.log(params.props.value);
         const hasError =
           params.props.value < 1 ? "Please input a valid deduction." : null;
         return { ...params.props, error: hasError };
@@ -136,7 +133,6 @@ function LoanDeductionsTable({
       editable: true,
       type: "number",
       preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
-        console.log(params.props.value);
         const hasError =
           params.props.value < 1 ? "Please input a valid deduction." : null;
         return { ...params.props, error: hasError };
@@ -161,7 +157,6 @@ function LoanDeductionsTable({
       editable: true,
       type: "number",
       preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
-        console.log(params.props.value);
         const hasError =
           params.props.value < 1 ? "Please input a valid deduction." : null;
         return { ...params.props, error: hasError };
@@ -186,7 +181,6 @@ function LoanDeductionsTable({
       editable: true,
       type: "number",
       preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
-        console.log(params.props.value);
         const hasError =
           params.props.value < 1 ? "Please input a valid deduction." : null;
         return { ...params.props, error: hasError };
@@ -211,7 +205,6 @@ function LoanDeductionsTable({
       editable: true,
       type: "number",
       preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
-        console.log(params.props.value);
         const hasError =
           params.props.value < 1 ? "Please input a valid deduction." : null;
         return { ...params.props, error: hasError };
@@ -236,7 +229,6 @@ function LoanDeductionsTable({
       editable: true,
       type: "number",
       preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
-        console.log(params.props.value);
         const hasError =
           params.props.value < 1 ? "Please input a valid deduction." : null;
         return { ...params.props, error: hasError };
@@ -261,7 +253,6 @@ function LoanDeductionsTable({
       editable: true,
       type: "number",
       preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
-        console.log(params.props.value);
         const hasError =
           params.props.value < 1 ? "Please input a valid deduction." : null;
         return { ...params.props, error: hasError };
@@ -286,7 +277,6 @@ function LoanDeductionsTable({
       editable: true,
       type: "number",
       preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
-        console.log(params.props.value);
         const hasError =
           params.props.value < 1 ? "Please input a valid deduction." : null;
         return { ...params.props, error: hasError };

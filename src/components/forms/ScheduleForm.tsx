@@ -13,6 +13,7 @@ import { isArrayEqual } from "@/utils/tools";
 import { MdOutlineClose } from "react-icons/md";
 import { DaysKey, Schedule, ScheduleDay } from "@/types";
 import { dateTz, formatTime } from "@/utils/dateFormatter";
+import { format } from "date-fns";
 
 function ScheduleForm({
   data,
@@ -33,8 +34,8 @@ function ScheduleForm({
     "Regular"
   );
   const [selectTime, setSelectTime] = useState<string | null>(null);
-  const [regularIn, setRegularIn] = useState<Date>(dateTz(new Date()));
-  const [regularOut, setRegularOut] = useState<Date>(dateTz(new Date()));
+  const [regularIn, setRegularIn] = useState<Date>(new Date());
+  const [regularOut, setRegularOut] = useState<Date>(new Date());
   const [lastType, setLastType] = useState<"IN" | "OUT" | null>(null);
   const [straightTimeRegular, setStraightTimeRegular] =
     useState<boolean>(false);
@@ -157,8 +158,8 @@ function ScheduleForm({
       setOption(opt);
 
       if (opt === "Regular") {
-        const regIn = dateTz(new Date((days[0] as ScheduleDay).inTime));
-        const regOut = dateTz(new Date((days[0] as ScheduleDay).outTime));
+        const regIn = new Date((days[0] as ScheduleDay).inTime);
+        const regOut = new Date((days[0] as ScheduleDay).outTime);
         setRegularIn(regIn);
         setRegularOut(regOut);
 
@@ -207,7 +208,7 @@ function ScheduleForm({
         return acc;
       }, {} as typeof schedule)
     );
-  }, []);
+  }, [data]);
 
   useEffect(() => {
     const scheds = Object.keys(schedule)
@@ -218,29 +219,25 @@ function ScheduleForm({
   }, [schedule]);
 
   const onChangeTime = (time?: Date, dt?: number) => {
-    const currentDate = dateTz(new Date());
+    const currentDate = new Date();
 
     if (!time)
-      return dateTz(
-        new Date(
-          currentDate.getFullYear(),
-          currentDate.getMonth(),
-          currentDate.getDate(),
-          dt || 0,
-          0,
-          0
-        )
+      return new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth(),
+        currentDate.getDate(),
+        dt || 0,
+        0,
+        0
       );
 
-    return dateTz(
-      new Date(
-        time.getFullYear(),
-        time.getMonth(),
-        time.getDate(),
-        dt || time.getHours(),
-        dt ? 0 : time.getMinutes(),
-        0
-      )
+    return new Date(
+      time.getFullYear(),
+      time.getMonth(),
+      time.getDate(),
+      dt || time.getHours(),
+      dt ? 0 : time.getMinutes(),
+      0
     );
   };
 
@@ -546,18 +543,11 @@ function ScheduleForm({
                   <h1 className="text-sm font-medium">{day}</h1>
                   <div className="flex flex-col text-xs items-start">
                     <p>
-                      In:{" "}
-                      {formatTime(
-                        dateTz(schedule[day as DaysKey].inTime),
-                        "hh:mm aa"
-                      )}
+                      In: {format(schedule[day as DaysKey].inTime, "hh:mm aa")}
                     </p>
                     <p>
                       Out:{" "}
-                      {formatTime(
-                        dateTz(schedule[day as DaysKey].outTime),
-                        "hh:mm aa"
-                      )}
+                      {format(schedule[day as DaysKey].outTime, "hh:mm aa")}
                     </p>
                   </div>
                 </>

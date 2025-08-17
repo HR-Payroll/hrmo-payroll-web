@@ -49,7 +49,6 @@ function EmployeesTable({
   });
 
   useEffect(() => {
-    console.log("EmployeesTable mounted with employees:", employees);
     setData(employees);
     setLoading(false);
   }, [employees]);
@@ -313,7 +312,6 @@ function EmployeesTable({
     try {
       await deleteEmployee(isDelete!);
       if (reload) {
-        console.log("tae");
         reload();
       }
     } catch (error) {

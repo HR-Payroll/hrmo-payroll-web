@@ -16,7 +16,6 @@ export const createSchedule = async (payload: any) => {
 
 export const updateSchedule = async (id: string, payload: any) => {
   try {
-    console.log("Updating schedule with ID:", id, "and payload:", payload);
     const event = await prisma.schedule.update({
       where: { id },
       data: payload,

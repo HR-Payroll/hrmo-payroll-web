@@ -1,5 +1,6 @@
 "use client";
 import { downloadSummary } from "@/actions/payroll";
+import { Backdrop, CircularProgress } from "@mui/material";
 import { format, set } from "date-fns";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -10,6 +11,7 @@ function DownloadSummary() {
   const [from, setFrom] = useState<Date>(new Date());
   const [to, setTo] = useState<Date>(new Date());
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [closeDialog, setCloseDialog] = useState<boolean>(true);
 
   useEffect(() => {
     const from = searchParams.get("from");
@@ -19,14 +21,13 @@ function DownloadSummary() {
       setFrom(new Date(from!));
       setTo(new Date(to!));
     }
-
-    console.log(from, to);
   }, [searchParams]);
 
   const handleDownload = async () => {
     const category = searchParams.get("category") || "all";
 
     setIsLoading(true);
+    setCloseDialog(false);
     try {
       if (category === "all") {
         await Promise.all([
@@ -54,9 +55,11 @@ function DownloadSummary() {
         });
       }
 
+      setCloseDialog(true);
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
+      setCloseDialog(true);
     }
   };
 
@@ -70,6 +73,7 @@ function DownloadSummary() {
     to: Date;
   }) => {
     const response = await downloadSummary(from, to, category);
+
     if (response) {
       const blob = new Blob([response], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -89,18 +93,32 @@ function DownloadSummary() {
   };
 
   return (
-    <button
-      disabled={isLoading}
-      onClick={() => {
-        handleDownload();
-      }}
-      className="flex flex-row items-center justify-center rounded-md disabled:bg-[var(--border)]/60 bg-[var(--border)] hover:bg-slate-300 active:bg-slate-400 active:text-white text-[var(--text)] text-sm cursor-pointer gap-x-2 py-2 px-5"
-    >
-      <MdOutlineFileDownload size={18} />
-      <span className="hidden md:block">
-        {isLoading ? "Downloading..." : "Download File"}
-      </span>
-    </button>
+    <>
+      <button
+        disabled={isLoading}
+        onClick={() => {
+          handleDownload();
+        }}
+        className="flex flex-row items-center justify-center rounded-md disabled:bg-[var(--border)]/60 bg-[var(--border)] hover:bg-slate-300 active:bg-slate-400 active:text-white text-[var(--text)] text-sm cursor-pointer gap-x-2 py-2 px-5"
+      >
+        <MdOutlineFileDownload size={18} />
+        <span className="hidden md:block">
+          {isLoading ? "Downloading..." : "Download File"}
+        </span>
+      </button>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={!closeDialog}
+        onClick={() => setCloseDialog(true)}
+      >
+        <div className="flex flex-col items-center justify-center bg-white p-6 rounded-md gap-2">
+          <CircularProgress size={42} />
+          <span className="ml-2 text-[var(--text)] text-sm font-medium">
+            Downloading summary, please wait...
+          </span>
+        </div>
+      </Backdrop>
+    </>
   );
 }
 

@@ -1,6 +1,8 @@
 "use server";
 import * as XLSX from "xlsx";
 import { getAllSummary } from "@/data/payroll";
+import { dateQuery } from "@/utils/dateFormatter";
+import { format } from "date-fns";
 
 export const downloadSummary = async (
   from: Date,
@@ -9,7 +11,11 @@ export const downloadSummary = async (
   department?: string
 ) => {
   try {
-    const reports = await getAllSummary(from, to, category, department);
+    const { dateFrom, dateTo } = dateQuery(
+      format(from, "yyyy-MM-dd"),
+      format(to, "yyyy-MM-dd")
+    );
+    const reports = await getAllSummary(dateFrom, dateTo, category, department);
 
     const res = await fetch(
       `${
@@ -36,8 +42,6 @@ export const downloadSummary = async (
       return acc;
     }, {} as Record<string, typeof reports>);
 
-    console.log(reportDepartments);
-
     Object.keys(reportDepartments).forEach((departmentName) => {
       const worksheet = JSON.parse(JSON.stringify(templateSheet));
       workbook.SheetNames.push(departmentName);
@@ -62,15 +66,23 @@ export const downloadSummary = async (
         worksheet[`A${rowStart + rowIndex}`] = { v: rowIndex };
         worksheet[`B${rowStart + rowIndex}`] = { v: name.name };
         worksheet[`C${rowStart + rowIndex}`] = { v: employee.rate };
-        worksheet[`D${rowStart + rowIndex}`] = { v: employee.type };
+        worksheet[`D${rowStart + rowIndex}`] = {
+          v: employee.type ? employee.type.toUpperCase() : "",
+        };
         worksheet[`E${rowStart + rowIndex}`] = { v: totalDays };
         worksheet[`F${rowStart + rowIndex}`] = { v: earnings };
         worksheet[`G${rowStart + rowIndex}`] = { v: deductions };
-        worksheet[`H${rowStart + rowIndex}`] = { v: earnings - deductions };
+        worksheet[`H${rowStart + rowIndex}`] = { v: net };
         worksheet[`AC${rowStart + rowIndex}`] = { v: deductions };
         worksheet[`AE${rowStart + rowIndex}`] = { v: net };
       });
     });
+
+    delete workbook.Sheets[templateSheetName];
+    const index = workbook.SheetNames.indexOf(templateSheetName);
+    if (index > -1) {
+      workbook.SheetNames.splice(index, 1);
+    }
 
     return XLSX.write(workbook, {
       bookType: "xlsx",

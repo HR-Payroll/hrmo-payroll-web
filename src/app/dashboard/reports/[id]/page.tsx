@@ -1,11 +1,9 @@
 import React from "react";
-import Link from "next/link";
 import PageInfo from "@/components/PageInfo";
 import DynamicHeader from "@/components/ui/DynamicHeader";
 import DateFilter from "@/components/DateFilter";
 import ViewReport from "@/components/tables/ViewReport";
 import { getReportById } from "@/data/report";
-import { MdArrowBackIosNew } from "react-icons/md";
 import { dateQuery } from "@/utils/dateFormatter";
 import DownloadSingleReport from "@/components/Downloads/DownloadSingleReport";
 import BackButton from "@/components/ui/BackButton";
@@ -29,8 +27,6 @@ const SingleReportPage = async ({
   const { dateFrom, dateTo } = dateQuery(from, to);
 
   const report = (await getReportById(id, dateFrom, dateTo)) as any;
-
-  console.log("Report:", report);
 
   return (
     <div className="card">

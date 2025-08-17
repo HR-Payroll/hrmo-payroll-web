@@ -231,7 +231,6 @@ function CompensationRateTable({
     }
   ) => {
     try {
-      console.log(id, payload);
       await updateRate(id, payload);
       setSnackbar({
         message: "Employee compensation rate info successfully updated!",

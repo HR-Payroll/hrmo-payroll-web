@@ -98,15 +98,6 @@ export const computeTotalDaysAndLate = ({
     };
   } else {
     const dateKeys = Object.keys(days).sort();
-    // if (dateKeys.length < 2) {
-    //   return {
-    //     totalDays: 0,
-    //     late: 0,
-    //     earnings: 0,
-    //     deductions: 0,
-    //     net: 0,
-    //   };
-    // }
     const { requiredDates, totalWorkingDays } = getTheRequiredDaysPerWeek(
       schedule,
       filter
@@ -130,7 +121,8 @@ export const computeTotalDaysAndLate = ({
       .map((d: any) => d.value)
       .sort((a: number, b: number) => b - a);
 
-    const workingDaysDeduction = missingDaysCount * (5 / scheduledDays.length);
+    //const workingDaysDeduction = missingDaysCount * (5 / scheduledDays.length);
+    const workingDaysDeduction = missingDaysCount * 2.5;
     let totalDays = totalWorkingDays - workingDaysDeduction;
 
     Object.keys(weeks).map((week: string) => {
@@ -143,7 +135,6 @@ export const computeTotalDaysAndLate = ({
 
         for (let i = 0; i < scheduledDays.length; i++) {
           const item = scheduledDays[i];
-          console.log("Scheduled Day:", item);
           if (actualDay >= item) {
             nearestScheduledDay = item;
             break;
@@ -152,7 +143,6 @@ export const computeTotalDaysAndLate = ({
 
         let diff = actualDay - nearestScheduledDay;
         diff = diff < 0 ? 0 : diff;
-
         totalDays -= diff;
       });
     });
@@ -226,7 +216,6 @@ export const computeTotalDaysAndLateSingle = ({
     const requiredDatesSet = new Set(requiredDates);
 
     if (actualDates.length > requiredDates.length) {
-      // Filter out extra dates not in requiredDates
       for (const date of actualDates) {
         if (!requiredDatesSet.has(date)) {
           delete reports[date];
@@ -239,7 +228,8 @@ export const computeTotalDaysAndLateSingle = ({
       .map((d: any) => d.value)
       .sort((a: number, b: number) => b - a);
 
-    const perDayEquivalent = 5 / scheduledDays.length;
+    //const perDayEquivalent = 5 / scheduledDays.length;
+    const perDayEquivalent = 2.5;
 
     const straightTimeReports = Object.keys(reports)
       .sort(
@@ -278,11 +268,7 @@ export const computeTotalDaysAndLateSingle = ({
 
         let diff = dayOfWeek - nearestScheduledDay;
         diff = diff < 0 ? 0 : diff;
-
         totalDays -= diff;
-
-        console.log("Nearest Scheduled Day:", nearestScheduledDay);
-        console.log("Total Days:", totalDays);
 
         let earnings = 0;
         earnings = employee ? totalDays * employee.rate : 0;
@@ -315,7 +301,9 @@ export const computeTotalDaysAndLateSingle = ({
     );
 
     return {
-      items: straightTimeReports,
+      items: straightTimeReports.sort((a: any, b: any) =>
+        a.date.localeCompare(b.date)
+      ),
       totalDays: total % 1 === 0 ? total.toFixed(0) : total.toFixed(1),
       totalMinsLate: 0,
     };
@@ -369,7 +357,7 @@ export const computeTotalDaysAndLateSingle = ({
       }
 
       if (times.length < 2) {
-        remarks = "INC";
+        remarks = "HALF DAY";
 
         return {
           date,
@@ -379,7 +367,7 @@ export const computeTotalDaysAndLateSingle = ({
           deductions: 0,
           net: 0,
           remarks,
-          totalDays: 0,
+          totalDays: 0.5,
           totalHours: 0,
           minsLate: 0,
         };
@@ -390,6 +378,10 @@ export const computeTotalDaysAndLateSingle = ({
 
       const inTime = dateTz(new Date(date + "T" + inTimeStr?.split("T")[1]));
       const outTime = dateTz(new Date(date + "T" + outTimeStr?.split("T")[1]));
+      const halfDay =
+        inTime.getTime() +
+        (outTime.getTime() - inTime.getTime()) / 2 -
+        30 * 60 * 1000;
 
       const workingHours =
         (outTime.getTime() - inTime.getTime()) / (1000 * 60 * 60) - 1;
@@ -401,8 +393,13 @@ export const computeTotalDaysAndLateSingle = ({
       const cutoff = inTime ? dateTz(new Date(inTime)) : undefined;
       if (cutoff) cutoff.setMinutes(cutoff.getMinutes() + gracePeriod);
 
-      const lateness =
+      let lateness =
         cutoff && times[0] ? times[0].getTime() - cutoff.getTime() : 0;
+
+      if (times[0].getTime() >= halfDay) {
+        remarks = "HALF DAY";
+        lateness = 0;
+      }
 
       const totalDays = Math.min(
         1,
@@ -411,10 +408,7 @@ export const computeTotalDaysAndLateSingle = ({
       );
 
       let totalLate = lateness > 0 ? Math.floor(lateness / (1000 * 60)) : 0;
-      totalLate;
-
       let deductions = (totalLate / 480) * 300;
-      console.log("Deductions:", deductions);
 
       let overtime = 0;
       let undertime = 0;
@@ -514,7 +508,6 @@ const getTotalDeduction = (employee: any) => {
 };
 
 const timeStringToDate = (timeString: string): Date => {
-  console.log("Time String:", timeString);
   const [hours, minutes] = timeString.split(":").map(Number);
   const date = new Date();
   date.setHours(hours, minutes, 0, 0);
@@ -546,10 +539,14 @@ const regularComputation = (
 
   const inTime = dateTz(new Date(date + "T" + inTimeStr.split("T")[1]));
   const outTime = dateTz(new Date(date + "T" + outTimeStr.split("T")[1]));
+  const halfDay =
+    inTime.getTime() +
+    (outTime.getTime() - inTime.getTime()) / 2 -
+    30 * 60 * 1000;
 
   if (times.length < 2) {
     return {
-      totalDays: 0,
+      totalDays: 0.5,
       late: 0,
       deductions: 0,
     };
@@ -564,7 +561,10 @@ const regularComputation = (
   const cutoff = inTime;
   cutoff.setMinutes(cutoff.getMinutes() + gracePeriod);
 
-  const lateness = times[0].getTime() - cutoff.getTime();
+  let lateness = times[0].getTime() - cutoff.getTime();
+
+  if (times[0].getTime() >= halfDay) lateness = 0;
+
   const totalDays = Math.min(
     1,
     Math.floor(totalHours / workingHours) +
@@ -588,7 +588,7 @@ const getTheRequiredDaysPerWeek = (
   const requiredDates: string[] = [];
   let totalWorkingDays = 0;
 
-  for (let d = dateTz(new Date(from)); d < to; d.setDate(d.getDate() + 1)) {
+  for (let d = dateTz(new Date(from)); d <= to; d.setDate(d.getDate() + 1)) {
     const dayOfWeek = d.getDay();
     const daySchedule = schedule.daysIncluded.find(
       (day: any) => day.value === dayOfWeek

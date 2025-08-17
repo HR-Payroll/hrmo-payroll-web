@@ -57,7 +57,6 @@ const UploadReports = ({ reload }: { reload?: VoidFunction }) => {
           }
         });
 
-      console.log(lines);
       setUpload(lines);
       //onUploadFile(lines);
       e.preventDefault();

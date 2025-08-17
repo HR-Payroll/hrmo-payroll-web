@@ -44,6 +44,8 @@ const UploadEmployees = ({
     setUploading(true);
 
     try {
+      const regular = schedules.find((schedule) => schedule.name === "REGULAR");
+
       const employees = data.map((employee: any) => {
         const index = `${employee.department
           .toString()
@@ -58,6 +60,10 @@ const UploadEmployees = ({
           (department) => department.index === index
         );
 
+        const schedule = schedules.find(
+          (schedule) => schedule.name === employee.schedule
+        );
+
         return {
           recordNo: employee.recordNo.toString().padStart(9, "0"),
           name: employee.name.toString(),
@@ -65,6 +71,7 @@ const UploadEmployees = ({
           category: employee.category,
           rate: employee.rate,
           type: employee.type,
+          schedule: schedule ? schedule._id.$oid : regular._id.$oid,
         };
       });
 
