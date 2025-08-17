@@ -356,23 +356,6 @@ export const computeTotalDaysAndLateSingle = ({
         };
       }
 
-      if (times.length < 2) {
-        remarks = "HALF DAY";
-
-        return {
-          date,
-          ...items,
-          name: ref,
-          earnings: 0,
-          deductions: 0,
-          net: 0,
-          remarks,
-          totalDays: 0.5,
-          totalHours: 0,
-          minsLate: 0,
-        };
-      }
-
       const inTimeStr = daySchedule?.inTime;
       const outTimeStr = daySchedule?.outTime;
 
@@ -396,16 +379,17 @@ export const computeTotalDaysAndLateSingle = ({
       let lateness =
         cutoff && times[0] ? times[0].getTime() - cutoff.getTime() : 0;
 
-      if (times[0].getTime() >= halfDay) {
-        remarks = "HALF DAY";
-        lateness = 0;
-      }
-
-      const totalDays = Math.min(
+      let totalDays = Math.min(
         1,
         Math.floor(totalHours / workingHours) +
           (totalHours % workingHours) / workingHours
       );
+
+      if (times[0].getTime() >= halfDay || totalHours <= 0.5) {
+        remarks = "HALF DAY";
+        lateness = 0;
+        totalDays = 0.5;
+      }
 
       let totalLate = lateness > 0 ? Math.floor(lateness / (1000 * 60)) : 0;
       let deductions = (totalLate / 480) * 300;
@@ -455,7 +439,9 @@ export const computeTotalDaysAndLateSingle = ({
         remarks,
         totalDays,
         totalHours:
-          totalHours % 1 === 0 ? totalHours.toFixed(0) : totalHours.toFixed(1),
+          totalHours % 1 === 0 || totalHours < 1
+            ? totalHours.toFixed(0)
+            : totalHours.toFixed(1),
         minsLate: totalLate,
       };
     });
@@ -544,19 +530,19 @@ const regularComputation = (
     (outTime.getTime() - inTime.getTime()) / 2 -
     30 * 60 * 1000;
 
-  if (times.length < 2) {
+  const workingHours =
+    (outTime.getTime() - inTime.getTime()) / (1000 * 60 * 60) - 1;
+
+  const totalHours =
+    (times[times.length - 1].getTime() - times[0].getTime()) / (1000 * 60 * 60);
+
+  if (times.length < 2 || totalHours <= 0.5) {
     return {
       totalDays: 0.5,
       late: 0,
       deductions: 0,
     };
   }
-
-  const workingHours =
-    (outTime.getTime() - inTime.getTime()) / (1000 * 60 * 60) - 1;
-
-  const totalHours =
-    (times[times.length - 1].getTime() - times[0].getTime()) / (1000 * 60 * 60);
 
   const cutoff = inTime;
   cutoff.setMinutes(cutoff.getMinutes() + gracePeriod);

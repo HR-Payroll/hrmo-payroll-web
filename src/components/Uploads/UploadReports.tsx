@@ -43,10 +43,10 @@ const UploadReports = ({ reload }: { reload?: VoidFunction }) => {
 
             const date = new Date(timestamp);
             return {
-              recordNo: recordNo.padEnd(9, "0"),
+              recordNo: recordNo.padStart(9, "0"),
               name: "N/A",
               timestamp: date.toISOString(),
-              index: `${recordNo.padEnd(9, "0")}-${date.toISOString()}`,
+              index: `${recordNo.padStart(9, "0")}-${date.toISOString()}`,
             };
           } else {
             return setSnackbar({

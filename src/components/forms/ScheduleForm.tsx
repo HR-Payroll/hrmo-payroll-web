@@ -214,7 +214,6 @@ function ScheduleForm({
     const scheds = Object.keys(schedule)
       .map((key: string) => schedule[key as DaysKey])
       .filter((item) => item.included) as any;
-
     setValue("daysIncluded", JSON.stringify(scheds), { shouldValidate: true });
   }, [schedule]);
 

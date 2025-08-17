@@ -33,7 +33,7 @@ export const updateDepartment = async (
   }
 ) => {
   try {
-    await prisma.employee.update({
+    await prisma.department.update({
       where: { id },
       data: { ...payload },
     });
