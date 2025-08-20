@@ -68,34 +68,28 @@ export const uploadReport = async (data: z.infer<typeof ReportSchema>[]) => {
   }
 
   try {
-    await prisma.$runCommandRaw({
-      insert: "Report",
-      documents: data.map((item) => ({ ...item, createdAt: new Date() })),
-      ordered: false,
-    });
-
-    await Promise.all([
-      prisma.$runCommandRaw({
-        update: "Report",
-        updates: [
+    const bulkOps = data.map((item) => {
+      return {
+        q: { index: item.index },
+        u: [
           {
-            q: {
-              createdAt: { $type: "string" },
+            $set: {
+              ...item,
+              createdAt: new Date(),
             },
-            u: [
-              {
-                $set: {
-                  createdAt: { $toDate: "$createdAt" },
-                },
-              },
-            ],
-            multi: true,
           },
         ],
-      }),
-    ]);
+        upsert: true,
+        multi: false,
+      };
+    });
 
-    return { success: "Reports have been uploaded successfully!" };
+    const result = await prisma.$runCommandRaw({
+      update: "Report",
+      updates: bulkOps,
+    });
+
+    return { result, success: "Reports have been uploaded successfully!" };
   } catch (error: any) {
     console.log(error);
     return { error: "Something went wrong, try again later." };

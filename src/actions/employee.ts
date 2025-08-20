@@ -77,68 +77,36 @@ export const uploadEmployee = async (
   }
 
   try {
-    await prisma.$runCommandRaw({
-      insert: "Employee",
-      documents: data.map((item) => ({ ...item, createdAt: new Date() })),
-      ordered: false,
+    const bulkOps = data.map((item) => {
+      const departmentValue =
+        item.department && item.department !== ""
+          ? { $toObjectId: item.department }
+          : undefined;
+
+      return {
+        q: { recordNo: item.recordNo },
+        u: [
+          {
+            $set: {
+              ...item,
+              department: departmentValue,
+              schedule: { $toObjectId: item.schedule },
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            },
+          },
+        ],
+        upsert: true,
+        multi: false,
+      };
     });
 
-    await prisma.$runCommandRaw({
+    const result = await prisma.$runCommandRaw({
       update: "Employee",
-      updates: [
-        {
-          q: {
-            department: {
-              $type: "string",
-            },
-          },
-          u: [
-            {
-              $set: {
-                department: { $toObjectId: "$department" },
-              },
-            },
-          ],
-          multi: true,
-        },
-        {
-          q: {
-            createdAt: { $type: "string" },
-          },
-          u: [
-            {
-              $set: {
-                createdAt: { $toDate: "$createdAt" },
-              },
-            },
-          ],
-          multi: true,
-        },
-      ],
+      updates: bulkOps,
     });
 
-    await prisma.$runCommandRaw({
-      update: "Employee",
-      updates: [
-        {
-          q: {
-            schedule: {
-              $type: "string",
-            },
-          },
-          u: [
-            {
-              $set: {
-                schedule: { $toObjectId: "$schedule" },
-              },
-            },
-          ],
-          multi: true,
-        },
-      ],
-    });
-
-    return { success: "Employees has been uploaded successfully!" };
+    return { result, success: "Employees has been uploaded successfully!" };
   } catch (error) {
     return { error: "Something went wrong, try again later." };
   }

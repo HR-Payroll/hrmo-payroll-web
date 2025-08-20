@@ -36,7 +36,7 @@ export const getAllSummary = async (
         },
         {
           $group: {
-            _id: { recordNo: "$recordNo", name: "$name" },
+            _id: { recordNo: "$recordNo" },
             count: { $sum: 1 },
             items: { $push: "$$ROOT" },
           },
@@ -233,7 +233,7 @@ export const getPaginatedSummary = async (
         },
         {
           $group: {
-            _id: { recordNo: "$recordNo", name: "$name" },
+            _id: { recordNo: "$recordNo" },
             count: { $sum: 1 },
             items: { $push: "$$ROOT" },
           },
@@ -386,7 +386,7 @@ export const getSummaryById = async (id: string, from: Date, to: Date) => {
         },
         {
           $group: {
-            _id: { name: "$name", recordNo: "$recordNo" },
+            _id: { recordNo: "$recordNo" },
             count: { $sum: 1 },
             items: { $push: "$$ROOT" },
           },

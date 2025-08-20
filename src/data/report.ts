@@ -22,7 +22,7 @@ export const getAllReport = async (
         },
         {
           $group: {
-            _id: { recordNo: "$recordNo", name: "$name" },
+            _id: { recordNo: "$recordNo" },
             count: { $sum: 1 },
             items: { $push: "$$ROOT" },
           },
@@ -180,7 +180,7 @@ export const getPaginatedReport = async (
         },
         {
           $group: {
-            _id: { recordNo: "$recordNo", name: "$name" },
+            _id: { recordNo: "$recordNo" },
             count: { $sum: 1 },
             items: { $push: "$$ROOT" },
           },
@@ -199,13 +199,7 @@ export const getPaginatedReport = async (
             from: "Employee",
             let: { recordNo: "$recordNo" },
             pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $eq: ["$recordNo", "$$recordNo"],
-                  },
-                },
-              },
+              { $match: { $expr: { $eq: ["$recordNo", "$$recordNo"] } } },
               {
                 $lookup: {
                   from: "Schedule",
@@ -322,7 +316,7 @@ export const getReportById = async (id: string, from: Date, to: Date) => {
         },
         {
           $group: {
-            _id: { name: "$name", recordNo: "$recordNo" },
+            _id: { recordNo: "$recordNo" },
             count: { $sum: 1 },
             items: { $push: "$$ROOT" },
           },
