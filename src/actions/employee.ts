@@ -42,7 +42,7 @@ export const updateEmployee = async (
   try {
     await prisma.employee.update({
       where: { id },
-      data: { ...payload },
+      data: { ...payload, createdAt: new Date() },
     });
 
     return { success: "Employee has been successfully updated!" };

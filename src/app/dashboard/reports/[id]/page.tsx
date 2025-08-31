@@ -58,6 +58,7 @@ const SingleReportPage = async ({
               employee={report ? report.employee : null}
               numDays={report ? report.totalDays : 0}
               totalLate={report ? report.totalLate : 0}
+              filter={{ from: dateFrom, to: dateTo }}
             />
           </div>
         </section>

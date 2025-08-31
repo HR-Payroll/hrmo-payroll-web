@@ -212,7 +212,7 @@ export const getPaginatedSummary = async (
       searchQuery = {
         $or: [
           {
-            name: { $regex: search, $options: "i" },
+            "name.name": { $regex: search, $options: "i" },
           },
           {
             recordNo: { $regex: search, $options: "i" },

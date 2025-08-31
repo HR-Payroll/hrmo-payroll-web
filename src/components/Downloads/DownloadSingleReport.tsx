@@ -4,17 +4,20 @@ import { MdOutlineFileDownload } from "react-icons/md";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { formatTime } from "@/utils/dateFormatter";
+import { format } from "date-fns";
 
 const DownloadSingleReport = ({
   reports,
   employee,
   numDays,
   totalLate,
+  filter,
 }: {
   reports: any[];
   employee: any;
   numDays?: number;
   totalLate?: number;
+  filter: { from: Date; to: Date };
 }) => {
   const handleGeneratePDF = async () => {
     const tableRows = reports.map((report) => {
@@ -40,12 +43,18 @@ const DownloadSingleReport = ({
     const imgY = 10;
     doc.addImage(imgData, "PNG", imgX, imgY, imgWidth, imgHeight);
 
-    const title = "Daily Time Report (DTR)";
+    const title = "Daily Time Record (DTR)";
     const textWidth = doc.getTextWidth(title);
     const xPosition = (pageWidth - textWidth) / 2;
     doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
     doc.text(title, xPosition, 56);
+    doc.setFont("helvetica", "normal");
+
+    const date = `${format(filter.from, "MM/dd/yy")} to ${format(
+      filter.to,
+      "MM/dd/yy"
+    )}`;
 
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
@@ -65,6 +74,8 @@ const DownloadSingleReport = ({
       15,
       74
     );
+
+    toHighLightText(doc, "Date: ", date, 15, 80);
 
     const depWidth = doc.getTextWidth(
       ` Department: ${employee.department.name || "N/A"}`
@@ -99,7 +110,7 @@ const DownloadSingleReport = ({
       "Remarks",
     ];
 
-    let tableHeight = 82;
+    let tableHeight = 88;
     autoTable(doc, {
       head: [tableColumn],
       body: tableRows,
@@ -124,6 +135,44 @@ const DownloadSingleReport = ({
       `${totalLate || "N/A"}`,
       15,
       tableHeight + 16
+    );
+
+    const certText =
+      "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0 I HEREBY CERTIFY on my honor that the above is true and correct record of the hours of work performed, record of which was made daily at the time of arrival and departure from the office.";
+
+    const wrappedText = doc.splitTextToSize(certText, pageWidth - 30);
+    doc.text(wrappedText, 15, tableHeight + 32);
+
+    const signatureY = tableHeight + 45;
+    const sigLineWidth = 60;
+
+    // Center X position for both lines
+    const centerX = 15;
+
+    doc.line(centerX, signatureY, centerX + sigLineWidth, signatureY);
+    doc.setFontSize(10);
+    const empSigLabel = "Employee's Signature";
+    const empSigLabelWidth = doc.getTextWidth(empSigLabel);
+    doc.text(
+      empSigLabel,
+      centerX + sigLineWidth / 2 - empSigLabelWidth / 2,
+      signatureY + 6
+    );
+
+    doc.text(
+      "Verified as to the prescribed office hour.",
+      centerX,
+      signatureY + 18
+    );
+
+    const headY = signatureY + 28;
+    doc.line(centerX, headY, centerX + sigLineWidth, headY);
+    const headLabel = "Head of Office";
+    const headLabelWidth = doc.getTextWidth(headLabel);
+    doc.text(
+      headLabel,
+      centerX + sigLineWidth / 2 - headLabelWidth / 2,
+      headY + 6
     );
 
     //doc.save("User_Report.pdf");
