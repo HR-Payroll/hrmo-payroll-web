@@ -77,26 +77,26 @@ const DownloadSingleReport = ({
 
     toHighLightText(doc, "Date: ", date, 15, 80);
 
-    const depWidth = doc.getTextWidth(
-      ` Department: ${employee.department.name || "N/A"}`
-    );
-    const catWidth = doc.getTextWidth(
-      ` Category: ${employee.category || "N/A"}`
-    );
+    const depText = `Department: ${employee?.department?.name || "N/A"}`;
+    const catText = `Category: ${employee?.category || "N/A"}`;
+    const depWidth = doc.getTextWidth(depText);
+    const catWidth = doc.getTextWidth(catText);
+    const rightMargin = 15;
+    const xPosition_h = pageWidth - Math.max(depWidth, catWidth) - rightMargin;
 
     toHighLightText(
       doc,
       "Category: ",
       employee ? employee.category : "N/A",
-      pageWidth - (depWidth > catWidth ? depWidth - 16 : catWidth) - 16,
+      xPosition_h,
       68
     );
 
     toHighLightText(
       doc,
       "Department: ",
-      employee.department.name || "N/A",
-      pageWidth - (depWidth > catWidth ? depWidth - 16 : catWidth) - 16,
+      employee?.department?.name || "N/A",
+      xPosition_h,
       74
     );
 
