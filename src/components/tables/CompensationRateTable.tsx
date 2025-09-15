@@ -8,10 +8,13 @@ import {
   DataGrid,
   GridColDef,
   GridEditInputCell,
+  GridPaginationModel,
   GridPreProcessEditCellProps,
   GridRenderEditCellParams,
 } from "@mui/x-data-grid";
 import { MdCheck, MdClose, MdOutlineCreate } from "react-icons/md";
+import { usePathname, useRouter } from "next/navigation";
+import SnackbarInfo, { initialSnackbar } from "../ui/SnackbarInfo";
 
 function CompensationRateTable({
   type,
@@ -19,15 +22,27 @@ function CompensationRateTable({
   employees,
   departments,
   reload,
+  loading,
+  page = 0,
+  limit = 10,
+  rowCount = 0,
 }: {
   type?: any[];
   rates?: any[];
   employees: any[];
   departments: any[];
   reload?: VoidFunction;
+  loading?: boolean;
+  page?: number;
+  limit?: number;
+  rowCount?: number;
 }) {
+  const router = useRouter();
+  const pathname = usePathname();
   const [data, setData] = useState(rates);
   const [isEditing, setEditing] = useState<any>();
+  const [pageSize, setPageSize] = useState(limit);
+  const [isLoading, setLoading] = useState(loading);
   const [snackbar, setSnackbar] = useState({
     message: "",
     type: "info",
@@ -36,7 +51,23 @@ function CompensationRateTable({
 
   useEffect(() => {
     setData(rates);
+    setLoading(false);
   }, [rates]);
+
+  const onPageChange = (model: GridPaginationModel) => {
+    let query = pathname;
+
+    if (model.page !== 0 && model.pageSize !== 10) {
+      query = `${pathname}?page=${model.page}&limit=${model.pageSize}`;
+    } else if (model.page !== 0) {
+      query = `${pathname}?page=${model.page}`;
+    } else if (model.pageSize !== 10) {
+      query = `${pathname}?limit=${model.pageSize}`;
+    }
+
+    setLoading(true);
+    router.push(query);
+  };
 
   const columns: GridColDef[] = [
     {
@@ -280,28 +311,40 @@ function CompensationRateTable({
     <>
       <DataGrid
         rows={data}
+        loading={isLoading}
         columns={columns}
         getRowId={(row) => row._id.$oid.toString()}
         columnHeaderHeight={40}
         rowHeight={36}
+        rowCount={rowCount}
         getRowClassName={(params) => {
           if (isEditing && Object.keys(isEditing).includes(params.id as string))
             return "edited-row";
 
           return params.indexRelativeToCurrentPage % 2 !== 0 ? "odd-row" : "";
         }}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 10,
-            },
-          },
-        }}
         pageSizeOptions={[5, 10, 20]}
+        paginationMode="server"
+        paginationModel={{ page, pageSize }}
+        onPaginationModelChange={(model) => {
+          page = model.page;
+          setPageSize(model.pageSize);
+          onPageChange(model);
+        }}
         disableRowSelectionOnClick
         sx={tableStyle}
         processRowUpdate={processUpdate}
       />
+      {snackbar.modal && (
+        <SnackbarInfo
+          isOpen={snackbar.modal}
+          type={snackbar.type as any}
+          message={snackbar.message}
+          onClose={() => {
+            setSnackbar(initialSnackbar);
+          }}
+        />
+      )}
     </>
   );
 }

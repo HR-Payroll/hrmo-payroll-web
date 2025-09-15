@@ -1,6 +1,6 @@
 import React from "react";
 import { revalidatePath } from "next/cache";
-import { getAllRate } from "@/data/compensation-rate";
+import { getAllRate, getPaginatedRate } from "@/data/compensation-rate";
 import { getAllEmployee } from "@/data/employee";
 import { getAllDepartment } from "@/data/department";
 import PageInfo from "@/components/PageInfo";
@@ -9,10 +9,27 @@ import TableFilters from "@/components/TableFilters";
 import UploadButton from "@/components/UploadButton";
 import CompensationRateTable from "@/components/tables/CompensationRateTable";
 
-const CompensationRate = async () => {
+const CompensationRate = async (props: {
+  searchParams?: Promise<{
+    search?: string;
+    category?: string;
+    department?: string;
+    page?: string;
+    limit?: string;
+  }>;
+}) => {
+  const params = await props.searchParams;
+  const { search, page, limit, category, department } = params as any;
+
   const departments = (await getAllDepartment()) as any;
   const employee = (await getAllEmployee()) as any;
-  const rates = (await getAllRate()) as any;
+  const rates = (await getPaginatedRate(
+    search,
+    Number(page || 0),
+    Number(limit || 10),
+    category,
+    department
+  )) as any;
 
   async function reload() {
     "use server";
@@ -41,8 +58,11 @@ const CompensationRate = async () => {
           <CompensationRateTable
             departments={departments}
             employees={employee}
-            rates={rates}
+            rates={rates.items}
             reload={reload}
+            limit={rates.pageSize}
+            rowCount={rates.pageRange}
+            page={rates.page}
           />
         </section>
       </main>
