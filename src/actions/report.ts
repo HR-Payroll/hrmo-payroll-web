@@ -59,6 +59,12 @@ export const deleteReport = async (id: string) => {
   }
 };
 
+function chunkArray<T>(arr: T[], size: number): T[][] {
+  const res: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) res.push(arr.slice(i, i + size));
+  return res;
+}
+
 export const uploadReport = async (data: z.infer<typeof ReportSchema>[]) => {
   for (let i = 0; i < data.length; i++) {
     const validateData = ReportSchema.parse(data[i]);
@@ -67,29 +73,34 @@ export const uploadReport = async (data: z.infer<typeof ReportSchema>[]) => {
     }
   }
 
+  const date = new Date();
+
   try {
-    const bulkOps = data.map((item) => {
-      return {
+    const CHUNK_SIZE = 500;
+
+    for (const batch of chunkArray(data, CHUNK_SIZE)) {
+      const bulkOps = batch.map((item) => ({
         q: { index: item.index },
         u: [
           {
             $set: {
               ...item,
-              createdAt: new Date(),
+              createdAt: date,
             },
           },
         ],
         upsert: true,
         multi: false,
-      };
-    });
+      }));
 
-    const result = await prisma.$runCommandRaw({
-      update: "Report",
-      updates: bulkOps,
-    });
+      await prisma.$runCommandRaw({
+        update: "Report",
+        updates: bulkOps,
+        ordered: false,
+      });
+    }
 
-    return { result, success: "Reports have been uploaded successfully!" };
+    return { success: "Reports have been uploaded successfully!" };
   } catch (error: any) {
     console.log(error);
     return { error: "Something went wrong, try again later." };
