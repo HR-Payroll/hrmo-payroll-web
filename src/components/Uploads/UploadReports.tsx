@@ -4,6 +4,7 @@ import { MdOutlineUploadFile } from "react-icons/md";
 import SnackbarInfo, { initialSnackbar } from "../ui/SnackbarInfo";
 import { uploadReport } from "@/actions/report";
 import { Backdrop, CircularProgress } from "@mui/material";
+import pLimit from "p-limit";
 
 const UploadReports = ({ reload }: { reload?: VoidFunction }) => {
   const [isUploading, setUploading] = useState(false);
@@ -18,6 +19,7 @@ const UploadReports = ({ reload }: { reload?: VoidFunction }) => {
     const file = event.target.files[0];
     if (!file) return;
 
+    const createdAt = new Date();
     const reader = new FileReader();
     reader.onload = (e: any) => {
       const text = e.target.result;
@@ -35,8 +37,9 @@ const UploadReports = ({ reload }: { reload?: VoidFunction }) => {
             return {
               recordNo,
               name,
-              timestamp: date.toISOString(),
+              timestamp: date,
               index: `${recordNo}-${date.toISOString()}`,
+              createdAt,
             };
           } else if (data.length === 6) {
             const [recordNo, timestamp] = line.split("\t");
@@ -45,8 +48,9 @@ const UploadReports = ({ reload }: { reload?: VoidFunction }) => {
             return {
               recordNo: recordNo.padStart(9, "0"),
               name: "N/A",
-              timestamp: date.toISOString(),
+              timestamp: date,
               index: `${recordNo.padStart(9, "0")}-${date.toISOString()}`,
+              createdAt,
             };
           } else {
             return setSnackbar({
@@ -69,19 +73,28 @@ const UploadReports = ({ reload }: { reload?: VoidFunction }) => {
     setUploading(true);
 
     try {
-      const result = (await uploadReport(data)) as any;
+      const limit = pLimit(5);
+      const CHUNK_SIZE = 20000;
+      const promises: Promise<any>[] = [];
 
-      if (result && result.error) {
+      for (let i = 0; i < data.length; i += CHUNK_SIZE) {
+        const chunk = data.slice(i, i + CHUNK_SIZE);
+        promises.push(limit(() => uploadReport(chunk)));
+      }
+
+      const results = await Promise.all(promises);
+      const errorChunk = results.find((r) => r && r.error);
+      if (errorChunk) {
         setUploading(false);
         return setSnackbar({
-          message: result.error,
+          message: errorChunk.error,
           type: "error",
           modal: true,
         });
       }
 
       setSnackbar({
-        message: result.success,
+        message: "All reports uploaded successfully!",
         type: "success",
         modal: true,
       });

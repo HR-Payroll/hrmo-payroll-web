@@ -73,9 +73,6 @@ function SummaryTable({
       align: "center",
       headerAlign: "center",
       editable: false,
-      valueGetter: (value) => {
-        return value["ref"] ? value["name"] : `${value["name"]} (no ref)`;
-      },
     },
     {
       field: "department",
@@ -88,10 +85,7 @@ function SummaryTable({
       editable: false,
       valueGetter: (value: any) => {
         if (!value) return "N/A";
-        const dept = departments.find(
-          (item: any) => value.$oid === item._id.$oid
-        );
-        return dept ? dept.name : "N/A";
+        return value.name;
       },
     },
     {

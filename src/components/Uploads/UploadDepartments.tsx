@@ -36,7 +36,8 @@ const UploadDepartments = ({ reload }: { reload?: VoidFunction }) => {
     setUploading(true);
 
     try {
-      const departments = data.map((department: any) => {
+      const date = new Date();
+      const departments: Department[] = data.map((department: any) => {
         return {
           name: department.name.toString(),
           category: department.category,
@@ -48,6 +49,7 @@ const UploadDepartments = ({ reload }: { reload?: VoidFunction }) => {
             .toLowerCase()
             .replace(/\s+/g, "")
             .replace(/[^a-zA-Z0-9]/g, "")}`,
+          createdAt: date,
         };
       });
 

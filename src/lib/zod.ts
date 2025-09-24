@@ -14,6 +14,8 @@ export const DepartmentSchema = object({
   name: string().min(1, "Department name is required"),
   category: string().min(1, "Category is required"),
   index: string().optional(),
+  createdAt: date().optional(),
+  updatedAt: date().optional(),
 });
 
 export const EmployeeSchema = object({
@@ -24,8 +26,10 @@ export const EmployeeSchema = object({
       message: "Employee name must be at most 20 characters long!",
     }),
   category: string().min(1, "Category is required"),
-  department: string().optional(),
-  schedule: string().optional(),
+  departmentId: number().nullable().optional(),
+  scheduleId: number().min(1, "Schedule is required"),
+  createdAt: date().optional(),
+  updatedAt: date().optional(),
 });
 
 export const RateSchema = object({
@@ -69,8 +73,10 @@ export const LoanSchema = object({
 export const ReportSchema = object({
   recordNo: string().min(1, "Record Number is required"),
   name: string().min(1, "Employee name is required"),
-  timestamp: string().min(1, "Timestamp is required"),
+  timestamp: date(),
   index: string().min(1, "Index is required"),
+  createdAt: date().optional(),
+  updatedAt: date().optional(),
 });
 
 export const EventSchema = object({

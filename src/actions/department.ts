@@ -26,7 +26,7 @@ export const createDepartment = async (
 };
 
 export const updateDepartment = async (
-  id: string,
+  id: number,
   payload: {
     name?: string;
     category?: string;
@@ -45,7 +45,7 @@ export const updateDepartment = async (
   }
 };
 
-export const deleteDepartment = async (id: string) => {
+export const deleteDepartment = async (id: number) => {
   try {
     await prisma.department.delete({
       where: {
@@ -59,9 +59,7 @@ export const deleteDepartment = async (id: string) => {
   }
 };
 
-export const uploadDepartment = async (
-  data: z.infer<typeof DepartmentSchema>[]
-) => {
+export const uploadDepartment = async (data: Department[]) => {
   for (var i = 0; i < data.length; i++) {
     const validateData = DepartmentSchema.parse(data[i]);
     if (!validateData) {
@@ -70,34 +68,12 @@ export const uploadDepartment = async (
   }
 
   try {
-    await prisma.$runCommandRaw({
-      insert: "Department",
-      documents: data.map((item) => ({ ...item, createdAt: new Date() })),
-      ordered: false,
+    const result = await prisma.department.createMany({
+      data: data.map((item) => ({ ...item })),
+      skipDuplicates: true,
     });
 
-    await Promise.all([
-      prisma.$runCommandRaw({
-        update: "Department",
-        updates: [
-          {
-            q: {
-              createdAt: { $type: "string" },
-            },
-            u: [
-              {
-                $set: {
-                  createdAt: { $toDate: "$createdAt" },
-                },
-              },
-            ],
-            multi: true,
-          },
-        ],
-      }),
-    ]);
-
-    return { success: "Department has been uploaded successfully!" };
+    return { result, success: "Department has been uploaded successfully!" };
   } catch (error) {
     return { error: "Something went wrong, try again later." };
   }

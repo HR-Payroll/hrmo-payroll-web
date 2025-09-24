@@ -17,20 +17,14 @@ import { usePathname, useRouter } from "next/navigation";
 import SnackbarInfo, { initialSnackbar } from "../ui/SnackbarInfo";
 
 function CompensationRateTable({
-  type,
   rates,
-  employees,
-  departments,
   reload,
   loading,
   page = 0,
   limit = 10,
   rowCount = 0,
 }: {
-  type?: any[];
   rates?: any[];
-  employees: any[];
-  departments: any[];
   reload?: VoidFunction;
   loading?: boolean;
   page?: number;
@@ -189,14 +183,10 @@ function CompensationRateTable({
                 <div
                   onClick={() => {
                     const row = data?.find(
-                      (row: any) => row._id.$oid === params.id
+                      (row: any) => row.id === Number(params.id)
                     );
 
-                    onUpdate(params.id, {
-                      recordNo: row.recordNo,
-                      name: row.name,
-                      category: row.category,
-                      department: row.department._id.$oid,
+                    onUpdate(Number(params.id), {
                       rate: row.rate,
                       type: row.type,
                     });
@@ -251,12 +241,8 @@ function CompensationRateTable({
   }));
 
   const onUpdate = async (
-    id: string,
+    id: number,
     payload: {
-      recordNo?: string;
-      name?: string;
-      department?: any;
-      category?: string;
       rate?: number;
       type?: string;
     }
@@ -272,6 +258,7 @@ function CompensationRateTable({
       const temp = { ...isEditing };
       delete temp[id];
       setEditing(temp);
+      reload && reload();
     } catch (error) {
       setSnackbar({
         message: "Failed to update employee compensation rate!",
@@ -301,7 +288,7 @@ function CompensationRateTable({
     }
 
     setData((prev: any) =>
-      prev.map((row: any) => (row._id.$oid === params.rowId ? newRow : row))
+      prev.map((row: any) => (row.id === Number(params.rowId) ? newRow : row))
     );
 
     return { ...newRow, isNew: false };
@@ -313,7 +300,7 @@ function CompensationRateTable({
         rows={data}
         loading={isLoading}
         columns={columns}
-        getRowId={(row) => row._id.$oid.toString()}
+        getRowId={(row) => row.id.toString()}
         columnHeaderHeight={40}
         rowHeight={36}
         rowCount={rowCount}

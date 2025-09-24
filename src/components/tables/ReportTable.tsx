@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { tableStyle } from "@/lib/themes";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import Link from "next/link";
 import { format } from "date-fns";
@@ -33,24 +33,26 @@ function ReportTable({
   const searchParams = useSearchParams();
   const [data, setData] = useState(reports);
   const [pageSize, setPageSize] = useState(limit);
+  const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
     setData(reports);
+    setLoading(false);
   }, [reports]);
 
-  const onChangeFilter = (key: string, value: string) => {
-    let path = "";
-    const params = Object.fromEntries(searchParams.entries());
+  const onPageChange = (model: GridPaginationModel) => {
+    let query = pathname;
 
-    if (params[key]) delete params[key];
-    if (value) params[key] = value;
+    if (model.page !== 0 && model.pageSize !== 10) {
+      query = `${pathname}?page=${model.page}&limit=${model.pageSize}`;
+    } else if (model.page !== 0) {
+      query = `${pathname}?page=${model.page}`;
+    } else if (model.pageSize !== 10) {
+      query = `${pathname}?limit=${model.pageSize}`;
+    }
 
-    Object.keys(params).forEach((key, index) => {
-      if (index === 0) path += `?${key}=${params[key]}`;
-      else path += `&${key}=${params[key]}`;
-    });
-
-    router.push(`${pathname}${path}`);
+    setLoading(true);
+    router.push(query);
   };
 
   const generateLink = (recordNo: string): string => {
@@ -83,9 +85,6 @@ function ReportTable({
       align: "center",
       headerAlign: "center",
       editable: false,
-      valueGetter: (value) => {
-        return value["ref"] ? value["name"] : `${value["name"]} (no ref)`;
-      },
     },
     {
       field: "department",
@@ -98,10 +97,7 @@ function ReportTable({
       editable: false,
       valueGetter: (value: any) => {
         if (!value) return "N/A";
-        const dept = departments.find(
-          (item: any) => value.$oid === item._id.$oid
-        );
-        return dept ? dept.name : "N/A";
+        return value.name;
       },
     },
     {
@@ -167,6 +163,7 @@ function ReportTable({
   return (
     <DataGrid
       rows={data}
+      loading={isLoading}
       columns={columns}
       getRowId={(row) => row.recordNo}
       columnHeaderHeight={40}
@@ -178,12 +175,10 @@ function ReportTable({
       pageSizeOptions={[5, 10, 20]}
       paginationMode="server"
       paginationModel={{ page, pageSize }}
-      onPaginationModelChange={(model: any) => {
+      onPaginationModelChange={(model) => {
         page = model.page;
         setPageSize(model.pageSize);
-
-        let key = Object.keys(model)[0] as string;
-        onChangeFilter(key === "pageSize" ? "limit" : key, model[key]);
+        onPageChange(model);
       }}
       disableRowSelectionOnClick
       sx={tableStyle}

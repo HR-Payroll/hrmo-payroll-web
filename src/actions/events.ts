@@ -78,7 +78,7 @@ export const createEvent = async (payload: any) => {
   }
 };
 
-export const updateEvent = async (id: string, payload: any) => {
+export const updateEvent = async (id: number, payload: any) => {
   try {
     const event = await prisma.events.update({
       where: { id },
@@ -92,7 +92,7 @@ export const updateEvent = async (id: string, payload: any) => {
   }
 };
 
-export const deleteEvent = async (id: string) => {
+export const deleteEvent = async (id: number) => {
   try {
     await prisma.events.delete({
       where: { id },

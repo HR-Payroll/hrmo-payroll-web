@@ -2,12 +2,8 @@
 import { prisma } from "../../prisma/prisma";
 
 export const updateRate = async (
-  id: string,
+  id: number,
   payload: {
-    recordNo?: string;
-    name?: string;
-    department?: any;
-    category?: string;
     rate?: number;
     type?: string;
   }

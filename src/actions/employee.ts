@@ -3,14 +3,14 @@ import { z } from "zod";
 import { EmployeeSchema } from "@/lib/zod";
 import { prisma } from "../../prisma/prisma";
 
-export const createEmployee = async (data: z.infer<typeof EmployeeSchema>) => {
+export const createEmployee = async (data: Employee) => {
   const validateData = EmployeeSchema.parse(data);
 
   if (!validateData) {
     return { error: "Invalid input fields" };
   }
 
-  const { recordNo, name, category, department, schedule } = validateData;
+  const { recordNo, name, category, departmentId, scheduleId } = validateData;
 
   try {
     await prisma.employee.create({
@@ -18,8 +18,8 @@ export const createEmployee = async (data: z.infer<typeof EmployeeSchema>) => {
         recordNo: recordNo,
         name: name,
         category: category,
-        department: department,
-        schedule: schedule,
+        departmentId: departmentId,
+        scheduleId: scheduleId,
       },
     });
 
@@ -30,7 +30,7 @@ export const createEmployee = async (data: z.infer<typeof EmployeeSchema>) => {
 };
 
 export const updateEmployee = async (
-  id: string,
+  id: number,
   payload: {
     recordNo?: string;
     name?: string;
@@ -42,7 +42,7 @@ export const updateEmployee = async (
   try {
     await prisma.employee.update({
       where: { id },
-      data: { ...payload, createdAt: new Date() },
+      data: { ...payload, updatedAt: new Date() },
     });
 
     return { success: "Employee has been successfully updated!" };
@@ -52,7 +52,7 @@ export const updateEmployee = async (
   }
 };
 
-export const deleteEmployee = async (id: string) => {
+export const deleteEmployee = async (id: number) => {
   try {
     await prisma.employee.delete({
       where: {
@@ -77,33 +77,9 @@ export const uploadEmployee = async (
   }
 
   try {
-    const bulkOps = data.map((item) => {
-      const departmentValue =
-        item.department && item.department !== ""
-          ? { $toObjectId: item.department }
-          : undefined;
-
-      return {
-        q: { recordNo: item.recordNo },
-        u: [
-          {
-            $set: {
-              ...item,
-              department: departmentValue,
-              schedule: { $toObjectId: item.schedule },
-              createdAt: new Date(),
-              updatedAt: new Date(),
-            },
-          },
-        ],
-        upsert: true,
-        multi: false,
-      };
-    });
-
-    const result = await prisma.$runCommandRaw({
-      update: "Employee",
-      updates: bulkOps,
+    const result = await prisma.employee.createMany({
+      data: data.map((item) => ({ ...item })),
+      skipDuplicates: true,
     });
 
     return { result, success: "Employees has been uploaded successfully!" };

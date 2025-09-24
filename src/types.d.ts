@@ -14,6 +14,7 @@ export interface ScheduleDay {
 }
 
 export interface Schedule {
+  id?: number;
   name: string;
   daysIncluded: ScheduleDay[];
   readOnly: boolean;

@@ -20,9 +20,6 @@ function ViewSummary({ summary, name }: { summary?: any[]; name?: string }) {
       flex: 1.5,
       align: "center",
       headerAlign: "center",
-      valueGetter: (value) => {
-        return value["ref"] ? value["name"] : `${value["name"]} (no ref)`;
-      },
     },
     {
       field: "totalHours",

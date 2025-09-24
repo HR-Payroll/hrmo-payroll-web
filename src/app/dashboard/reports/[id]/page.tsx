@@ -28,6 +28,8 @@ const SingleReportPage = async ({
 
   const report = (await getReportById(id, dateFrom, dateTo)) as any;
 
+  console.log(report);
+
   return (
     <div className="card">
       <header className="absolute top-4 -ml-4">
@@ -41,15 +43,7 @@ const SingleReportPage = async ({
         <section className="flex flex-col gap-4">
           <div className="flex items-center gap-2">
             <BackButton to={`/dashboard/reports`} />
-            <DynamicHeader
-              label={
-                report
-                  ? report.name.ref
-                    ? report.name.name
-                    : `${report.name.name} (no ref)`
-                  : "N/A"
-              }
-            />
+            <DynamicHeader label={report ? report.employee.name : "N/A"} />
           </div>
           <div className="flex items-center justify-between">
             <DateFilter from={dateFrom} />

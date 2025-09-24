@@ -89,7 +89,7 @@ const TableFilters = ({
                   JOB_ORDER: "Job Order",
                 } as any;
                 return (
-                  <option key={item._id.$oid} value={item._id.$oid}>
+                  <option key={item.id} value={item.id}>
                     {`${item.name} - ${category[item.category]}`}
                   </option>
                 );

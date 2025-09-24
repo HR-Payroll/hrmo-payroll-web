@@ -118,13 +118,16 @@ function DepartmentTable({
       },
     },
     {
-      field: "employees",
+      field: "_count",
       headerName: "Total Employees",
       headerClassName: "custom-header",
       flex: 1,
       align: "center",
       headerAlign: "center",
       editable: false,
+      valueGetter: (params: any) => {
+        return params.employees || 0;
+      },
     },
     {
       field: "createdAt",
@@ -136,7 +139,7 @@ function DepartmentTable({
       editable: false,
       renderCell: (params) => {
         if (!params.value) return "N/A";
-        return new Date(params.value.$date).toLocaleString("en-US", {
+        return new Date(params.value).toLocaleString("en-US", {
           year: "numeric",
           month: "2-digit",
           day: "2-digit",
@@ -225,7 +228,7 @@ function DepartmentTable({
   }));
 
   const onUpdate = async (
-    id: string,
+    id: number,
     payload: {
       name?: string;
       category?: string;
@@ -319,7 +322,7 @@ function DepartmentTable({
         rows={data}
         columns={columns}
         loading={isLoading}
-        getRowId={(row) => row._id.$oid.toString()}
+        getRowId={(row) => row.id}
         columnHeaderHeight={40}
         rowHeight={36}
         rowCount={rowCount}

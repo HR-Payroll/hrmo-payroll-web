@@ -21,7 +21,13 @@ export default {
 
         const passwordMatch = password === user.password;
 
-        if (passwordMatch) return user;
+        if (passwordMatch) {
+          // Convert id to string to satisfy NextAuth's User type
+          return {
+            ...user,
+            id: user.id.toString(),
+          };
+        }
 
         return null;
       },

@@ -1,40 +1,54 @@
 import { prisma } from "@/../prisma/prisma";
 import { paginationUtil } from "@/utils/tools";
 
-export const getEmployeeById = async (id: number) => {
+export const getMDeductionById = async (id: number) => {
   try {
-    const department = await prisma.department.findUnique({
+    const deduction = await prisma.employee.findUnique({
       where: { id },
     });
 
-    return department;
+    return deduction;
   } catch (error: any) {
     console.log(error);
     return null;
   }
 };
 
-export const getAllEmployee = async () => {
+export const getAllMDeduction = async () => {
   try {
-    const employees = await prisma.employee.findMany({
-      include: {
+    const deductions = await prisma.employee.findMany({
+      select: {
+        id: true,
+        recordNo: true,
+        name: true,
+        category: true,
         department: true,
+        gsisgs: true,
+        ec: true,
+        phic: true,
+        gsisps: true,
+        hdmfgs: true,
+        hdmfps: true,
+        wtax: true,
+        sss: true,
+        createdAt: true,
+        updatedAt: true,
       },
       orderBy: { recordNo: "asc" },
     });
-    return employees;
+    return deductions;
   } catch (error: any) {
     console.log(error);
     return null;
   }
 };
 
-export const getPaginatedEmployee = async (
+export const getPaginatedMDeduction = async (
   search?: string,
   page = 0,
   limit = 10,
   category?: string,
-  department?: number
+  department?: string
 ) => {
   try {
     const where: any = {};
@@ -51,7 +65,7 @@ export const getPaginatedEmployee = async (
       ];
     }
 
-    const items = await prisma.employee.findMany({
+    const deductions = await prisma.employee.findMany({
       select: {
         id: true,
         recordNo: true,
@@ -59,7 +73,14 @@ export const getPaginatedEmployee = async (
         category: true,
         createdAt: true,
         department: true,
-        schedule: true,
+        gsisgs: true,
+        ec: true,
+        phic: true,
+        gsisps: true,
+        hdmfgs: true,
+        hdmfps: true,
+        wtax: true,
+        sss: true,
       },
       where,
       orderBy: { recordNo: "asc" },
@@ -68,16 +89,8 @@ export const getPaginatedEmployee = async (
     });
 
     const totalItems = await prisma.employee.count({ where });
-    const regularSchedule = await prisma.schedule.findFirst({
-      where: { name: "REGULAR" },
-    });
 
-    const employees = items.map((e) => ({
-      ...e,
-      schedule: e.schedule ?? regularSchedule,
-    }));
-
-    return paginationUtil(employees, page, limit, totalItems);
+    return paginationUtil(deductions, page, limit, totalItems);
   } catch (error: any) {
     return paginationUtil([], page, limit, 0);
   }

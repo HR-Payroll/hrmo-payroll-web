@@ -41,6 +41,8 @@ const Reports = async (props: {
     department
   )) as any;
 
+  console.log(reports);
+
   async function reload() {
     "use server";
     revalidatePath("/dashboard/reports");
@@ -80,7 +82,7 @@ const Reports = async (props: {
             employees={employees}
             departments={departments}
             reload={reload}
-            reports={reports.items || []}
+            reports={reports.items}
             from={dateFrom}
             to={dateTo}
             limit={reports.pageSize}
