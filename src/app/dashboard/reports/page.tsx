@@ -41,8 +41,6 @@ const Reports = async (props: {
     department
   )) as any;
 
-  console.log(reports);
-
   async function reload() {
     "use server";
     revalidatePath("/dashboard/reports");

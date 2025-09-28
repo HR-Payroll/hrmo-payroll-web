@@ -165,10 +165,10 @@ function DepartmentTable({
                 <div
                   onClick={() => {
                     const row = data?.find(
-                      (row: any) => row._id.$oid === params.id
+                      (row: any) => row.id === Number(params.id)
                     );
 
-                    onUpdate(params.id, {
+                    onUpdate(Number(params.id), {
                       name: row.name,
                       category: row.category,
                     });
@@ -256,7 +256,7 @@ function DepartmentTable({
 
   const onDelete = async () => {
     try {
-      await deleteDepartment(isDelete!);
+      await deleteDepartment(Number(isDelete!));
       if (reload) reload();
     } catch (error) {
       setSnackbar({
@@ -287,7 +287,7 @@ function DepartmentTable({
     }
 
     setData((prev: any) =>
-      prev.map((row: any) => (row._id.$oid === params.rowId ? newRow : row))
+      prev.map((row: any) => (row.id === Number(params.rowId) ? newRow : row))
     );
 
     return { ...newRow, isNew: false };
@@ -322,7 +322,7 @@ function DepartmentTable({
         rows={data}
         columns={columns}
         loading={isLoading}
-        getRowId={(row) => row.id}
+        getRowId={(row) => row.id.toString()}
         columnHeaderHeight={40}
         rowHeight={36}
         rowCount={rowCount}

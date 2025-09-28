@@ -313,7 +313,7 @@ function EmployeesTable({
 
   const onDelete = async () => {
     try {
-      await deleteEmployee(isDelete!);
+      await deleteEmployee(Number(isDelete!));
       if (reload) {
         reload();
       }

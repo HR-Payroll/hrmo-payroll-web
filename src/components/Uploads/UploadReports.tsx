@@ -5,6 +5,7 @@ import SnackbarInfo, { initialSnackbar } from "../ui/SnackbarInfo";
 import { uploadReport } from "@/actions/report";
 import { Backdrop, CircularProgress } from "@mui/material";
 import pLimit from "p-limit";
+import { parse } from "date-fns";
 
 const UploadReports = ({ reload }: { reload?: VoidFunction }) => {
   const [isUploading, setUploading] = useState(false);
@@ -31,7 +32,7 @@ const UploadReports = ({ reload }: { reload?: VoidFunction }) => {
           const data = line.split("\t");
 
           if (data.length === 5) {
-            const [recordNo, name, timestamp] = line.split("\t");
+            const [recordNo, name, timestamp] = data;
 
             const date = new Date(timestamp);
             return {
@@ -42,7 +43,7 @@ const UploadReports = ({ reload }: { reload?: VoidFunction }) => {
               createdAt,
             };
           } else if (data.length === 6) {
-            const [recordNo, timestamp] = line.split("\t");
+            const [recordNo, timestamp] = data;
 
             const date = new Date(timestamp);
             return {
@@ -50,6 +51,21 @@ const UploadReports = ({ reload }: { reload?: VoidFunction }) => {
               name: "N/A",
               timestamp: date,
               index: `${recordNo.padStart(9, "0")}-${date.toISOString()}`,
+              createdAt,
+            };
+          } else if (data.length === 3) {
+            const [recordNo, name, timestamp] = data;
+
+            const parseDate = parse(timestamp, "dd/MM/yyyy H:mm", new Date());
+            const date = new Date(parseDate);
+
+            return {
+              recordNo: recordNo.trim().padStart(9, "0"),
+              name: name,
+              timestamp: date,
+              index: `${recordNo
+                .trim()
+                .padStart(9, "0")}-${date.toISOString()}`,
               createdAt,
             };
           } else {

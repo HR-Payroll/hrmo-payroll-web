@@ -75,10 +75,12 @@ export const computeTotalDaysAndLate = ({
     let earnings = 0;
 
     if (employee.type === "MONTHLY") {
-      earnings = Math.min(
-        (employee.rate / 2 / businessDays) * total,
-        employee.rate / 2
-      );
+      // earnings = Math.min(
+      //   (employee.rate / 2 / businessDays) * total,
+      //   employee.rate / 2
+      // );
+
+      earnings = employee.rate / 2;
     } else {
       earnings = employee ? total * employee.rate : 0;
     }
@@ -121,34 +123,57 @@ export const computeTotalDaysAndLate = ({
       .map((d: any) => d.value)
       .sort((a: number, b: number) => b - a);
 
-    //const workingDaysDeduction = missingDaysCount * (5 / scheduledDays.length);
-    const workingDaysDeduction = missingDaysCount * 2.5;
-    let totalDays = totalWorkingDays - workingDaysDeduction;
+    const totalScheduledDays = scheduledDays.length;
 
-    Object.keys(weeks).map((week: string) => {
-      const actualDays = weeks[week].map((item) =>
-        dateTz(new Date(item)).getDay()
-      );
+    let totalDays = 0;
 
-      actualDays.forEach((actualDay) => {
-        let nearestScheduledDay = 0;
+    if (totalScheduledDays <= 2) {
+      //const workingDaysDeduction = missingDaysCount * (5 / scheduledDays.length);
+      const workingDaysDeduction = missingDaysCount * 2.5;
+      totalDays = totalWorkingDays - workingDaysDeduction;
 
-        for (let i = 0; i < scheduledDays.length; i++) {
-          const item = scheduledDays[i];
-          if (actualDay >= item) {
-            nearestScheduledDay = item;
-            break;
+      Object.keys(weeks).map((week: string) => {
+        const actualDays = weeks[week].map((item) =>
+          dateTz(new Date(item)).getDay()
+        );
+
+        actualDays.forEach((actualDay) => {
+          let nearestScheduledDay = 0;
+
+          for (let i = 0; i < scheduledDays.length; i++) {
+            const item = scheduledDays[i];
+            if (actualDay >= item) {
+              nearestScheduledDay = item;
+              break;
+            }
           }
-        }
 
-        let diff = actualDay - nearestScheduledDay;
-        diff = diff < 0 ? 0 : diff;
-        totalDays -= diff;
+          let diff = actualDay - nearestScheduledDay;
+          diff = diff < 0 ? 0 : diff;
+          totalDays -= diff;
+        });
       });
-    });
+    } else {
+      const totalActualDays = Object.keys(weeks)
+        .map((week: string) => {
+          const actualDays = weeks[week].map((item) =>
+            dateTz(new Date(item)).getDay()
+          );
+
+          return actualDays;
+        })
+        .flat().length;
+
+      totalDays = totalActualDays;
+    }
 
     let earnings = 0;
-    earnings = employee ? totalDays * employee.rate : 0;
+
+    if (employee.type === "MONTHLY") {
+      earnings = employee.rate / 2;
+    } else {
+      earnings = employee ? totalDays * employee.rate : 0;
+    }
 
     const deductions = employee ? getTotalDeduction(employee) : 0;
     let net = earnings - deductions;
@@ -419,7 +444,7 @@ export const computeTotalDaysAndLateSingle = ({
       //temporary calculations
       let earnings = 0;
       if (employee.type === "MONTHLY") {
-        earnings = (employee.rate / 2 / businessDays) * totalDays;
+        earnings = employee.rate / 2;
       } else {
         earnings = employee ? totalDays * employee.rate : 0;
       }
@@ -582,11 +607,12 @@ const getTheRequiredDaysPerWeek = (
 
     if (daySchedule && daySchedule.included) {
       requiredDates.push(format(dateTz(new Date(d)), "yyyy-MM-dd"));
-    }
-
-    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
       totalWorkingDays++;
     }
+
+    // if ( dayOfWeek !== 0 && dayOfWeek !== 6) {
+
+    // }
   }
 
   return { requiredDates, totalWorkingDays };

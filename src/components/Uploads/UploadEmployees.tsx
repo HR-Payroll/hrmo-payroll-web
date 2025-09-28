@@ -77,6 +77,8 @@ const UploadEmployees = ({
         };
       });
 
+      console.log(employees.length);
+
       const result = (await uploadEmployee(employees)) as any;
 
       if (result && result.error) {
