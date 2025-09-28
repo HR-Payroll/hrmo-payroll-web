@@ -320,10 +320,8 @@ function LoanDeductionsTable({
   }));
 
   const onUpdate = async (
-    id: string,
+    id: number,
     payload: {
-      name?: string;
-      department?: any;
       mplhdmf?: number;
       gfal?: number;
       landbank?: number;
