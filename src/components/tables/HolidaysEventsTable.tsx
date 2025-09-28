@@ -8,12 +8,12 @@ import {
   GridPreProcessEditCellProps,
   GridRenderEditCellParams,
 } from "@mui/x-data-grid";
-import { format } from "date-fns";
 import { MdCheck, MdClose, MdDeleteOutline } from "react-icons/md";
 import Alert from "../ui/Alert";
 import { deleteEvent, updateEvent } from "@/actions/events";
 import SnackbarInfo, { initialSnackbar } from "../ui/SnackbarInfo";
 import { styled, Tooltip, tooltipClasses, TooltipProps } from "@mui/material";
+import { formatTime } from "@/utils/dateFormatter";
 
 function HolidaysEventsTable({
   events,
@@ -72,7 +72,7 @@ function HolidaysEventsTable({
       editable: true,
       type: "date",
       valueFormatter: (params: any) => {
-        return params ? format(params, "MMMM dd, yyyy") : "";
+        return params ? formatTime(params, "MMMM dd, yyyy") : "";
       },
     },
     {

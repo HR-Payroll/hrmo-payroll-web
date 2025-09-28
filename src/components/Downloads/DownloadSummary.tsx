@@ -1,7 +1,7 @@
 "use client";
 import { downloadSummary } from "@/actions/payroll";
+import { formatTime } from "@/utils/dateFormatter";
 import { Backdrop, CircularProgress } from "@mui/material";
-import { format, set } from "date-fns";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { MdOutlineFileDownload } from "react-icons/md";
@@ -82,10 +82,10 @@ function DownloadSummary() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `Payroll_${category}_${format(from, "yyyy-MM-dd")}-${format(
-        to,
+      a.download = `Payroll_${category}_${formatTime(
+        from,
         "yyyy-MM-dd"
-      )}.xlsx`;
+      )}-${formatTime(to, "yyyy-MM-dd")}.xlsx`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);

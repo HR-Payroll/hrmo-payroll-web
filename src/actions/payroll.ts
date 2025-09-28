@@ -1,8 +1,7 @@
 "use server";
 import * as XLSX from "xlsx";
 import { getAllSummary } from "@/data/payroll";
-import { dateQuery } from "@/utils/dateFormatter";
-import { format } from "date-fns";
+import { dateQuery, formatTime } from "@/utils/dateFormatter";
 
 export const downloadSummary = async (
   from: Date,
@@ -12,8 +11,8 @@ export const downloadSummary = async (
 ) => {
   try {
     const { dateFrom, dateTo } = dateQuery(
-      format(from, "yyyy-MM-dd"),
-      format(to, "yyyy-MM-dd")
+      formatTime(from, "yyyy-MM-dd"),
+      formatTime(to, "yyyy-MM-dd")
     );
     const reports = await getAllSummary(dateFrom, dateTo, category, department);
 

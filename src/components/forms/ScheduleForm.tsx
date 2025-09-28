@@ -9,11 +9,10 @@ import TimePickerField from "../TimePickerField";
 import { Backdrop, Checkbox, Chip, Radio } from "@mui/material";
 import Button from "../ui/Button";
 import { createSchedule, updateSchedule } from "@/actions/schedule";
-import { isArrayEqual } from "@/utils/tools";
 import { MdOutlineClose } from "react-icons/md";
 import { DaysKey, Schedule, ScheduleDay } from "@/types";
-import { dateTz, formatTime } from "@/utils/dateFormatter";
-import { format } from "date-fns";
+import moment from "moment-business-days";
+import { formatTime } from "@/utils/dateFormatter";
 
 function ScheduleForm({
   data,
@@ -181,10 +180,10 @@ function ScheduleForm({
             acc[key as DaysKey] = {
               ...schedule[key as DaysKey],
               inTime: matchedDay
-                ? dateTz(new Date(matchedDay.inTime))
+                ? new Date(matchedDay.inTime)
                 : onChangeTime(new Date(), 8),
               outTime: matchedDay
-                ? dateTz(new Date(matchedDay.outTime))
+                ? new Date(matchedDay.outTime)
                 : onChangeTime(new Date(), 17),
               included: isIncluded,
               type: opt === "Straight Time" ? matchedDay?.type : undefined,
@@ -214,8 +213,16 @@ function ScheduleForm({
 
   useEffect(() => {
     const scheds = Object.keys(schedule)
-      .map((key: string) => schedule[key as DaysKey])
+      .map((key: string) => {
+        const sched = schedule[key as DaysKey];
+        return {
+          ...sched,
+          inTime: moment.tz(sched.inTime, "Asia/Manila").toDate(),
+          outTime: moment.tz(sched.outTime, "Asia/Manila").toDate(),
+        };
+      })
       .filter((item) => item.included) as any;
+
     setValue("daysIncluded", JSON.stringify(scheds), { shouldValidate: true });
   }, [schedule]);
 
@@ -316,7 +323,7 @@ function ScheduleForm({
             setSchedule({
               [(selectTime as DaysKey) || ""]: {
                 ...schedule[(selectTime as DaysKey) || ""],
-                inTime: onChangeTime(dateTz(value)),
+                inTime: onChangeTime(new Date(value)),
               },
             });
           }}
@@ -337,7 +344,7 @@ function ScheduleForm({
             setSchedule({
               [(selectTime as DaysKey) || ""]: {
                 ...schedule[(selectTime as DaysKey) || ""],
-                outTime: onChangeTime(dateTz(new Date(value))),
+                outTime: onChangeTime(new Date(value)),
               },
             });
           }}
@@ -485,7 +492,7 @@ function ScheduleForm({
             label="Time In"
             defaultValue={regularIn}
             setValue={(_, value) => {
-              const tz = dateTz(value);
+              const tz = new Date(value);
               setRegularIn(tz);
               setRegularTime("inTime", tz);
             }}
@@ -497,7 +504,7 @@ function ScheduleForm({
             defaultValue={regularOut}
             validator={() => false}
             setValue={(_, value) => {
-              const tz = dateTz(value);
+              const tz = new Date(value);
               setRegularOut(tz);
               setRegularTime("outTime", tz);
             }}
@@ -544,11 +551,12 @@ function ScheduleForm({
                   <h1 className="text-sm font-medium">{day}</h1>
                   <div className="flex flex-col text-xs items-start">
                     <p>
-                      In: {format(schedule[day as DaysKey].inTime, "hh:mm aa")}
+                      In:{" "}
+                      {formatTime(schedule[day as DaysKey].inTime, "hh:mm A")}
                     </p>
                     <p>
                       Out:{" "}
-                      {format(schedule[day as DaysKey].outTime, "hh:mm aa")}
+                      {formatTime(schedule[day as DaysKey].outTime, "hh:mm A")}
                     </p>
                   </div>
                 </>

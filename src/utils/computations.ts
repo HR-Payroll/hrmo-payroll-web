@@ -1,7 +1,6 @@
 import { format } from "date-fns";
 import { getBusinessDays, getTotalHolidays } from "./holidays";
 import { REGULAR_SCHEDULE } from "@/data/constants";
-import { dateTz } from "./dateFormatter";
 import { Schedule } from "@/types";
 
 export const computeTotalDaysAndLate = ({
@@ -20,12 +19,11 @@ export const computeTotalDaysAndLate = ({
   const days = dates
     .map((item: any) => item.timestamp)
     .reduce((acc: any, dateTime: any) => {
-      const date = format(
-        dateTz(new Date(dateTime)),
-        "yyyy-MM-dd HH:mm:ss"
-      ).split(" ")[0];
+      const date = format(new Date(dateTime), "yyyy-MM-dd HH:mm:ss").split(
+        " "
+      )[0];
       acc[date] = acc[date] || [];
-      acc[date].push(dateTz(new Date(dateTime)));
+      acc[date].push(new Date(dateTime));
       return acc;
     }, {});
 
@@ -43,7 +41,7 @@ export const computeTotalDaysAndLate = ({
   }
 
   Object.keys(days).forEach((date) => {
-    const dayOfWeek = dateTz(new Date(date)).getDay();
+    const dayOfWeek = new Date(date).getDay();
 
     if (!schedule.daysIncluded.map((d) => d.value).includes(dayOfWeek)) {
       delete days[date];
@@ -55,7 +53,7 @@ export const computeTotalDaysAndLate = ({
   if (schedule.option !== "Straight Time") {
     inOut = Object.keys(days).map((date) => {
       const times = days[date].sort(
-        (a: Date, b: Date) => dateTz(a).getTime() - dateTz(b).getTime()
+        (a: Date, b: Date) => a.getTime() - b.getTime()
       );
 
       return regularComputation(date, schedule, times, gracePeriod);
@@ -133,9 +131,7 @@ export const computeTotalDaysAndLate = ({
       totalDays = totalWorkingDays - workingDaysDeduction;
 
       Object.keys(weeks).map((week: string) => {
-        const actualDays = weeks[week].map((item) =>
-          dateTz(new Date(item)).getDay()
-        );
+        const actualDays = weeks[week].map((item) => new Date(item).getDay());
 
         actualDays.forEach((actualDay) => {
           let nearestScheduledDay = 0;
@@ -156,9 +152,7 @@ export const computeTotalDaysAndLate = ({
     } else {
       const totalActualDays = Object.keys(weeks)
         .map((week: string) => {
-          const actualDays = weeks[week].map((item) =>
-            dateTz(new Date(item)).getDay()
-          );
+          const actualDays = weeks[week].map((item) => new Date(item).getDay());
 
           return actualDays;
         })
@@ -223,7 +217,7 @@ export const computeTotalDaysAndLateSingle = ({
 
   if (filter && schedule.option !== "Straight Time") {
     Object.keys(reports).forEach((date) => {
-      const dayOfWeek = dateTz(new Date(date)).getDay();
+      const dayOfWeek = new Date(date).getDay();
 
       if (!schedule.daysIncluded.map((d) => d.value).includes(dayOfWeek)) {
         delete reports[date];
@@ -257,13 +251,10 @@ export const computeTotalDaysAndLateSingle = ({
     const perDayEquivalent = 2.5;
 
     const straightTimeReports = Object.keys(reports)
-      .sort(
-        (a: any, b: any) =>
-          dateTz(new Date(b)).getTime() - dateTz(new Date(a)).getTime()
-      )
+      .sort((a: any, b: any) => new Date(b).getTime() - new Date(a).getTime())
       .map((date, index: number) => {
         const times = reports[date].sort(
-          (a: Date, b: Date) => dateTz(a).getTime() - dateTz(b).getTime()
+          (a: Date, b: Date) => new Date(a).getTime() - new Date(b).getTime()
         );
 
         let filterTimes = times;
@@ -279,7 +270,7 @@ export const computeTotalDaysAndLateSingle = ({
           }, {});
 
         let totalDays = perDayEquivalent;
-        const dayOfWeek = dateTz(new Date(date)).getDay();
+        const dayOfWeek = new Date(date).getDay();
 
         let nearestScheduledDay = 0;
 
@@ -335,16 +326,13 @@ export const computeTotalDaysAndLateSingle = ({
   }
 
   const sortedReports = Object.keys(reports)
-    .sort(
-      (a: any, b: any) =>
-        dateTz(new Date(b)).getTime() - dateTz(new Date(a)).getTime()
-    )
+    .sort((a: any, b: any) => new Date(b).getTime() - new Date(a).getTime())
     .map((date, index: number) => {
       const times = reports[date].sort(
-        (a: Date, b: Date) => dateTz(a).getTime() - dateTz(b).getTime()
+        (a: Date, b: Date) => new Date(a).getTime() - new Date(b).getTime()
       );
 
-      const dayOfWeek = dateTz(new Date(date)).getDay();
+      const dayOfWeek = new Date(date).getDay();
 
       const daySchedule = schedule.daysIncluded.find(
         (d: any) => d.value === dayOfWeek
@@ -384,8 +372,8 @@ export const computeTotalDaysAndLateSingle = ({
       const inTimeStr = daySchedule?.inTime;
       const outTimeStr = daySchedule?.outTime;
 
-      const inTime = dateTz(new Date(date + "T" + inTimeStr?.split("T")[1]));
-      const outTime = dateTz(new Date(date + "T" + outTimeStr?.split("T")[1]));
+      const inTime = new Date(date + "T" + inTimeStr?.split("T")[1]);
+      const outTime = new Date(date + "T" + outTimeStr?.split("T")[1]);
       const halfDay =
         inTime.getTime() +
         (outTime.getTime() - inTime.getTime()) / 2 -
@@ -398,7 +386,7 @@ export const computeTotalDaysAndLateSingle = ({
         (times[times.length - 1].getTime() - times[0].getTime()) /
         (1000 * 60 * 60);
 
-      const cutoff = inTime ? dateTz(new Date(inTime)) : undefined;
+      const cutoff = inTime ? new Date(inTime) : undefined;
       if (cutoff) cutoff.setMinutes(cutoff.getMinutes() + gracePeriod);
 
       let lateness =
@@ -526,8 +514,8 @@ const timeStringToDate = (timeString: string): Date => {
 };
 
 export const getTotalBusinessDays = (from: Date, to: Date, events: any[]) => {
-  from = dateTz(new Date(from));
-  to = dateTz(new Date(to));
+  from = new Date(from);
+  to = new Date(to);
 
   return getBusinessDays(from, to) - getTotalHolidays(events);
 };
@@ -538,7 +526,7 @@ const regularComputation = (
   times: Date[],
   gracePeriod: number
 ) => {
-  const dayOfWeek = dateTz(new Date(date)).getDay();
+  const dayOfWeek = new Date(date).getDay();
   const daySchedule = schedule.daysIncluded.find(
     (d: any) => d.value === dayOfWeek
   );
@@ -548,8 +536,8 @@ const regularComputation = (
   const inTimeStr = daySchedule.inTime;
   const outTimeStr = daySchedule.outTime;
 
-  const inTime = dateTz(new Date(date + "T" + inTimeStr.split("T")[1]));
-  const outTime = dateTz(new Date(date + "T" + outTimeStr.split("T")[1]));
+  const inTime = new Date(date + "T" + inTimeStr.split("T")[1]);
+  const outTime = new Date(date + "T" + outTimeStr.split("T")[1]);
   const halfDay =
     inTime.getTime() +
     (outTime.getTime() - inTime.getTime()) / 2 -
@@ -599,14 +587,14 @@ const getTheRequiredDaysPerWeek = (
   const requiredDates: string[] = [];
   let totalWorkingDays = 0;
 
-  for (let d = dateTz(new Date(from)); d <= to; d.setDate(d.getDate() + 1)) {
+  for (let d = new Date(from); d <= to; d.setDate(d.getDate() + 1)) {
     const dayOfWeek = d.getDay();
     const daySchedule = schedule.daysIncluded.find(
       (day: any) => day.value === dayOfWeek
     );
 
     if (daySchedule && daySchedule.included) {
-      requiredDates.push(format(dateTz(new Date(d)), "yyyy-MM-dd"));
+      requiredDates.push(format(new Date(d), "yyyy-MM-dd"));
       totalWorkingDays++;
     }
 
@@ -621,11 +609,11 @@ const getTheRequiredDaysPerWeek = (
 const groupDatesPerWeek = (dateKeys: string[]) => {
   const weeks: { [week: string]: string[] } = {};
   dateKeys.forEach((dateStr) => {
-    const date = dateTz(new Date(dateStr));
+    const date = new Date(dateStr);
     const year = date.getFullYear();
-    const jan4 = dateTz(new Date(year, 0, 4));
+    const jan4 = new Date(year, 0, 4);
     const jan4Day = jan4.getDay() || 7;
-    const weekStart = dateTz(new Date(jan4));
+    const weekStart = new Date(jan4);
     weekStart.setDate(jan4.getDate() - jan4Day + 1);
     const diff = Math.floor(
       (date.getTime() - weekStart.getTime()) / (7 * 24 * 60 * 60 * 1000)

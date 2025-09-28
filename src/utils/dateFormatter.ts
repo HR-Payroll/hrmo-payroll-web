@@ -1,79 +1,46 @@
-import { toZonedTime, format } from "date-fns-tz";
-import { subHours, toDate } from "date-fns";
-
-export const stringToDate = (date: string) => {
-  const [datePart, timePart] = date.split(" ");
-  const [year, month, day] = datePart.split("-").map(Number);
-  const [hour, minute, second] = timePart.split(":").map(Number);
-
-  return new Date(Date.UTC(year, month - 1, day, hour, minute, second));
-};
+import moment from "moment-timezone";
 
 export const dateQuery = (from?: string, to?: string) => {
-  const currentDate = new Date();
-  const day1 = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth(),
-    1,
-    0,
-    0,
-    0
-  );
-  const day15 = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth(),
-    15,
-    0,
-    0,
-    0
-  );
+  const now = moment.tz("Asia/Manila");
+  const day1 = now.clone().startOf("month");
+  const day15 = now.clone().date(15).startOf("day");
 
-  const dateFrom = from
-    ? new Date(
-        new Date(from).getFullYear(),
-        new Date(from).getMonth(),
-        new Date(from).getDate(),
-        0,
-        0,
-        0
-      )
-    : currentDate.getDate() >= 15
+  const baseFrom = from
+    ? moment.tz(from, "Asia/Manila")
+    : now.date() >= 15
     ? day15
     : day1;
-  const dateTo = to
-    ? new Date(
-        new Date(to).getFullYear(),
-        new Date(to).getMonth(),
-        new Date(to).getDate(),
-        23,
-        59,
-        59
-      )
-    : currentDate;
 
-  return { currentDate, dateFrom, dateTo };
+  const baseTo = to ? moment.tz(to, "Asia/Manila") : now;
+
+  return {
+    currentDate: now.toDate(),
+    dateFrom: baseFrom.startOf("day").toDate(), // Manila start-of-day converted to UTC Date
+    dateTo: baseTo.endOf("day").toDate(), // Manila end-of-day converted to UTC Date
+  };
 };
 
-const TIMEZONE = "Asia/Manila";
+// const TIMEZONE = "Asia/Manila";
 
-export const dateTz = (date: Date | string): Date => {
-  const d = typeof date === "string" ? new Date(date) : date;
-  // Always convert to Asia/Manila time regardless of server timezone
-  return toZonedTime(d, TIMEZONE);
-};
+// export const dateTz = (date: Date | string): Date => {
+//   const d = typeof date === "string" ? new Date(date) : date;
+//   // Always convert to Asia/Manila time regardless of server timezone
+//   return toZonedTime(d, TIMEZONE);
+// };
 
 export function formatTime(
   date: Date | string,
   pattern = "yyyy-MM-dd hh:mmaaa"
 ) {
   if (!date) return "";
-  const d = typeof date === "string" ? new Date(date) : date;
-  return format(d, pattern, { timeZone: TIMEZONE });
+
+  const utcMoment = moment.utc(date, "YYYY-MM-DD HH:mm:ss");
+  return utcMoment.tz("Asia/Manila").format(pattern);
 }
 
-export const dateTzUTC = (date: Date): Date => {
-  return toDate(date);
-};
+// export const dateTzUTC = (date: Date): Date => {
+//   return toDate(date);
+// };
 
 // export const dateTzUTC = (date: Date): Date => {
 //   return utcToZonedTime(utcDate, 'Asia/Manila');

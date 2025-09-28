@@ -4,7 +4,6 @@ import { MdOutlineFileDownload } from "react-icons/md";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { formatTime } from "@/utils/dateFormatter";
-import { format } from "date-fns";
 
 const DownloadSingleReport = ({
   reports,
@@ -25,10 +24,10 @@ const DownloadSingleReport = ({
       return [
         date,
         name,
-        r1 ? formatTime(r1, "hh:mm aa") : "",
-        r2 ? formatTime(r2, "hh:mm aa") : "",
-        r3 ? formatTime(r3, "hh:mm aa") : "",
-        r4 ? formatTime(r4, "hh:mm aa") : "",
+        r1 ? formatTime(r1, "hh:mm A") : "",
+        r2 ? formatTime(r2, "hh:mm A") : "",
+        r3 ? formatTime(r3, "hh:mm A") : "",
+        r4 ? formatTime(r4, "hh:mm A") : "",
         remarks || "",
       ];
     });
@@ -51,7 +50,7 @@ const DownloadSingleReport = ({
     doc.text(title, xPosition, 56);
     doc.setFont("helvetica", "normal");
 
-    const date = `${format(filter.from, "MM/dd/yy")} to ${format(
+    const date = `${formatTime(filter.from, "MM/dd/yy")} to ${formatTime(
       filter.to,
       "MM/dd/yy"
     )}`;

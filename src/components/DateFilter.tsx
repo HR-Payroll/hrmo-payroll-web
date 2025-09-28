@@ -2,6 +2,7 @@
 import { format } from "date-fns";
 import React, { useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { formatTime } from "@/utils/dateFormatter";
 
 const DateFilter = ({ from }: { from: Date }) => {
   const [dateFrom, setDateFrom] = useState(from);
@@ -21,8 +22,8 @@ const DateFilter = ({ from }: { from: Date }) => {
     }
 
     onChangeFilter([
-      { key: "from", value: format(newFrom, "yyyy-MM-dd") },
-      { key: "to", value: format(newTo, "yyyy-MM-dd") },
+      { key: "from", value: formatTime(newFrom, "yyyy-MM-dd") },
+      { key: "to", value: formatTime(newTo, "yyyy-MM-dd") },
     ]);
   };
 
@@ -48,7 +49,7 @@ const DateFilter = ({ from }: { from: Date }) => {
       <div className="flex flex-row items-center justify-between gap-x-4">
         <span className="text-sm font-medium">From:</span>
         <input
-          value={format(dateFrom.toISOString(), "yyyy-MM-dd")}
+          value={formatTime(dateFrom.toISOString(), "yyyy-MM-dd")}
           type="date"
           className="outline-none rounded-md border-2 border-[var(--border)] text-sm py-1.5 px-4 cursor-pointer"
           onChange={(e) => {
@@ -60,10 +61,10 @@ const DateFilter = ({ from }: { from: Date }) => {
       <div className="flex flex-row items-center justify-between gap-x-4">
         <span className="text-sm font-medium">To:</span>
         <input
-          value={format(dateTo.toISOString(), "yyyy-MM-dd")}
+          value={formatTime(dateTo.toISOString(), "yyyy-MM-dd")}
           type="date"
           className="outline-none rounded-md border-2 border-[var(--border)] text-sm py-1.5 px-4 cursor-pointer"
-          min={format(dateFrom.toISOString(), "yyyy-MM-dd")}
+          min={formatTime(dateFrom.toISOString(), "yyyy-MM-dd")}
           onChange={(e) => {
             setDateTo(new Date(e.target.value));
             onChangeDate({ to: new Date(e.target.value) });

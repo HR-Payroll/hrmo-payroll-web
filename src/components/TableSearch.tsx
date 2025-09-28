@@ -1,6 +1,6 @@
 "use client";
+import { formatTime } from "@/utils/dateFormatter";
 import { debounce } from "@/utils/tools";
-import { format } from "date-fns";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { MdOutlineSearch } from "react-icons/md";
@@ -17,18 +17,18 @@ const TableSearch = () => {
   const debounceSearch = debounce((value: string) => {
     let path = "";
     if (dateFilter.from && dateFilter.to && value) {
-      path = `?from=${format(
+      path = `?from=${formatTime(
         dateFilter.from.toISOString(),
         "yyyy-MM-dd"
-      )}&to=${format(
+      )}&to=${formatTime(
         dateFilter.to.toISOString(),
         "yyyy-MM-dd"
       )}&search=${value}`;
     } else if (dateFilter.from && dateFilter.to) {
-      path = `?from=${format(
+      path = `?from=${formatTime(
         dateFilter.from.toISOString(),
         "yyyy-MM-dd"
-      )}&to=${format(dateFilter.to.toISOString(), "yyyy-MM-dd")}`;
+      )}&to=${formatTime(dateFilter.to.toISOString(), "yyyy-MM-dd")}`;
     } else if (value) {
       path = `?search=${value}`;
     }
