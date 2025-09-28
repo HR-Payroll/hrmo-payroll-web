@@ -22,8 +22,8 @@ const DateFilter = ({ from }: { from: Date }) => {
     }
 
     onChangeFilter([
-      { key: "from", value: formatTime(newFrom, "yyyy-MM-dd") },
-      { key: "to", value: formatTime(newTo, "yyyy-MM-dd") },
+      { key: "from", value: formatTime(newFrom, "yyyy-MM-DD") },
+      { key: "to", value: formatTime(newTo, "yyyy-MM-DD") },
     ]);
   };
 
@@ -49,7 +49,7 @@ const DateFilter = ({ from }: { from: Date }) => {
       <div className="flex flex-row items-center justify-between gap-x-4">
         <span className="text-sm font-medium">From:</span>
         <input
-          value={formatTime(dateFrom.toISOString(), "yyyy-MM-dd")}
+          value={formatTime(dateFrom, "yyyy-MM-DD")}
           type="date"
           className="outline-none rounded-md border-2 border-[var(--border)] text-sm py-1.5 px-4 cursor-pointer"
           onChange={(e) => {
@@ -61,10 +61,10 @@ const DateFilter = ({ from }: { from: Date }) => {
       <div className="flex flex-row items-center justify-between gap-x-4">
         <span className="text-sm font-medium">To:</span>
         <input
-          value={formatTime(dateTo.toISOString(), "yyyy-MM-dd")}
+          value={formatTime(dateTo, "yyyy-MM-DD")}
           type="date"
           className="outline-none rounded-md border-2 border-[var(--border)] text-sm py-1.5 px-4 cursor-pointer"
-          min={formatTime(dateFrom.toISOString(), "yyyy-MM-dd")}
+          min={formatTime(dateFrom, "yyyy-MM-DD")}
           onChange={(e) => {
             setDateTo(new Date(e.target.value));
             onChangeDate({ to: new Date(e.target.value) });

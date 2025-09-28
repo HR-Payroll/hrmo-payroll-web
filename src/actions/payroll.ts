@@ -11,8 +11,8 @@ export const downloadSummary = async (
 ) => {
   try {
     const { dateFrom, dateTo } = dateQuery(
-      formatTime(from, "yyyy-MM-dd"),
-      formatTime(to, "yyyy-MM-dd")
+      formatTime(from, "yyyy-MM-DD"),
+      formatTime(to, "yyyy-MM-DD")
     );
     const reports = await getAllSummary(dateFrom, dateTo, category, department);
 

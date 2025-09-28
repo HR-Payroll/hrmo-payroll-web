@@ -19,16 +19,16 @@ const TableSearch = () => {
     if (dateFilter.from && dateFilter.to && value) {
       path = `?from=${formatTime(
         dateFilter.from.toISOString(),
-        "yyyy-MM-dd"
+        "yyyy-MM-DD"
       )}&to=${formatTime(
         dateFilter.to.toISOString(),
-        "yyyy-MM-dd"
+        "yyyy-MM-DD"
       )}&search=${value}`;
     } else if (dateFilter.from && dateFilter.to) {
       path = `?from=${formatTime(
         dateFilter.from.toISOString(),
-        "yyyy-MM-dd"
-      )}&to=${formatTime(dateFilter.to.toISOString(), "yyyy-MM-dd")}`;
+        "yyyy-MM-DD"
+      )}&to=${formatTime(dateFilter.to.toISOString(), "yyyy-MM-DD")}`;
     } else if (value) {
       path = `?search=${value}`;
     }

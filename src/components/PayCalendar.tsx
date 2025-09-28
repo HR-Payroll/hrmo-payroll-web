@@ -43,7 +43,7 @@ const PayCalendar = ({
           if (isFilter) {
             const from = formatTime(
               args.activeStartDate || new Date(),
-              "yyyy-MM-dd"
+              "yyyy-MM-DD"
             );
             onChangeFilter("from", from);
           }

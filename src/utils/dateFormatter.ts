@@ -30,7 +30,7 @@ export const dateQuery = (from?: string, to?: string) => {
 
 export function formatTime(
   date: Date | string,
-  pattern = "yyyy-MM-dd hh:mmaaa"
+  pattern = "YYYY-MM-DD HH:mm:ss"
 ) {
   if (!date) return "";
 

@@ -84,8 +84,8 @@ function DownloadSummary() {
       a.href = url;
       a.download = `Payroll_${category}_${formatTime(
         from,
-        "yyyy-MM-dd"
-      )}-${formatTime(to, "yyyy-MM-dd")}.xlsx`;
+        "yyyy-MM-DD"
+      )}-${formatTime(to, "yyyy-MM-DD")}.xlsx`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
