@@ -10,18 +10,14 @@ import {
   MdOutlineEdit,
   MdOutlineRemoveRedEye,
 } from "react-icons/md";
-import Link from "next/link";
-import { format, set } from "date-fns";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Box, Chip } from "@mui/material";
 import Alert from "../ui/Alert";
 import SnackbarInfo, { initialSnackbar } from "../ui/SnackbarInfo";
 import { deleteSchedule } from "@/actions/schedule";
 import ScheduleForm from "../forms/ScheduleForm";
-import { ScheduleSchema } from "@/lib/zod";
-import { z } from "zod";
-import { dateTz, formatTime } from "@/utils/dateFormatter";
 import { Schedule } from "@/types";
+import { formatTime } from "@/utils/dateFormatter";
 
 function WorkSchedulesTable({
   schedules,
@@ -72,29 +68,21 @@ function WorkSchedulesTable({
         ...item,
         inTime:
           item.option === "Regular"
-            ? formatTime(
-                dateTz(new Date(item.daysIncluded[0].inTime)),
-                " hh:mm aa"
-              )
+            ? formatTime(new Date(item.daysIncluded[0].inTime), " hh:mm A")
             : item.option === "Custom"
             ? item.daysIncluded
-                .map((day: any) =>
-                  formatTime(dateTz(new Date(day.inTime)), " hh:mm aa")
-                )
+                .map((day: any) => formatTime(new Date(day.inTime), " hh:mm A"))
                 .toString()
             : item.daysIncluded
                 .filter((day: any) => day.type === "IN")
                 .map((day: any) => ` ${days[day.value]}`),
         outTime:
           item.option === "Regular"
-            ? formatTime(
-                dateTz(new Date(item.daysIncluded[0].outTime)),
-                " hh:mm aa"
-              )
+            ? formatTime(new Date(item.daysIncluded[0].outTime), " hh:mm A")
             : item.option === "Custom"
             ? item.daysIncluded
                 .map((day: any) =>
-                  formatTime(dateTz(new Date(day.outTime)), " hh:mm aa")
+                  formatTime(new Date(day.outTime), " hh:mm A")
                 )
                 .toString()
             : item.daysIncluded

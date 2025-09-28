@@ -28,8 +28,6 @@ const SingleReportPage = async ({
 
   const report = (await getReportById(id, dateFrom, dateTo)) as any;
 
-  console.log(report);
-
   return (
     <div className="card">
       <header className="absolute top-4 -ml-4">

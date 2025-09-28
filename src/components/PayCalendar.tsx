@@ -1,9 +1,9 @@
 "use client";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { format } from "date-fns";
 import React, { useState } from "react";
 import Calendar, { OnArgs } from "react-calendar";
 import "react-calendar/dist/Calendar.css";
+import { formatTime } from "@/utils/dateFormatter";
 
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
@@ -41,7 +41,7 @@ const PayCalendar = ({
       <Calendar
         onActiveStartDateChange={(args: OnArgs) => {
           if (isFilter) {
-            const from = format(
+            const from = formatTime(
               args.activeStartDate || new Date(),
               "yyyy-MM-dd"
             );

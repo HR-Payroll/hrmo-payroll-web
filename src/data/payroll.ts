@@ -8,7 +8,6 @@ import { prisma } from "../../prisma/prisma";
 import { format } from "date-fns";
 import { getEventsByDateRange } from "@/actions/events";
 import { getSettings } from "@/actions/settings";
-import { dateTz } from "@/utils/dateFormatter";
 
 export const getAllSummary = async (
   from: Date,
@@ -350,12 +349,11 @@ export const getSummaryById = async (id: string, from: Date, to: Date) => {
     let reports = results
       .map((item: any) => item.timestamp)
       .reduce((acc: any, dateTime: any) => {
-        const date = format(
-          dateTz(new Date(dateTime)),
-          "yyyy-MM-dd HH:mm:ss"
-        ).split(" ")[0];
+        const date = format(new Date(dateTime), "yyyy-MM-dd HH:mm:ss").split(
+          " "
+        )[0];
         acc[date] = acc[date] || [];
-        acc[date].push(dateTz(new Date(dateTime)));
+        acc[date].push(new Date(dateTime));
         return acc;
       }, {});
 
