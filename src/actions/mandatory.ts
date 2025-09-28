@@ -2,10 +2,8 @@
 import { prisma } from "../../prisma/prisma";
 
 export const updateMandatory = async (
-  id: string,
+  id: number,
   payload: {
-    name?: string;
-    department?: any;
     gsisgs?: number;
     ec?: number;
     gsisps?: number;
@@ -22,7 +20,9 @@ export const updateMandatory = async (
       data: { ...payload },
     });
 
-    return { success: "Employee Mandatory Deductions has been successfully updated!" };
+    return {
+      success: "Employee Mandatory Deductions has been successfully updated!",
+    };
   } catch (error) {
     console.log(error);
     return { error: "Something went wrong, please try again later." };

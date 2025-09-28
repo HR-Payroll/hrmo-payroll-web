@@ -24,7 +24,7 @@ const DownloadSingleReport = ({
       const { date, name, r1, r2, r3, r4, remarks } = report;
       return [
         date,
-        name["ref"] ? name["name"] : `${name["name"]} (no ref)`,
+        name,
         r1 ? formatTime(r1, "hh:mm aa") : "",
         r2 ? formatTime(r2, "hh:mm aa") : "",
         r3 ? formatTime(r3, "hh:mm aa") : "",

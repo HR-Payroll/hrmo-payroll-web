@@ -8,10 +8,28 @@ import TableFilters from "@/components/TableFilters";
 import UploadButton from "@/components/UploadButton";
 import AddButton from "@/components/AddButton";
 import MandatoryDeductionsTable from "@/components/tables/MandatoryDeductionsTable";
+import { getPaginatedMDeduction } from "@/data/mandatory-deduction";
 
-const MandatoryDeductions = async () => {
+const MandatoryDeductions = async (props: {
+  searchParams?: Promise<{
+    search?: string;
+    category?: string;
+    department?: string;
+    page?: string;
+    limit?: string;
+  }>;
+}) => {
+  const params = await props.searchParams;
+  const { search, page, limit, category, department } = params as any;
+
   const departments = (await getAllDepartment()) as any;
-  const employees = (await getAllEmployee()) as any;
+  const deductions = (await getPaginatedMDeduction(
+    search,
+    Number(page || 0),
+    Number(limit || 10),
+    category,
+    department
+  )) as any;
 
   async function reload() {
     "use server";
@@ -40,9 +58,11 @@ const MandatoryDeductions = async () => {
 
         <section>
           <MandatoryDeductionsTable
-            employees={employees}
-            departments={departments}
+            deductions={deductions.items}
             reload={reload}
+            limit={deductions.pageSize}
+            rowCount={deductions.pageRange}
+            page={deductions.page}
           />
         </section>
       </main>

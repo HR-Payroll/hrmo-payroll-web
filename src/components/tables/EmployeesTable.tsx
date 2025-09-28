@@ -27,7 +27,7 @@ function EmployeesTable({
   rowCount = 0,
 }: {
   departments: any[];
-  employees?: any[];
+  employees?: Employee[];
   schedules: any[];
   reload?: VoidFunction;
   loading?: boolean;
@@ -137,7 +137,6 @@ function EmployeesTable({
       editable: true,
       valueSetter: (value, row) => {
         const department = departments.find((dept: any) => dept.name === value);
-
         return {
           ...row,
           department,
@@ -213,15 +212,19 @@ function EmployeesTable({
                 <div
                   onClick={() => {
                     const row = data?.find(
-                      (row: any) => row._id.$oid === params.id
+                      (row: any) => row.id === Number(params.id)
                     );
 
-                    onUpdate(params.id, {
+                    if (!row) return;
+
+                    console.log(row);
+
+                    onUpdate(Number(params.id), {
                       recordNo: row.recordNo,
                       name: row.name,
                       category: row.category,
-                      department: row.department._id.$oid,
-                      schedule: row.schedule._id.$oid,
+                      departmentId: row.department!.id,
+                      scheduleId: row.schedule!.id,
                     });
                   }}
                   className="w-full flex items-center justify-center p-1 cursor-pointer"
@@ -236,7 +239,7 @@ function EmployeesTable({
                     const temp = { ...isEditing };
                     setData((prev: any) =>
                       prev.map((row: any) =>
-                        row._id.$oid === params.id ? temp[params.id] : row
+                        row.id === params.id ? temp[params.id] : row
                       )
                     );
                     delete temp[params.id];
@@ -279,13 +282,13 @@ function EmployeesTable({
   }));
 
   const onUpdate = async (
-    id: string,
+    id: number,
     payload: {
       recordNo?: string;
       name?: string;
       category?: string;
-      department?: any;
-      schedule?: any;
+      departmentId?: number;
+      scheduleId?: number;
     }
   ) => {
     try {
@@ -310,7 +313,7 @@ function EmployeesTable({
 
   const onDelete = async () => {
     try {
-      await deleteEmployee(isDelete!);
+      await deleteEmployee(Number(isDelete!));
       if (reload) {
         reload();
       }
@@ -343,7 +346,7 @@ function EmployeesTable({
     }
 
     setData((prev: any) =>
-      prev.map((row: any) => (row._id.$oid === params.rowId ? newRow : row))
+      prev.map((row: any) => (row.id === Number(params.rowId) ? newRow : row))
     );
 
     return { ...newRow, isNew: false };
@@ -378,7 +381,7 @@ function EmployeesTable({
         rows={data}
         loading={isLoading}
         columns={columns}
-        getRowId={(row) => row._id.$oid.toString()}
+        getRowId={(row) => row.id.toString()}
         columnHeaderHeight={40}
         rowHeight={36}
         rowCount={rowCount}

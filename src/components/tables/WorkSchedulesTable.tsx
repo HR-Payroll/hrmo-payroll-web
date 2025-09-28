@@ -42,10 +42,10 @@ function WorkSchedulesTable({
   const [data, setData] = useState<any[]>([]);
   const [pageSize, setPageSize] = useState(limit);
   const [isEditing, setEditing] = useState<{
-    id: string;
+    id: number;
     data: Schedule;
   } | null>(null);
-  const [isDelete, setDelete] = useState<string | null>(null);
+  const [isDelete, setDelete] = useState<number | null>(null);
   const [snackbar, setSnackbar] = useState({
     message: "",
     type: "info",
@@ -238,16 +238,16 @@ function WorkSchedulesTable({
     }
   };
 
-  const onUpdate = async (id: string) => {
-    const schedule = data.find((item) => item._id.$oid === id);
+  const onUpdate = async (id: number) => {
+    const schedule = data.find((item) => item.id === id);
     if (!schedule) return;
 
     setEditing({
       id,
       data: {
         ...schedule,
-        inTime: schedule.inTime.$date,
-        outTime: schedule.outTime.$date,
+        inTime: schedule.inTime,
+        outTime: schedule.outTime,
       },
     });
   };
@@ -280,7 +280,7 @@ function WorkSchedulesTable({
       <DataGrid
         rows={data}
         columns={columns}
-        getRowId={(row) => row._id.$oid}
+        getRowId={(row) => row.id}
         columnHeaderHeight={40}
         rowHeight={36}
         rowCount={rowCount}

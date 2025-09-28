@@ -150,7 +150,9 @@ function HolidaysEventsTable({
               <div className="flex flex-row">
                 <div
                   onClick={() => {
-                    const row = data?.find((row: any) => row.id === params.id);
+                    const row = data?.find(
+                      (row: any) => row.id === Number(params.id)
+                    );
 
                     const startDate = new Date(row.startDate);
                     row.endDate = new Date(
@@ -162,7 +164,7 @@ function HolidaysEventsTable({
                       59
                     );
 
-                    onUpdate(params.id, {
+                    onUpdate(Number(params.id), {
                       name: row.name,
                       startDate: startDate,
                       endDate: row.endDate,
@@ -226,7 +228,7 @@ function HolidaysEventsTable({
   }));
 
   const onUpdate = async (
-    id: string,
+    id: number,
     payload: {
       name: string;
       startDate: Date;
@@ -291,7 +293,7 @@ function HolidaysEventsTable({
     }
 
     setData((prev: any) =>
-      prev.map((row: any) => (row.id === params.rowId ? newRow : row))
+      prev.map((row: any) => (row.id === Number(params.rowId) ? newRow : row))
     );
 
     return { ...newRow, isNew: false };
@@ -325,7 +327,7 @@ function HolidaysEventsTable({
       <DataGrid
         rows={data}
         columns={columns}
-        getRowId={(row) => row.id}
+        getRowId={(row) => row.id.toString()}
         columnHeaderHeight={40}
         rowHeight={36}
         getRowClassName={(params) => {

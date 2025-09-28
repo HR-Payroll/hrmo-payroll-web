@@ -1,7 +1,7 @@
 import { prisma } from "@/../prisma/prisma";
 import { paginationUtil } from "@/utils/tools";
 
-export const getScheduleById = async (id: string) => {
+export const getScheduleById = async (id: number) => {
   try {
     const schedule = await prisma.schedule.findUnique({
       where: { id },
@@ -16,26 +16,13 @@ export const getScheduleById = async (id: string) => {
 
 export const getAllSchedules = async () => {
   try {
-    const schedules = await prisma.schedule.aggregateRaw({
-      pipeline: [
-        {
-          $project: {
-            _id: 1,
-            name: 1,
-            option: 1,
-            daysIncluded: 1,
-            readOnly: 1,
-            createdAt: 1,
-            updatedAt: 1,
-          },
-        },
-        { $sort: { name: 1 } },
-      ],
+    const schedules = await prisma.schedule.findMany({
+      orderBy: { name: "asc" },
     });
 
     return schedules;
   } catch (error: any) {
-    return null;
+    return [];
   }
 };
 
@@ -49,44 +36,29 @@ export const getPaginatedSchedule = async (
 
     if (search) {
       searchQuery = {
-        $or: [{ name: { $regex: search, $options: "i" } }],
+        OR: [
+          {
+            name: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+        ],
       };
     }
 
-    const schedules = await prisma.schedule.aggregateRaw({
-      pipeline: [
-        {
-          $match: { ...searchQuery },
-        },
-        {
-          $project: {
-            _id: 1,
-            name: 1,
-            daysIncluded: 1,
-            option: 1,
-            readOnly: 1,
-            createdAt: 1,
-            updatedAt: 1,
-          },
-        },
-        {
-          $facet: {
-            totalCount: [{ $count: "count" }],
-            items: [
-              { $sort: { name: 1 } },
-              { $skip: page * limit },
-              { $limit: limit },
-            ],
-          },
-        },
-      ],
+    const schedules = await prisma.schedule.findMany({
+      where: { ...searchQuery },
+      orderBy: { name: "asc" },
+      skip: page * limit,
+      take: limit,
     });
 
-    const result = schedules as any;
-    const length = result[0].totalCount[0] ? result[0].totalCount[0].count : 0;
-    const items = result && result[0] ? result[0].items : [];
+    const totalCount = await prisma.schedule.count({
+      where: { ...searchQuery },
+    });
 
-    return paginationUtil(items, page, limit, length);
+    return paginationUtil(schedules, page, limit, totalCount);
   } catch (error: any) {
     return null;
   }

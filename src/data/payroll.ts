@@ -17,160 +17,69 @@ export const getAllSummary = async (
   department?: string
 ) => {
   try {
-    to.setDate(to.getDate() + 1);
-    let filterQuery = {};
+    const tableFilter: any = {};
+    const dateFilter: any = {
+      timestamp: {
+        gte: from,
+        lte: to,
+      },
+    };
 
-    if (category) filterQuery = { ...filterQuery, category };
-    if (department)
-      filterQuery = { ...filterQuery, department: { $oid: department } };
+    if (category) tableFilter.category = category;
+    if (department) tableFilter.departmentId = department;
 
-    const reports = await prisma.report.aggregateRaw({
-      pipeline: [
-        {
-          $match: {
-            timestamp: {
-              $gte: from.toISOString(),
-              $lte: to.toISOString(),
-            },
-          },
-        },
-        {
-          $group: {
-            _id: { recordNo: "$recordNo" },
-            count: { $sum: 1 },
-            items: { $push: "$$ROOT" },
-          },
-        },
-        {
-          $project: {
-            _id: 0,
-            recordNo: "$_id.recordNo",
-            name: { name: "$_id.name", ref: null },
-            items: 1,
-            count: 1,
-          },
-        },
-        {
-          $lookup: {
-            from: "Employee",
-            let: { recordNo: "$recordNo" },
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $eq: ["$recordNo", "$$recordNo"],
-                  },
-                },
-              },
-              {
-                $lookup: {
-                  from: "Schedule",
-                  let: { scheduleId: "$schedule" },
-                  pipeline: [
-                    {
-                      $match: {
-                        $expr: {
-                          $cond: {
-                            if: {
-                              $or: [
-                                { $eq: ["$$scheduleId", null] },
-                                { $eq: [{ $type: "$$scheduleId" }, "missing"] },
-                              ],
-                            },
-                            then: { $eq: ["$name", "REGULAR"] },
-                            else: { $eq: ["$_id", "$$scheduleId"] },
-                          },
-                        },
-                      },
-                    },
-                  ],
-                  as: "schedules",
-                },
-              },
-              {
-                $project: {
-                  _id: 1,
-                  name: 1,
-                  category: 1,
-                  department: 1,
-                  schedule: { $arrayElemAt: ["$schedules", 0] },
-                  rate: 1,
-                  type: 1,
-                },
-              },
-            ],
-            as: "employee",
-          },
-        },
-        {
-          $project: {
-            _id: 0,
-            recordNo: 1,
-            name: {
-              name: { $arrayElemAt: ["$employee.name", 0] },
-              ref: { $arrayElemAt: ["$employee._id", 0] },
-            },
-            employee: { $arrayElemAt: ["$employee", 0] },
-            category: { $arrayElemAt: ["$employee.category", 0] },
-            department: { $arrayElemAt: ["$employee.department", 0] },
-            items: 1,
-            count: 1,
-          },
-        },
-        {
-          $match: { ...filterQuery, "name.ref": { $ne: null } },
-        },
-        {
-          $lookup: {
-            from: "Department",
-            let: { departmentId: "$department" },
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $eq: ["$_id", "$$departmentId"],
-                  },
-                },
-              },
-              {
-                $project: {
-                  _id: 0,
-                  name: 1,
-                },
-              },
-            ],
-            as: "departments",
-          },
-        },
-        {
-          $project: {
-            _id: 0,
-            recordNo: 1,
-            name: 1,
-            employee: 1,
-            category: 1,
-            department: { $arrayElemAt: ["$departments", 0] },
-            items: 1,
-            count: 1,
-          },
-        },
-
-        { $sort: { recordNo: 1 } },
-      ],
+    const employees = await prisma.employee.findMany({
+      select: {
+        id: true,
+        recordNo: true,
+        name: true,
+        category: true,
+        createdAt: true,
+        department: true,
+        schedule: true,
+        type: true,
+        rate: true,
+      },
+      where: {
+        ...tableFilter,
+      },
+      orderBy: { recordNo: "asc" },
     });
 
-    const result = reports as any;
-    const settings = await getSettings();
-    to.setDate(to.getDate() - 1);
+    const recordNos = employees.map((emp) => emp.recordNo);
 
-    const items = Array.isArray(result)
-      ? result.map((report: any) => {
-          const { earnings, deductions, net, totalDays, late } =
+    const results = await prisma.report.findMany({
+      where: {
+        ...dateFilter,
+        recordNo: { in: recordNos },
+      },
+      orderBy: { recordNo: "asc" },
+    });
+
+    const reportsMap = results.reduce((acc, rep) => {
+      (acc[rep.recordNo] ??= []).push(rep);
+      return acc;
+    }, {} as Record<string, typeof results>);
+
+    const reports = employees.map((emp) => {
+      const empReports = reportsMap[emp.recordNo] ?? [];
+      return {
+        ...emp,
+        reports: empReports,
+        reportCount: empReports.length,
+      };
+    });
+
+    const settings = await getSettings();
+
+    const items = Array.isArray(reports)
+      ? reports.map((report: any) => {
+          const { totalDays, late, earnings, deductions, net } =
             computeTotalDaysAndLate({
-              dates: report.items,
+              dates: report.reports,
+              employee: report,
               settings,
-              employee: report.employee,
-              filter: { from: from, to: to },
+              filter: { from, to },
             });
           return {
             ...report,
@@ -186,7 +95,7 @@ export const getAllSummary = async (
     return items;
   } catch (error: any) {
     console.log(error);
-    return null;
+    return [];
   }
 };
 
@@ -200,137 +109,77 @@ export const getPaginatedSummary = async (
   department?: string
 ) => {
   try {
-    to.setDate(to.getDate() + 1);
-    let searchQuery = {};
-    let filterQuery = {};
+    const searchQuery: any = {};
+    const tableFilter: any = {};
+    const dateFilter: any = {
+      timestamp: {
+        gte: from,
+        lte: to,
+      },
+    };
 
-    if (category) filterQuery = { ...filterQuery, category };
-    if (department)
-      filterQuery = { ...filterQuery, department: { $oid: department } };
+    if (category) tableFilter.category = category;
+    if (department) tableFilter.departmentId = Number(department);
 
     if (search) {
-      searchQuery = {
-        $or: [
-          {
-            "name.name": { $regex: search, $options: "i" },
-          },
-          {
-            recordNo: { $regex: search, $options: "i" },
-          },
-        ],
-      };
+      searchQuery.OR = [
+        { name: { contains: search, mode: "insensitive" } },
+        { recordNo: { contains: search, mode: "insensitive" } },
+        { category: { contains: search, mode: "insensitive" } },
+        { department: { name: { contains: search, mode: "insensitive" } } },
+      ];
     }
 
-    const reports = await prisma.report.aggregateRaw({
-      pipeline: [
-        {
-          $match: {
-            timestamp: {
-              $gte: from.toISOString(),
-              $lte: to.toISOString(),
-            },
-          },
-        },
-        {
-          $group: {
-            _id: { recordNo: "$recordNo" },
-            count: { $sum: 1 },
-            items: { $push: "$$ROOT" },
-          },
-        },
-        {
-          $project: {
-            _id: 0,
-            recordNo: "$_id.recordNo",
-            name: { name: "$_id.name", ref: null },
-            items: 1,
-            count: 1,
-          },
-        },
-        {
-          $lookup: {
-            from: "Employee",
-            let: { recordNo: "$recordNo" },
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $eq: ["$recordNo", "$$recordNo"],
-                  },
-                },
-              },
-              {
-                $lookup: {
-                  from: "Schedule",
-                  let: { scheduleId: "$schedule" },
-                  pipeline: [
-                    {
-                      $match: {
-                        $expr: {
-                          $cond: {
-                            if: {
-                              $or: [
-                                { $eq: ["$$scheduleId", null] },
-                                { $eq: [{ $type: "$$scheduleId" }, "missing"] },
-                              ],
-                            },
-                            then: { $eq: ["$name", "REGULAR"] },
-                            else: { $eq: ["$_id", "$$scheduleId"] },
-                          },
-                        },
-                      },
-                    },
-                  ],
-                  as: "schedules",
-                },
-              },
-              {
-                $project: {
-                  _id: 1,
-                  name: 1,
-                  category: 1,
-                  department: 1,
-                  schedule: { $arrayElemAt: ["$schedules", 0] },
-                  rate: 1,
-                },
-              },
-            ],
-            as: "employee",
-          },
-        },
-        {
-          $project: {
-            _id: 0,
-            recordNo: 1,
-            name: {
-              name: { $arrayElemAt: ["$employee.name", 0] },
-              ref: { $arrayElemAt: ["$employee._id", 0] },
-            },
-            employee: { $arrayElemAt: ["$employee", 0] },
-            category: { $arrayElemAt: ["$employee.category", 0] },
-            department: { $arrayElemAt: ["$employee.department", 0] },
-            items: 1,
-            count: 1,
-          },
-        },
-        {
-          $match: { ...searchQuery, ...filterQuery, "name.ref": { $ne: null } },
-        },
-        {
-          $facet: {
-            totalCount: [{ $count: "count" }],
-            items: [
-              { $sort: { recordNo: 1 } },
-              { $skip: page * limit },
-              { $limit: limit },
-            ],
-          },
-        },
-      ],
+    const employees = await prisma.employee.findMany({
+      select: {
+        id: true,
+        recordNo: true,
+        name: true,
+        category: true,
+        createdAt: true,
+        department: true,
+        schedule: true,
+        type: true,
+        rate: true,
+      },
+      where: {
+        ...tableFilter,
+        ...searchQuery,
+      },
+      orderBy: { recordNo: "asc" },
+      skip: page * limit,
+      take: limit,
     });
 
-    const result = reports as any;
-    const length = result[0].totalCount[0] ? result[0].totalCount[0].count : 0;
+    const totalItems = await prisma.employee.count({
+      where: {
+        ...tableFilter,
+        ...searchQuery,
+      },
+    });
+    const recordNos = employees.map((emp) => emp.recordNo);
+
+    const results = await prisma.report.findMany({
+      where: {
+        ...dateFilter,
+        recordNo: { in: recordNos },
+      },
+      orderBy: { recordNo: "asc" },
+    });
+
+    const reportsMap = results.reduce((acc, rep) => {
+      (acc[rep.recordNo] ??= []).push(rep);
+      return acc;
+    }, {} as Record<string, typeof results>);
+
+    const reports = employees.map((emp) => {
+      const empReports = reportsMap[emp.recordNo] ?? [];
+      return {
+        ...emp,
+        reports: empReports,
+        reportCount: empReports.length,
+      };
+    });
 
     const events = await getEventsByDateRange(from, to);
     const totalBusinessDays = getTotalBusinessDays(
@@ -340,30 +189,29 @@ export const getPaginatedSummary = async (
     );
 
     const settings = await getSettings();
-    to.setDate(to.getDate() - 1);
 
-    const items = Array.isArray(result[0].items)
-      ? result[0].items.map((report: any) => {
-          const { earnings, deductions, net, totalDays } =
+    const items = Array.isArray(reports)
+      ? reports.map((report: any) => {
+          const { totalDays, earnings, deductions, net } =
             computeTotalDaysAndLate({
-              dates: report.items,
+              dates: report.reports,
+              employee: report,
               settings,
-              employee: report.employee,
               businessDays: totalBusinessDays,
-              filter: { from: from, to: to },
+              filter: { from, to },
             });
           return {
             ...report,
             earnings,
             deductions,
             totalDays,
-            rate: report.employee.rate,
+            rate: report.rate,
             net,
           };
         })
       : [];
 
-    return paginationUtil(items, page, limit, length);
+    return paginationUtil(items, page, limit, totalItems);
   } catch (error: any) {
     console.log(error);
     return null;
@@ -372,103 +220,134 @@ export const getPaginatedSummary = async (
 
 export const getSummaryById = async (id: string, from: Date, to: Date) => {
   try {
-    to.setDate(to.getDate() + 1);
-    const report = await prisma.report.aggregateRaw({
-      pipeline: [
-        {
-          $match: {
-            recordNo: id,
-            timestamp: {
-              $gte: from.toISOString(),
-              $lte: to.toISOString(),
-            },
-          },
-        },
-        {
-          $group: {
-            _id: { recordNo: "$recordNo" },
-            count: { $sum: 1 },
-            items: { $push: "$$ROOT" },
-          },
-        },
-        {
-          $project: {
-            _id: 0,
-            recordNo: "$_id.recordNo",
-            name: { name: "$_id.name", ref: null },
-            items: 1,
-          },
-        },
-        {
-          $lookup: {
-            from: "Employee",
-            let: { recordNo: "$recordNo" },
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $eq: ["$recordNo", "$$recordNo"],
-                  },
-                },
-              },
-              {
-                $lookup: {
-                  from: "Schedule",
-                  let: { scheduleId: "$schedule" },
-                  pipeline: [
-                    {
-                      $match: {
-                        $expr: {
-                          $cond: {
-                            if: {
-                              $or: [
-                                { $eq: ["$$scheduleId", null] },
-                                { $eq: [{ $type: "$$scheduleId" }, "missing"] },
-                              ],
-                            },
-                            then: { $eq: ["$name", "REGULAR"] },
-                            else: { $eq: ["$_id", "$$scheduleId"] },
-                          },
-                        },
-                      },
-                    },
-                  ],
-                  as: "schedules",
-                },
-              },
-              {
-                $project: {
-                  _id: 1,
-                  name: 1,
-                  category: 1,
-                  department: 1,
-                  schedule: { $arrayElemAt: ["$schedules", 0] },
-                  rate: 1,
-                },
-              },
-            ],
-            as: "employee",
-          },
-        },
-        {
-          $project: {
-            _id: 0,
-            recordNo: 1,
-            name: {
-              name: { $arrayElemAt: ["$employee.name", 0] },
-              ref: { $arrayElemAt: ["$employee._id", 0] },
-            },
-            employee: { $arrayElemAt: ["$employee", 0] },
-            items: 1,
-          },
-        },
-      ],
+    // to.setDate(to.getDate() + 1);
+    // const report = await prisma.report.aggregateRaw({
+    //   pipeline: [
+    //     {
+    //       $match: {
+    //         recordNo: id,
+    //         timestamp: {
+    //           $gte: from.toISOString(),
+    //           $lte: to.toISOString(),
+    //         },
+    //       },
+    //     },
+    //     {
+    //       $group: {
+    //         _id: { recordNo: "$recordNo" },
+    //         count: { $sum: 1 },
+    //         items: { $push: "$$ROOT" },
+    //       },
+    //     },
+    //     {
+    //       $project: {
+    //         _id: 0,
+    //         recordNo: "$_id.recordNo",
+    //         name: { name: "$_id.name", ref: null },
+    //         items: 1,
+    //       },
+    //     },
+    //     {
+    //       $lookup: {
+    //         from: "Employee",
+    //         let: { recordNo: "$recordNo" },
+    //         pipeline: [
+    //           {
+    //             $match: {
+    //               $expr: {
+    //                 $eq: ["$recordNo", "$$recordNo"],
+    //               },
+    //             },
+    //           },
+    //           {
+    //             $lookup: {
+    //               from: "Schedule",
+    //               let: { scheduleId: "$schedule" },
+    //               pipeline: [
+    //                 {
+    //                   $match: {
+    //                     $expr: {
+    //                       $cond: {
+    //                         if: {
+    //                           $or: [
+    //                             { $eq: ["$$scheduleId", null] },
+    //                             { $eq: [{ $type: "$$scheduleId" }, "missing"] },
+    //                           ],
+    //                         },
+    //                         then: { $eq: ["$name", "REGULAR"] },
+    //                         else: { $eq: ["$_id", "$$scheduleId"] },
+    //                       },
+    //                     },
+    //                   },
+    //                 },
+    //               ],
+    //               as: "schedules",
+    //             },
+    //           },
+    //           {
+    //             $project: {
+    //               _id: 1,
+    //               name: 1,
+    //               category: 1,
+    //               department: 1,
+    //               schedule: { $arrayElemAt: ["$schedules", 0] },
+    //               rate: 1,
+    //             },
+    //           },
+    //         ],
+    //         as: "employee",
+    //       },
+    //     },
+    //     {
+    //       $project: {
+    //         _id: 0,
+    //         recordNo: 1,
+    //         name: {
+    //           name: { $arrayElemAt: ["$employee.name", 0] },
+    //           ref: { $arrayElemAt: ["$employee._id", 0] },
+    //         },
+    //         employee: { $arrayElemAt: ["$employee", 0] },
+    //         items: 1,
+    //       },
+    //     },
+    //   ],
+    // });
+
+    const employee = await prisma.employee.findUnique({
+      where: { recordNo: id },
+      select: {
+        id: true,
+        recordNo: true,
+        name: true,
+        category: true,
+        createdAt: true,
+        department: true,
+        schedule: true,
+        type: true,
+        rate: true,
+      },
     });
 
-    const result = report[0] as any;
-    if (!result) return { ...result, items: [] };
+    const results = await prisma.report.findMany({
+      where: {
+        recordNo: id,
+        timestamp: {
+          gte: from,
+          lte: to,
+        },
+      },
+      orderBy: { timestamp: "asc" },
+    });
 
-    let reports = result.items
+    const events = await getEventsByDateRange(from, to);
+    const settings = await getSettings();
+    const totalBusinessDays = getTotalBusinessDays(
+      from,
+      to,
+      events.items || []
+    );
+
+    let reports = results
       .map((item: any) => item.timestamp)
       .reduce((acc: any, dateTime: any) => {
         const date = format(
@@ -480,25 +359,17 @@ export const getSummaryById = async (id: string, from: Date, to: Date) => {
         return acc;
       }, {});
 
-    const events = await getEventsByDateRange(from, to);
-    const settings = await getSettings();
-    to.setDate(to.getDate() - 1);
-    const totalBusinessDays = getTotalBusinessDays(
-      from,
-      to,
-      events.items || []
-    );
     const { items } = computeTotalDaysAndLateSingle({
       reports,
+      employee,
       settings,
-      employee: result.employee,
+      ref: employee!.name,
       businessDays: totalBusinessDays,
-      ref: result.name,
-      filter: true,
       dates: { from, to },
+      filter: true,
     });
 
-    return { ...result, items };
+    return { ...employee, items };
   } catch (error: any) {
     console.log(error);
   }

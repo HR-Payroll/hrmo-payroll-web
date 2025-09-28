@@ -14,7 +14,7 @@ export const createSchedule = async (payload: any) => {
   }
 };
 
-export const updateSchedule = async (id: string, payload: any) => {
+export const updateSchedule = async (id: number, payload: any) => {
   try {
     const event = await prisma.schedule.update({
       where: { id },
@@ -28,7 +28,7 @@ export const updateSchedule = async (id: string, payload: any) => {
   }
 };
 
-export const deleteSchedule = async (id: string) => {
+export const deleteSchedule = async (id: number) => {
   try {
     await prisma.schedule.delete({
       where: { id },

@@ -8,10 +8,28 @@ import TableFilters from "@/components/TableFilters";
 import UploadButton from "@/components/UploadButton";
 import AddButton from "@/components/AddButton";
 import LoanDeductionsTable from "@/components/tables/LoanDeductionsTable";
+import { getPaginatedLDeduction } from "@/data/loan-deduction";
 
-const LoanDeductions = async () => {
+const LoanDeductions = async (props: {
+  searchParams?: Promise<{
+    search?: string;
+    category?: string;
+    department?: string;
+    page?: string;
+    limit?: string;
+  }>;
+}) => {
+  const params = await props.searchParams;
+  const { search, page, limit, category, department } = params as any;
+
   const departments = (await getAllDepartment()) as any;
-  const employees = (await getAllEmployee()) as any;
+  const deductions = (await getPaginatedLDeduction(
+    search,
+    Number(page || 0),
+    Number(limit || 10),
+    category,
+    department
+  )) as any;
 
   async function reload() {
     "use server";
@@ -41,9 +59,11 @@ const LoanDeductions = async () => {
 
         <section>
           <LoanDeductionsTable
-            employees={employees}
-            departments={departments}
+            deductions={deductions.items}
             reload={reload}
+            limit={deductions.pageSize}
+            rowCount={deductions.pageRange}
+            page={deductions.page}
           />
         </section>
       </main>

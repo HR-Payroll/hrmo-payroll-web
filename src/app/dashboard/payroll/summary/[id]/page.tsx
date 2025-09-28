@@ -44,15 +44,7 @@ const SingleSummaryPage = async ({
         <section className="flex flex-col gap-4">
           <div className="flex items-center gap-2">
             <BackButton to={`/dashboard/payroll/summary`} />
-            <DynamicHeader
-              label={
-                summary && summary.name
-                  ? summary.name.ref
-                    ? summary.name.name
-                    : `${summary.name.name} (no ref)`
-                  : "N/A"
-              }
-            />
+            <DynamicHeader label={summary && summary.name} />
           </div>
           <div className="flex items-center justify-between">
             <DateFilter from={dateFrom} />

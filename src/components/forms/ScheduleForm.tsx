@@ -25,7 +25,7 @@ function ScheduleForm({
   data?: any;
   onClose: Function;
   setSnackbar: Function;
-  edit?: { id: string; data: Schedule };
+  edit?: { id: number; data: Schedule };
   reload?: VoidFunction;
 }) {
   const [serverError, setServerError] = useState<string | null>(null);
@@ -48,7 +48,7 @@ function ScheduleForm({
         value: 0,
         inTime: regularIn,
         outTime: regularOut,
-        included: false,
+        included: true,
         type: undefined as "IN" | "OUT" | undefined,
       },
       Monday: {
@@ -90,7 +90,7 @@ function ScheduleForm({
         value: 6,
         inTime: regularIn,
         outTime: regularOut,
-        included: false,
+        included: true,
         type: undefined as "IN" | "OUT" | undefined,
       },
     }
@@ -171,6 +171,8 @@ function ScheduleForm({
             const isIncluded =
               Array.isArray(days) &&
               days.some((d: any) => d.value === schedule[key as DaysKey].value);
+
+            console.log(isIncluded, days, schedule[key as DaysKey].value);
             const matchedDay = isIncluded
               ? days.find(
                   (d: any) => d.value === schedule[key as DaysKey].value

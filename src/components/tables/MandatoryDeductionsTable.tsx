@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { styled } from "@mui/material";
 import { tableStyle } from "@/lib/themes";
 import { updateMandatory } from "@/actions/mandatory";
@@ -8,26 +8,43 @@ import {
   DataGrid,
   GridColDef,
   GridEditInputCell,
+  GridPaginationModel,
   GridPreProcessEditCellProps,
   GridRenderEditCellParams,
 } from "@mui/x-data-grid";
+import { usePathname, useRouter } from "next/navigation";
 
 function MandatoryDeductionsTable({
-  employees,
-  departments,
+  deductions,
   reload,
+  loading,
+  page = 0,
+  limit = 10,
+  rowCount = 0,
 }: {
-  employees: any[];
-  departments: any[];
+  deductions?: any[];
   reload?: VoidFunction;
+  loading?: boolean;
+  page?: number;
+  limit?: number;
+  rowCount?: number;
 }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const [data, setData] = useState(deductions);
   const [isEditing, setEditing] = useState<any>();
-  const [data, setData] = useState(employees);
+  const [pageSize, setPageSize] = useState(limit);
+  const [isLoading, setLoading] = useState(loading);
   const [snackbar, setSnackbar] = useState({
     message: "",
     type: "info",
     modal: false,
   });
+
+  useEffect(() => {
+    setData(deductions);
+    setLoading(false);
+  }, [deductions]);
 
   const columns: GridColDef[] = [
     {
@@ -255,7 +272,7 @@ function MandatoryDeductionsTable({
   }));
 
   const onUpdate = async (
-    id: string,
+    id: number,
     payload: {
       name?: string;
       department?: any;
@@ -289,6 +306,21 @@ function MandatoryDeductionsTable({
     }
   };
 
+  const onPageChange = (model: GridPaginationModel) => {
+    let query = pathname;
+
+    if (model.page !== 0 && model.pageSize !== 10) {
+      query = `${pathname}?page=${model.page}&limit=${model.pageSize}`;
+    } else if (model.page !== 0) {
+      query = `${pathname}?page=${model.page}`;
+    } else if (model.pageSize !== 10) {
+      query = `${pathname}?limit=${model.pageSize}`;
+    }
+
+    setLoading(true);
+    router.push(query);
+  };
+
   const processUpdate = async (newRow: any, oldRow: any, params: any) => {
     const isChanged = Object.keys(newRow).some((key) => {
       const newValue = newRow[key];
@@ -309,7 +341,7 @@ function MandatoryDeductionsTable({
     }
 
     setData((prev: any) =>
-      prev.map((row: any) => (row._id.$oid === params.rowId ? newRow : row))
+      prev.map((row: any) => (row.id === Number(params.rowId) ? newRow : row))
     );
 
     return { ...newRow, isNew: false };
@@ -318,8 +350,10 @@ function MandatoryDeductionsTable({
   return (
     <DataGrid
       rows={data}
+      loading={isLoading}
       columns={columns}
-      getRowId={(row) => row._id.$oid.toString()}
+      getRowId={(row) => row.id.toString()}
+      rowCount={rowCount}
       columnHeaderHeight={40}
       rowHeight={36}
       getRowClassName={(params) => {
@@ -327,17 +361,17 @@ function MandatoryDeductionsTable({
           return "edited-row";
         return params.indexRelativeToCurrentPage % 2 !== 0 ? "odd-row" : "";
       }}
-      initialState={{
-        pagination: {
-          paginationModel: {
-            pageSize: 10,
-          },
-        },
-      }}
+      paginationMode="server"
+      paginationModel={{ page, pageSize }}
       pageSizeOptions={[5, 10, 20]}
       disableRowSelectionOnClick
       sx={tableStyle}
       processRowUpdate={processUpdate}
+      onPaginationModelChange={(model) => {
+        page = model.page;
+        setPageSize(model.pageSize);
+        onPageChange(model);
+      }}
     />
   );
 }

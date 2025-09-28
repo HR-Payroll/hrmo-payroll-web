@@ -24,7 +24,7 @@ export const createReport = async (data: z.infer<typeof ReportSchema>) => {
 };
 
 export const updateReport = async (
-  id: string,
+  id: number,
   payload: {
     recordNo?: string;
     name?: string;
@@ -45,7 +45,7 @@ export const updateReport = async (
   }
 };
 
-export const deleteReport = async (id: string) => {
+export const deleteReport = async (id: number) => {
   try {
     await prisma.report.delete({
       where: {
@@ -59,6 +59,12 @@ export const deleteReport = async (id: string) => {
   }
 };
 
+function chunkArray<T>(arr: T[], size: number): T[][] {
+  const res: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) res.push(arr.slice(i, i + size));
+  return res;
+}
+
 export const uploadReport = async (data: z.infer<typeof ReportSchema>[]) => {
   for (let i = 0; i < data.length; i++) {
     const validateData = ReportSchema.parse(data[i]);
@@ -68,25 +74,9 @@ export const uploadReport = async (data: z.infer<typeof ReportSchema>[]) => {
   }
 
   try {
-    const bulkOps = data.map((item) => {
-      return {
-        q: { index: item.index },
-        u: [
-          {
-            $set: {
-              ...item,
-              createdAt: new Date(),
-            },
-          },
-        ],
-        upsert: true,
-        multi: false,
-      };
-    });
-
-    const result = await prisma.$runCommandRaw({
-      update: "Report",
-      updates: bulkOps,
+    const result = await prisma.report.createMany({
+      data: data,
+      skipDuplicates: true,
     });
 
     return { result, success: "Reports have been uploaded successfully!" };

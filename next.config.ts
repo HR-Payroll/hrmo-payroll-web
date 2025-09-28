@@ -12,6 +12,11 @@ const nextConfig: NextConfig = {
   compiler: {
     styledComponents: true,
   },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "10mb", // or '100mb'
+    },
+  },
 };
 
 export default nextConfig;

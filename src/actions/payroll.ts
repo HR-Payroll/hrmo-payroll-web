@@ -54,20 +54,22 @@ export const downloadSummary = async (
           recordNo,
           name,
           items,
-          employee,
+          type,
+          rate,
           totalDays,
           earnings,
           net,
           late,
           deductions,
         } = report;
+
         const rowIndex = index + 1;
 
         worksheet[`A${rowStart + rowIndex}`] = { v: rowIndex };
-        worksheet[`B${rowStart + rowIndex}`] = { v: name.name };
-        worksheet[`C${rowStart + rowIndex}`] = { v: employee.rate };
+        worksheet[`B${rowStart + rowIndex}`] = { v: name };
+        worksheet[`C${rowStart + rowIndex}`] = { v: rate };
         worksheet[`D${rowStart + rowIndex}`] = {
-          v: employee.type ? employee.type.toUpperCase() : "",
+          v: type ? type.toUpperCase() : "",
         };
         worksheet[`E${rowStart + rowIndex}`] = { v: totalDays };
         worksheet[`F${rowStart + rowIndex}`] = { v: earnings };

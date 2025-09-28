@@ -34,14 +34,16 @@ const EmployeeForm = ({
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
+    watch,
   } = useForm<z.infer<typeof EmployeeSchema>>({
     resolver: zodResolver(EmployeeSchema),
     defaultValues: {
       recordNo: "",
       name: "",
       category: "",
-      department: "",
-      schedule: "",
+      departmentId: undefined,
+      scheduleId: undefined,
     },
   });
 
@@ -55,8 +57,10 @@ const EmployeeForm = ({
     setServerError(null);
     setIsAdding(true);
 
+    const employeeData: Employee = { ...data, createdAt: new Date() };
+
     try {
-      const result = await createEmployee(data);
+      const result = await createEmployee(employeeData);
       if (result && result.error) {
         setIsAdding(false);
         return setSnackbar({
@@ -111,6 +115,9 @@ const EmployeeForm = ({
           {...register("category")}
           defaultValue={data?.category}
         >
+          <option value="" disabled>
+            -- Select a category --
+          </option>
           {Object.keys(CATEGORY_OPTIONS).map((key: string) => {
             return (
               <option key={key} value={CATEGORY_OPTIONS[key]}>
@@ -129,22 +136,29 @@ const EmployeeForm = ({
         <label className="text-left">Department</label>
         <select
           className="w-full bg-transparent rounded-md ring-2 ring-[var(--border)] focus:outline-2 focus:outline-blue-200 p-2"
-          {...register("department")}
-          defaultValue={data?.department}
+          value={watch("departmentId") || ""}
+          onChange={(e) => {
+            setValue("departmentId", Number(e.target.value), {
+              shouldValidate: true,
+            });
+          }}
         >
+          <option value="" disabled>
+            -- Select a department --
+          </option>
           {departments &&
             departments.length > 0 &&
             departments.map((item: any) => {
               return (
-                <option key={item._id.$oid} value={item._id.$oid}>
+                <option key={item.id} value={item.id}>
                   {item.name}
                 </option>
               );
             })}
         </select>
-        {errors.department?.message && (
+        {errors.departmentId?.message && (
           <p className="text-[var(--error)] text-xs">
-            {errors.department.message.toString()}
+            {errors.departmentId.message.toString()}
           </p>
         )}
       </div>
@@ -152,22 +166,29 @@ const EmployeeForm = ({
         <label className="text-left">Schedule</label>
         <select
           className="w-full bg-transparent rounded-md ring-2 ring-[var(--border)] focus:outline-2 focus:outline-blue-200 p-2"
-          {...register("schedule")}
-          defaultValue={data?.schedule}
+          onChange={(e) => {
+            setValue("scheduleId", Number(e.target.value), {
+              shouldValidate: true,
+            });
+          }}
+          value={watch("scheduleId") || ""}
         >
+          <option value="" disabled>
+            -- Select a schedule --
+          </option>
           {schedules &&
             schedules.length > 0 &&
             schedules.map((item: any) => {
               return (
-                <option key={item._id.$oid} value={item._id.$oid}>
+                <option key={item.id} value={item.id}>
                   {item.name}
                 </option>
               );
             })}
         </select>
-        {errors.schedule?.message && (
+        {errors.scheduleId?.message && (
           <p className="text-[var(--error)] text-xs">
-            {errors.schedule.message.toString()}
+            {errors.scheduleId.message.toString()}
           </p>
         )}
       </div>

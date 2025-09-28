@@ -11,14 +11,31 @@ export const stringToDate = (date: string) => {
 
 export const dateQuery = (from?: string, to?: string) => {
   const currentDate = new Date();
-  const day1 = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-  const day15 = new Date(currentDate.getFullYear(), currentDate.getMonth(), 15);
+  const day1 = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth(),
+    1,
+    0,
+    0,
+    0
+  );
+  const day15 = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth(),
+    15,
+    0,
+    0,
+    0
+  );
 
   const dateFrom = from
     ? new Date(
         new Date(from).getFullYear(),
         new Date(from).getMonth(),
-        new Date(from).getDate()
+        new Date(from).getDate(),
+        0,
+        0,
+        0
       )
     : currentDate.getDate() >= 15
     ? day15
@@ -27,7 +44,10 @@ export const dateQuery = (from?: string, to?: string) => {
     ? new Date(
         new Date(to).getFullYear(),
         new Date(to).getMonth(),
-        new Date(to).getDate()
+        new Date(to).getDate(),
+        23,
+        59,
+        59
       )
     : currentDate;
 
@@ -48,11 +68,7 @@ export function formatTime(
 ) {
   if (!date) return "";
   const d = typeof date === "string" ? new Date(date) : date;
-  return format(
-    d,
-    pattern,
-    { timeZone: TIMEZONE }
-  );
+  return format(d, pattern, { timeZone: TIMEZONE });
 }
 
 export const dateTzUTC = (date: Date): Date => {

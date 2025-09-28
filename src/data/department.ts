@@ -1,7 +1,7 @@
 import { prisma } from "@/../prisma/prisma";
 import { paginationUtil } from "@/utils/tools";
 
-export const getDepartmentById = async (id: string) => {
+export const getDepartmentById = async (id: number) => {
   try {
     const department = await prisma.department.findUnique({
       where: { id },
@@ -16,34 +16,14 @@ export const getDepartmentById = async (id: string) => {
 
 export const getAllDepartment = async () => {
   try {
-    const departments = await prisma.department.aggregateRaw({
-      pipeline: [
-        {
-          $lookup: {
-            from: "Employee",
-            localField: "_id",
-            foreignField: "department",
-            as: "employees",
-          },
-        },
-        {
-          $project: {
-            _id: 1,
-            name: 1,
-            index: 1,
-            employees: { $size: "$employees" },
-            category: 1,
-            createdAt: 1,
-            updatedAt: 1,
-          },
-        },
-        { $sort: { name: 1 } },
-      ],
+    const departments = await prisma.department.findMany({
+      orderBy: { name: "asc" },
     });
 
     return departments;
   } catch (error: any) {
-    return null;
+    console.log(error);
+    return [];
   }
 };
 
@@ -57,53 +37,35 @@ export const getPaginatedDepartment = async (
 
     if (search) {
       searchQuery = {
-        $or: [{ name: { $regex: search, $options: "i" } }],
+        OR: [
+          {
+            name: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+        ],
       };
     }
 
-    const departments = await prisma.department.aggregateRaw({
-      pipeline: [
-        {
-          $match: { ...searchQuery },
+    const departments = await prisma.department.findMany({
+      where: { ...searchQuery },
+      include: {
+        _count: {
+          select: { employees: true },
         },
-        {
-          $lookup: {
-            from: "Employee",
-            localField: "_id",
-            foreignField: "department",
-            as: "employees",
-          },
-        },
-        {
-          $project: {
-            _id: 1,
-            name: 1,
-            index: 1,
-            employees: { $size: "$employees" },
-            category: 1,
-            createdAt: 1,
-            updatedAt: 1,
-          },
-        },
-        {
-          $facet: {
-            totalCount: [{ $count: "count" }],
-            items: [
-              { $sort: { name: 1 } },
-              { $skip: page * limit },
-              { $limit: limit },
-            ],
-          },
-        },
-      ],
+      },
+      orderBy: { name: "asc" },
+      skip: page * limit,
+      take: limit,
     });
 
-    const result = departments as any;
-    const length = result[0].totalCount[0] ? result[0].totalCount[0].count : 0;
-    const items = result[0].items;
+    const totalCount = await prisma.department.count({
+      where: { ...searchQuery },
+    });
 
-    return paginationUtil(items, page, limit, length);
+    return paginationUtil(departments, page, limit, totalCount);
   } catch (error: any) {
-    return null;
+    return paginationUtil([], page, limit, 0);
   }
 };

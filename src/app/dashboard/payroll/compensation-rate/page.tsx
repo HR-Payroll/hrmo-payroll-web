@@ -22,7 +22,6 @@ const CompensationRate = async (props: {
   const { search, page, limit, category, department } = params as any;
 
   const departments = (await getAllDepartment()) as any;
-  const employee = (await getAllEmployee()) as any;
   const rates = (await getPaginatedRate(
     search,
     Number(page || 0),
@@ -56,8 +55,6 @@ const CompensationRate = async (props: {
 
         <section>
           <CompensationRateTable
-            departments={departments}
-            employees={employee}
             rates={rates.items}
             reload={reload}
             limit={rates.pageSize}
