@@ -2,7 +2,7 @@
 import { prisma } from "../../prisma/prisma";
 
 export const updateLoan = async (
-  id: string,
+  id: number,
   payload: {
     name?: string;
     department?: any;
@@ -24,7 +24,10 @@ export const updateLoan = async (
       data: { ...payload },
     });
 
-    return { success: "Employee Loans & Other Deductions has been successfully updated!" };
+    return {
+      success:
+        "Employee Loans & Other Deductions has been successfully updated!",
+    };
   } catch (error) {
     console.log(error);
     return { error: "Something went wrong, please try again later." };
