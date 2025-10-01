@@ -6,6 +6,7 @@ import {
 import { format } from "date-fns";
 import { paginationUtil } from "@/utils/tools";
 import { getSettings } from "@/actions/settings";
+import moment from "moment-business-days";
 
 export const getAllReport = async (
   from: Date,
@@ -280,6 +281,11 @@ export const getPaginatedReport = async (
 
     const reports = employees.map((emp) => {
       const empReports = reportsMap[emp.recordNo] ?? [];
+
+      empReports.sort(
+        (a, b) =>
+          new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+      );
       return {
         ...emp,
         reports: empReports,
@@ -287,6 +293,7 @@ export const getPaginatedReport = async (
       };
     });
 
+    console.log(reports);
     const settings = await getSettings();
 
     const items = Array.isArray(reports)
@@ -345,9 +352,10 @@ export const getReportById = async (id: string, from: Date, to: Date) => {
     let reports = results
       .map((item: any) => item.timestamp)
       .reduce((acc: any, dateTime: any) => {
-        const date = format(new Date(dateTime), "yyyy-MM-dd HH:mm:ss").split(
-          " "
-        )[0];
+        const date = format(
+          moment.tz(dateTime, "Asia/Manila").toDate(),
+          "yyyy-MM-dd HH:mm:ss"
+        ).split(" ")[0];
         acc[date] = acc[date] || [];
         acc[date].push(new Date(dateTime));
         return acc;

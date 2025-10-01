@@ -2,6 +2,7 @@ import { format } from "date-fns";
 import { getBusinessDays, getTotalHolidays } from "./holidays";
 import { REGULAR_SCHEDULE } from "@/data/constants";
 import { Schedule } from "@/types";
+import moment from "moment-business-days";
 
 export const computeTotalDaysAndLate = ({
   dates,
@@ -19,9 +20,10 @@ export const computeTotalDaysAndLate = ({
   const days = dates
     .map((item: any) => item.timestamp)
     .reduce((acc: any, dateTime: any) => {
-      const date = format(new Date(dateTime), "yyyy-MM-dd HH:mm:ss").split(
-        " "
-      )[0];
+      const date = format(
+        moment.tz(dateTime, "Asia/Manila").toDate(),
+        "yyyy-MM-dd HH:mm:ss"
+      ).split(" ")[0];
       acc[date] = acc[date] || [];
       acc[date].push(new Date(dateTime));
       return acc;
