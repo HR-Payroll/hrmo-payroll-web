@@ -50,9 +50,9 @@ const DownloadSingleReport = ({
     doc.text(title, xPosition, 56);
     doc.setFont("helvetica", "normal");
 
-    const date = `${formatTime(filter.from, "MM/dd/yy")} to ${formatTime(
+    const date = `${formatTime(filter.from, "MM/DD/yy")} to ${formatTime(
       filter.to,
-      "MM/dd/yy"
+      "MM/DD/yy"
     )}`;
 
     doc.setFont("helvetica", "normal");

@@ -91,12 +91,12 @@ export const computeTotalDaysAndLate = ({
     const net = earnings - deductions;
 
     return {
-      totalDays: total % 1 === 0 ? total.toFixed(0) : total.toFixed(1),
+      totalDays: total % 1 === 0 ? total.toFixed(0) : total.toFixed(2),
       late: late % 1 === 0 ? late.toFixed(0) : late.toFixed(1),
-      earnings: earnings % 1 === 0 ? earnings.toFixed(0) : earnings.toFixed(1),
+      earnings: earnings % 1 === 0 ? earnings.toFixed(0) : earnings.toFixed(2),
       deductions:
-        deductions % 1 === 0 ? deductions.toFixed(0) : deductions.toFixed(1),
-      net: net % 1 === 0 ? net.toFixed(0) : net.toFixed(1),
+        deductions % 1 === 0 ? deductions.toFixed(0) : deductions.toFixed(2),
+      net: net % 1 === 0 ? net.toFixed(0) : net.toFixed(2),
     };
   } else {
     const dateKeys = Object.keys(days).sort();
@@ -177,12 +177,12 @@ export const computeTotalDaysAndLate = ({
 
     return {
       totalDays:
-        totalDays % 1 === 0 ? totalDays.toFixed(0) : totalDays.toFixed(1),
+        totalDays % 1 === 0 ? totalDays.toFixed(0) : totalDays.toFixed(2),
       late: 0,
-      earnings: earnings % 1 === 0 ? earnings.toFixed(0) : earnings.toFixed(1),
+      earnings: earnings % 1 === 0 ? earnings.toFixed(0) : earnings.toFixed(2),
       deductions:
-        deductions % 1 === 0 ? deductions.toFixed(0) : deductions.toFixed(1),
-      net: net % 1 === 0 ? net.toFixed(0) : net.toFixed(1),
+        deductions % 1 === 0 ? deductions.toFixed(0) : deductions.toFixed(2),
+      net: net % 1 === 0 ? net.toFixed(0) : net.toFixed(2),
     };
   }
 };
@@ -304,12 +304,12 @@ export const computeTotalDaysAndLateSingle = ({
           minsLate: 0,
           totalHours: "Straight Time",
           earnings:
-            earnings % 1 === 0 ? earnings.toFixed(0) : earnings.toFixed(1),
+            earnings % 1 === 0 ? earnings.toFixed(0) : earnings.toFixed(2),
           deductions:
             deductions % 1 === 0
               ? deductions.toFixed(0)
-              : deductions.toFixed(1),
-          net: net % 1 === 0 ? net.toFixed(0) : net.toFixed(1),
+              : deductions.toFixed(2),
+          net: net % 1 === 0 ? net.toFixed(0) : net.toFixed(2),
         };
       });
 
@@ -447,16 +447,16 @@ export const computeTotalDaysAndLateSingle = ({
         ...items,
         name: ref,
         earnings:
-          earnings % 1 === 0 ? earnings.toFixed(0) : earnings.toFixed(1),
+          earnings % 1 === 0 ? earnings.toFixed(0) : earnings.toFixed(2),
         deductions:
-          deductions % 1 === 0 ? deductions.toFixed(0) : deductions.toFixed(1),
-        net: net % 1 === 0 ? net.toFixed(0) : net.toFixed(1),
+          deductions % 1 === 0 ? deductions.toFixed(0) : deductions.toFixed(2),
+        net: net % 1 === 0 ? net.toFixed(0) : net.toFixed(2),
         remarks,
         totalDays,
         totalHours:
           totalHours % 1 === 0 || totalHours < 1
             ? totalHours.toFixed(0)
-            : totalHours.toFixed(1),
+            : totalHours.toFixed(2),
         minsLate: totalLate,
       };
     });
@@ -473,11 +473,11 @@ export const computeTotalDaysAndLateSingle = ({
 
   return {
     items: sortedReports.sort((a: any, b: any) => a.date.localeCompare(b.date)),
-    totalDays: total % 1 === 0 ? total.toFixed(0) : total.toFixed(1),
+    totalDays: total % 1 === 0 ? total.toFixed(0) : total.toFixed(2),
     totalMinsLate:
       totalMinsLate % 1 === 0
         ? totalMinsLate.toFixed(0)
-        : totalMinsLate.toFixed(1),
+        : totalMinsLate.toFixed(2),
   };
 };
 

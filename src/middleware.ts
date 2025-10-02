@@ -10,12 +10,12 @@ export default auth(async (req) => {
   const isAuthRoute = nextUrl.pathname.includes("/login");
   const isApiRoute = nextUrl.pathname.includes("/api");
 
-  if (isApiRoute) return;
-  if (isLoggedIn && isAuthRoute)
-    return Response.redirect(`${process.env.NEXT_PUBLIC_CLIENT_URL}/dashboard`);
-  if (!isLoggedIn && isAuthRoute) return;
-  if (!isLoggedIn && isPrivateRoute)
-    return Response.redirect(`${process.env.NEXT_PUBLIC_CLIENT_URL}/login`);
+  // if (isApiRoute) return;
+  // if (isLoggedIn && isAuthRoute)
+  //   return Response.redirect(`${process.env.NEXT_PUBLIC_CLIENT_URL}/dashboard`);
+  // if (!isLoggedIn && isAuthRoute) return;
+  // if (!isLoggedIn && isPrivateRoute)
+  //   return Response.redirect(`${process.env.NEXT_PUBLIC_CLIENT_URL}/login`);
 });
 
 export const config = {

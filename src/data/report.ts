@@ -293,7 +293,6 @@ export const getPaginatedReport = async (
       };
     });
 
-    console.log(reports);
     const settings = await getSettings();
 
     const items = Array.isArray(reports)
