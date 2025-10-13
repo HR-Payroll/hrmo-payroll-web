@@ -47,7 +47,7 @@ const SingleSummaryPage = async ({
             <DynamicHeader label={summary && summary.name} />
           </div>
           <div className="flex items-center justify-between">
-            <DateFilter from={dateFrom} />
+            <DateFilter />
             {/* <DownloadSingleSummary summary={summary} employee={employee} /> */}
           </div>
         </section>

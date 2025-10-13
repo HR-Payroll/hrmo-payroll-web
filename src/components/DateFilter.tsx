@@ -1,7 +1,6 @@
 "use client";
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { formatTime } from "@/utils/dateFormatter";
 import {
   getDateFromCache,
   getDateToCache,
@@ -40,8 +39,8 @@ const DateFilter = () => {
 
     // override cache when query params exist
     if (hasQuery) {
-      setDateFromCache(formatTime(from, "yyyy-MM-DD"));
-      setDateToCache(formatTime(to, "yyyy-MM-DD"));
+      setDateFromCache(format(from, "yyyy-MM-dd"));
+      setDateToCache(format(to, "yyyy-MM-dd"));
     }
   }, [searchParams]);
 

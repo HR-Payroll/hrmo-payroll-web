@@ -77,7 +77,7 @@ const UploadEmployees = ({
         };
       });
 
-      console.log(employees.length);
+      console.log("Uploaded employees:", employees.length);
 
       const result = (await uploadEmployee(employees)) as any;
 
