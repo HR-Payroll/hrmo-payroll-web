@@ -1,22 +1,17 @@
 import moment from "moment-timezone";
 
 export const dateQuery = (from?: string, to?: string) => {
-  const now = moment.tz("Asia/Manila");
+  const now = moment();
   const day1 = now.clone().startOf("month");
   const day15 = now.clone().date(15).startOf("day");
 
-  const baseFrom = from
-    ? moment.tz(from, "Asia/Manila")
-    : now.date() >= 15
-    ? day15
-    : day1;
-
-  const baseTo = to ? moment.tz(to, "Asia/Manila") : now;
+  const baseFrom = from ? moment(from) : now.date() >= 15 ? day15 : day1;
+  const baseTo = to ? moment(to) : now;
 
   return {
     currentDate: now.toDate(),
-    dateFrom: baseFrom.startOf("day").toDate(), // Manila start-of-day converted to UTC Date
-    dateTo: baseTo.endOf("day").toDate(), // Manila end-of-day converted to UTC Date
+    dateFrom: baseFrom.startOf("day").toDate(),
+    dateTo: baseTo.endOf("day").toDate(),
   };
 };
 
@@ -34,8 +29,8 @@ export function formatTime(
 ) {
   if (!date) return "";
 
-  const utcMoment = moment.utc(date, "YYYY-MM-DD HH:mm:ss");
-  return utcMoment.tz("Asia/Manila").format(pattern);
+  const utcMoment = moment(date, "YYYY-MM-DD HH:mm:ss");
+  return utcMoment.format(pattern);
 }
 
 // export const dateTzUTC = (date: Date): Date => {
