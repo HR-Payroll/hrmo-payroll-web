@@ -110,7 +110,6 @@ export const computeTotalDaysAndLate = ({
       getTheRequiredDaysPerWeek(schedule, filter);
     const requiredDaysPerWeek = groupDatesPerWeek(requiredDates);
 
-    console.log(totalWorkingDaysRegular);
 
     const weeks: { [week: string]: string[] } = groupDatesPerWeek(dateKeys);
 
