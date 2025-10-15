@@ -1,8 +1,8 @@
 import { format } from "date-fns";
 import { getBusinessDays, getTotalHolidays } from "./holidays";
 import { REGULAR_SCHEDULE } from "@/data/constants";
-import { Schedule } from "@/types";
 import moment from "moment-business-days";
+import { Schedule } from "@/types";
 
 export const computeTotalDaysAndLate = ({
   dates,
@@ -13,7 +13,7 @@ export const computeTotalDaysAndLate = ({
 }: {
   dates: any[];
   settings: any;
-  employee?: any;
+  employee?: Employee;
   businessDays?: number;
   filter: { from: Date; to: Date };
 }) => {
@@ -74,15 +74,21 @@ export const computeTotalDaysAndLate = ({
     //temporary calculations
     let earnings = 0;
 
-    if (employee.type === "MONTHLY") {
+    if (
+      employee &&
+      employee.type === "MONTHLY" &&
+      typeof employee.rate === "number"
+    ) {
       // earnings = Math.min(
       //   (employee.rate / 2 / businessDays) * total,
       //   employee.rate / 2
       // );
 
       earnings = employee.rate / 2;
+    } else if (employee && typeof employee.rate === "number") {
+      earnings = total * employee.rate;
     } else {
-      earnings = employee ? total * employee.rate : 0;
+      earnings = 0;
     }
 
     const deductions = employee
@@ -100,11 +106,11 @@ export const computeTotalDaysAndLate = ({
     };
   } else {
     const dateKeys = Object.keys(days).sort();
-    const { requiredDates, totalWorkingDays } = getTheRequiredDaysPerWeek(
-      schedule,
-      filter
-    );
+    const { requiredDates, totalWorkingDays, totalWorkingDaysRegular } =
+      getTheRequiredDaysPerWeek(schedule, filter);
     const requiredDaysPerWeek = groupDatesPerWeek(requiredDates);
+
+    console.log(totalWorkingDaysRegular);
 
     const weeks: { [week: string]: string[] } = groupDatesPerWeek(dateKeys);
 
@@ -130,7 +136,7 @@ export const computeTotalDaysAndLate = ({
     if (totalScheduledDays <= 2) {
       //const workingDaysDeduction = missingDaysCount * (5 / scheduledDays.length);
       const workingDaysDeduction = missingDaysCount * 2.5;
-      totalDays = totalWorkingDays - workingDaysDeduction;
+      totalDays = totalWorkingDaysRegular - workingDaysDeduction;
 
       Object.keys(weeks).map((week: string) => {
         const actualDays = weeks[week].map((item) => new Date(item).getDay());
@@ -164,21 +170,28 @@ export const computeTotalDaysAndLate = ({
     }
 
     let earnings = 0;
+    let deductions = 0;
+    let net = 0;
 
-    if (employee.type === "MONTHLY") {
-      earnings = employee.rate / 2;
+    if (employee && employee.type === "MONTHLY") {
+      earnings = typeof employee.rate === "number" ? employee.rate / 2 : 0;
     } else {
-      earnings = employee ? totalDays * employee.rate : 0;
+      earnings =
+        employee && typeof employee.rate === "number"
+          ? totalDays * employee.rate
+          : 0;
     }
 
-    const deductions = employee ? getTotalDeduction(employee) : 0;
-    let net = earnings - deductions;
+    deductions = employee ? getTotalDeduction(employee) : 0;
+    net = earnings - deductions;
     net = net < 0 ? 0 : net;
+
+    if (totalDays < 0) totalDays = 0;
 
     return {
       totalDays:
         totalDays % 1 === 0 ? totalDays.toFixed(0) : totalDays.toFixed(2),
-      late: 0,
+      late: "0",
       earnings: earnings % 1 === 0 ? earnings.toFixed(0) : earnings.toFixed(2),
       deductions:
         deductions % 1 === 0 ? deductions.toFixed(0) : deductions.toFixed(2),
@@ -228,10 +241,8 @@ export const computeTotalDaysAndLateSingle = ({
   }
 
   if (schedule.option === "Straight Time") {
-    const { requiredDates, totalWorkingDays } = getTheRequiredDaysPerWeek(
-      schedule,
-      dates
-    );
+    const { requiredDates, totalWorkingDays, totalWorkingDaysRegular } =
+      getTheRequiredDaysPerWeek(schedule, dates);
 
     const actualDates = Object.keys(reports);
     const requiredDatesSet = new Set(requiredDates);
@@ -250,7 +261,8 @@ export const computeTotalDaysAndLateSingle = ({
       .sort((a: number, b: number) => b - a);
 
     //const perDayEquivalent = 5 / scheduledDays.length;
-    const perDayEquivalent = 2.5;
+    const perDayEquivalent = 1;
+    const perAbsence = 2.5;
 
     const straightTimeReports = Object.keys(reports)
       .sort((a: any, b: any) => new Date(b).getTime() - new Date(a).getTime())
@@ -318,12 +330,16 @@ export const computeTotalDaysAndLateSingle = ({
       0
     );
 
+    const totalDays =
+      totalWorkingDaysRegular - (requiredDates.length - total) * perAbsence;
+
     return {
       items: straightTimeReports.sort((a: any, b: any) =>
         a.date.localeCompare(b.date)
       ),
-      totalDays: total % 1 === 0 ? total.toFixed(0) : total.toFixed(1),
-      totalMinsLate: 0,
+      totalDays:
+        totalDays % 1 === 0 ? totalDays.toFixed(0) : totalDays.toFixed(2),
+      totalMinsLate: "0",
     };
   }
 
@@ -431,8 +447,8 @@ export const computeTotalDaysAndLateSingle = ({
         if (!remarks) remarks = "-";
       }
 
-      //temporary calculations
       let earnings = 0;
+
       if (employee.type === "MONTHLY") {
         earnings = employee.rate / 2;
       } else {
@@ -504,7 +520,7 @@ const getTotalDeduction = (employee: any) => {
   ];
 
   return deductionList.reduce((sum: number, deduction: string) => {
-    return sum + employee[deduction] || 0;
+    return sum + (employee[deduction] || 0);
   }, 0);
 };
 
@@ -588,6 +604,7 @@ const getTheRequiredDaysPerWeek = (
   const { from, to } = filter;
   const requiredDates: string[] = [];
   let totalWorkingDays = 0;
+  let totalWorkingDaysRegular = 0;
 
   for (let d = new Date(from); d <= to; d.setDate(d.getDate() + 1)) {
     const dayOfWeek = d.getDay();
@@ -600,12 +617,12 @@ const getTheRequiredDaysPerWeek = (
       totalWorkingDays++;
     }
 
-    // if ( dayOfWeek !== 0 && dayOfWeek !== 6) {
-
-    // }
+    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+      totalWorkingDaysRegular++;
+    }
   }
 
-  return { requiredDates, totalWorkingDays };
+  return { requiredDates, totalWorkingDays, totalWorkingDaysRegular };
 };
 
 const groupDatesPerWeek = (dateKeys: string[]) => {

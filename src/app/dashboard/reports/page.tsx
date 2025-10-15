@@ -1,16 +1,16 @@
 import React from "react";
 import { revalidatePath } from "next/cache";
-import { getPaginatedReport } from "@/data/report";
+import { getPaginatedReport, getReportByDepartment } from "@/data/report";
 import { getAllEmployee } from "@/data/employee";
 import { getAllDepartment } from "@/data/department";
 import PageInfo from "@/components/PageInfo";
 import TableSearch from "@/components/TableSearch";
-import DownloadButton from "@/components/DownloadButton";
 import DateFilter from "@/components/DateFilter";
 import TableFilters from "@/components/TableFilters";
 import ReportTable from "@/components/tables/ReportTable";
 import { dateQuery } from "@/utils/dateFormatter";
 import UploadReports from "@/components/Uploads/UploadReports";
+import DownloadMultipleReports from "@/components/Downloads/DownloadMultipleReports";
 
 const Reports = async (props: {
   searchParams?: Promise<{
@@ -41,6 +41,16 @@ const Reports = async (props: {
     department
   )) as any;
 
+  let allReports = [];
+  if (category && department) {
+    allReports = (await getReportByDepartment(dateFrom, dateTo, {
+      category,
+      department: Number(department),
+    })) as any;
+
+    console.log(allReports);
+  }
+
   async function reload() {
     "use server";
     revalidatePath("/dashboard/reports");
@@ -61,7 +71,11 @@ const Reports = async (props: {
             <TableSearch />
             <div className="flex gap-4">
               <UploadReports />
-              <DownloadButton />
+              <DownloadMultipleReports
+                reports={allReports}
+                filter={{ from: dateFrom, to: dateTo }}
+                disable={!allReports || allReports.length === 0}
+              />
             </div>
           </div>
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">

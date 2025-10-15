@@ -48,6 +48,7 @@ export const getPaginatedEmployee = async (
         { recordNo: { contains: search, mode: "insensitive" } },
         { category: { contains: search, mode: "insensitive" } },
         { department: { name: { contains: search, mode: "insensitive" } } },
+        { schedule: { name: { contains: search, mode: "insensitive" } } },
       ];
     }
 
