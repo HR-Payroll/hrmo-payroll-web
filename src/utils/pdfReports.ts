@@ -30,7 +30,6 @@ export const generatePDFReport = async (
   const { doc, pageWidth, imgData, imgWidth, imgHeight, imgX, imgY } =
     docParams;
 
-  console.log(reports);
   const tableRows = reports.map((report) => {
     const { date, name, r1, r2, r3, r4, remarks } = report;
     return [
