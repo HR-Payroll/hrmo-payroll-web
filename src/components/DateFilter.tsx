@@ -1,16 +1,54 @@
 "use client";
-import { format } from "date-fns";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { formatTime } from "@/utils/dateFormatter";
+import {
+  getDateFromCache,
+  getDateToCache,
+  setDateFromCache,
+  setDateToCache,
+} from "@/services/localStorage";
+import { format } from "date-fns";
 
-const DateFilter = ({ from }: { from: Date }) => {
-  const [dateFrom, setDateFrom] = useState(from);
-  const [dateTo, setDateTo] = useState(new Date());
+const DateFilter = () => {
+  const [dateFrom, setDateFrom] = useState<Date>(getDateFromCache());
+  const [dateTo, setDateTo] = useState<Date>(getDateToCache());
 
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  /** Load initial dates */
+  useEffect(() => {
+    const params = Object.fromEntries(searchParams.entries());
+    const hasQuery = !!params.from || !!params.to;
+
+    const from = hasQuery
+      ? params.from
+        ? new Date(params.from)
+        : getDateFromCache() || new Date()
+      : getDateFromCache() || new Date();
+
+    const to = hasQuery
+      ? params.to
+        ? new Date(params.to)
+        : getDateToCache() || new Date()
+      : getDateToCache() || new Date();
+
+    setDateFrom(from);
+    setDateTo(to);
+
+    // override cache when query params exist
+    if (hasQuery) {
+      setDateFromCache(format(from, "yyyy-MM-dd"));
+      setDateToCache(format(to, "yyyy-MM-dd"));
+    }
+  }, [searchParams]);
+
+  /** Sync cache whenever date changes */
+  useEffect(() => {
+    setDateFromCache(format(dateFrom, "yyyy-MM-dd"));
+    setDateToCache(format(dateTo, "yyyy-MM-dd"));
+  }, [dateFrom, dateTo]);
 
   const onChangeDate = ({ from, to }: { from?: Date; to?: Date }) => {
     const newFrom = from || dateFrom;
@@ -22,8 +60,8 @@ const DateFilter = ({ from }: { from: Date }) => {
     }
 
     onChangeFilter([
-      { key: "from", value: formatTime(newFrom, "yyyy-MM-DD") },
-      { key: "to", value: formatTime(newTo, "yyyy-MM-DD") },
+      { key: "from", value: format(newFrom, "yyyy-MM-dd") },
+      { key: "to", value: format(newTo, "yyyy-MM-dd") },
     ]);
   };
 
@@ -49,7 +87,7 @@ const DateFilter = ({ from }: { from: Date }) => {
       <div className="flex flex-row items-center justify-between gap-x-4">
         <span className="text-sm font-medium">From:</span>
         <input
-          value={formatTime(dateFrom, "yyyy-MM-DD")}
+          value={format(dateFrom, "yyyy-MM-dd")}
           type="date"
           className="outline-none rounded-md border-2 border-[var(--border)] text-sm py-1.5 px-4 cursor-pointer"
           onChange={(e) => {
@@ -61,10 +99,10 @@ const DateFilter = ({ from }: { from: Date }) => {
       <div className="flex flex-row items-center justify-between gap-x-4">
         <span className="text-sm font-medium">To:</span>
         <input
-          value={formatTime(dateTo, "yyyy-MM-DD")}
+          value={format(dateTo, "yyyy-MM-dd")}
           type="date"
           className="outline-none rounded-md border-2 border-[var(--border)] text-sm py-1.5 px-4 cursor-pointer"
-          min={formatTime(dateFrom, "yyyy-MM-DD")}
+          min={format(dateFrom, "yyyy-MM-dd")}
           onChange={(e) => {
             setDateTo(new Date(e.target.value));
             onChangeDate({ to: new Date(e.target.value) });

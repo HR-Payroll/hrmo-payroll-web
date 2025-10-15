@@ -44,7 +44,7 @@ const SingleReportPage = async ({
             <DynamicHeader label={report ? report.employee.name : "N/A"} />
           </div>
           <div className="flex items-center justify-between">
-            <DateFilter from={dateFrom} />
+            <DateFilter />
             <DownloadSingleReport
               reports={report ? report.items : []}
               employee={report ? report.employee : null}

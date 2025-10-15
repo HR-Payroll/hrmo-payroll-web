@@ -59,7 +59,7 @@ const Summary = async (props: {
             <DownloadSummary />
           </div>
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <DateFilter from={dateFrom} />
+            <DateFilter />
             <div className="flex flex-col md:flex-row items-center">
               <span className="hidden md:block text-sm font-medium pr-4">
                 Filters
