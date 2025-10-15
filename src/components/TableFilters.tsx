@@ -52,7 +52,6 @@ const TableFilters = ({
     const department = searchParams.get("department") || "";
     setDepartmentFilter(Number(department));
 
-    console.log(departments);
   }, [searchParams]);
 
   return (
