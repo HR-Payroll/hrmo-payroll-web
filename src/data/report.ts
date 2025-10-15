@@ -26,8 +26,6 @@ export const getAllReport = async (
     if (filters && filters.department)
       tableFilter.departmentId = Number(filters.department);
 
-    console.log(tableFilter);
-
     const employees = await prisma.employee.findMany({
       select: {
         id: true,
