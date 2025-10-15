@@ -524,7 +524,6 @@ export const getReportByDepartment = async (
       };
     });
 
-    console.log(items);
 
     return items;
   } catch (error: any) {
