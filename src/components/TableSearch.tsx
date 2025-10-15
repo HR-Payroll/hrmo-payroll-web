@@ -13,6 +13,7 @@ const TableSearch = () => {
     from: Date | null;
     to: Date | null;
   }>({ from: null, to: null });
+  const [searchFilter, setSearchFilter] = useState<string>("");
 
   const debounceSearch = debounce((value: string) => {
     let path = "";
@@ -39,21 +40,29 @@ const TableSearch = () => {
   useEffect(() => {
     const from = searchParams.get("from");
     const to = searchParams.get("to");
+    const search = searchParams.get("search") || "";
 
     if (from && to) {
       setDateFilter({ from: new Date(from), to: new Date(to) });
     } else {
       setDateFilter({ from: null, to: null });
     }
+
+    if (search && searchFilter === "") {
+      setSearchFilter(search);
+    }
   }, [searchParams]);
 
   return (
     <div className="w-fit flex items-center rounded-md ring-2 ring-[var(--border)] gap-x-2 text-sm py-1.5">
       <input
+        value={searchFilter}
         type="search"
         placeholder="Search"
         className="w-[180px] outline-none pl-4"
-        onChange={(e) => debounceSearch(e.target.value)}
+        onChange={(e) => (
+          setSearchFilter(e.target.value), debounceSearch(e.target.value)
+        )}
       />
       <button className="text-gray-300 hover:text-gray-400 active:text-gray-500 cursor-pointer pr-2">
         <MdOutlineSearch size={18} />

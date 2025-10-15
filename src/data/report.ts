@@ -22,9 +22,9 @@ export const getAllReport = async (
       },
     };
 
-    if (filters && filters.category) tableFilter.category.id = filters.category;
+    if (filters && filters.category) tableFilter.category = filters.category;
     if (filters && filters.department)
-      tableFilter.departmentId = filters.department;
+      tableFilter.departmentId = Number(filters.department);
 
     const employees = await prisma.employee.findMany({
       select: {
@@ -202,7 +202,8 @@ export const getAllReport = async (
 
     // return temp;
   } catch (error: any) {
-    return null;
+    console.log(error);
+    return [];
   }
 };
 
@@ -423,5 +424,110 @@ export const getReportById = async (id: string, from: Date, to: Date) => {
     };
   } catch (error: any) {
     console.log(error);
+  }
+};
+
+export const getReportByDepartment = async (
+  from: Date,
+  to: Date,
+  filter: { category: string; department: number }
+) => {
+  try {
+    const tableFilter: any = {};
+    const dateFilter: any = {
+      timestamp: {
+        gte: from,
+        lte: to,
+      },
+    };
+
+    if (filter.category) tableFilter.category = filter.category;
+    if (filter.department) tableFilter.departmentId = filter.department;
+
+    const employees = await prisma.employee.findMany({
+      select: {
+        id: true,
+        recordNo: true,
+        name: true,
+        category: true,
+        createdAt: true,
+        department: true,
+        schedule: true,
+        type: true,
+        rate: true,
+      },
+      where: {
+        ...tableFilter,
+      },
+      orderBy: { recordNo: "asc" },
+    });
+
+    const recordNos = employees.map((emp) => emp.recordNo);
+
+    const results = await prisma.report.findMany({
+      where: {
+        ...dateFilter,
+        recordNo: { in: recordNos },
+      },
+      orderBy: { recordNo: "asc" },
+    });
+
+    const reportsMap = results.reduce((acc, rep) => {
+      (acc[rep.recordNo] ??= []).push(rep);
+      return acc;
+    }, {} as Record<string, typeof results>);
+
+    const reports = employees.map((emp) => {
+      const empReports = reportsMap[emp.recordNo] ?? [];
+
+      empReports.sort(
+        (a, b) =>
+          new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+      );
+      return {
+        ...emp,
+        reports: empReports,
+        reportCount: empReports.length,
+      };
+    });
+
+    const settings = await getSettings();
+
+    const items = reports.map((report: any) => {
+      let reports = report.reports
+        .map((item: any) => item.timestamp)
+        .reduce((acc: any, dateTime: any) => {
+          const date = format(
+            moment.tz(dateTime, "Asia/Manila").toDate(),
+            "yyyy-MM-dd HH:mm:ss"
+          ).split(" ")[0];
+          acc[date] = acc[date] || [];
+          acc[date].push(new Date(dateTime));
+          return acc;
+        }, {});
+
+      const { items, totalDays, totalMinsLate } = computeTotalDaysAndLateSingle(
+        {
+          reports,
+          employee: report,
+          settings,
+          ref: report.name,
+          dates: { from, to },
+        }
+      );
+
+      return {
+        ...report,
+        reports: items,
+        totalDays,
+        totalLate: totalMinsLate,
+      };
+    });
+
+
+    return items;
+  } catch (error: any) {
+    console.log(error);
+    return [];
   }
 };

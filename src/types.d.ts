@@ -13,7 +13,7 @@ export interface ScheduleDay {
   type?: "IN" | "OUT";
 }
 
-export interface Schedule {
+interface Schedule {
   id?: number;
   name: string;
   daysIncluded: ScheduleDay[];
@@ -75,3 +75,65 @@ export type Days = {
     included: true;
   };
 };
+
+export interface User {
+  id: number;
+  email: string;
+  password: string;
+  role: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Department {
+  id: number;
+  index: string;
+  name: string;
+  category: string;
+  createdAt: Date;
+  updatedAt: Date;
+  employees?: Employee[];
+}
+
+export interface Employee {
+  id: number;
+  recordNo: string;
+  name: string;
+  category: Category;
+  departmentId?: number | null;
+  rate?: number | null;
+  type?: string | null;
+  scheduleId?: number | null;
+  gsisgs?: number | null;
+  ec?: number | null;
+  gsisps?: number | null;
+  phic?: number | null;
+  hdmfgs?: number | null;
+  hdmfps?: number | null;
+  wtax?: number | null;
+  sss?: number | null;
+  mplhdmf?: number | null;
+  gfal?: number | null;
+  landbank?: number | null;
+  cb?: number | null;
+  eml?: number | null;
+  mplgsis?: number | null;
+  tagum?: number | null;
+  ucpb?: number | null;
+  mpllite?: number | null;
+  sb?: number | null;
+  createdAt: Date;
+  updatedAt: Date;
+  department?: Department | null;
+  schedule?: Schedule | null;
+}
+
+export interface Report {
+  id: number;
+  index: string;
+  recordNo: string;
+  name: string;
+  timestamp: Date;
+  createdAt: Date;
+  updatedAt?: Date | null;
+}

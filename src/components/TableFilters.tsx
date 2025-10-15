@@ -21,6 +21,7 @@ const TableFilters = ({
   const searchParams = useSearchParams();
 
   const [categoryFilter, setCategoryFilter] = useState<string>("");
+  const [departmentFilter, setDepartmentFilter] = useState<number>(0);
 
   const CATEGORY_OPTIONS: Record<string, string> = {
     "All Category": "",
@@ -44,17 +45,25 @@ const TableFilters = ({
     router.push(`${pathname}${path}`);
   };
 
+  useEffect(() => {
+    const category = searchParams.get("category") || "";
+    setCategoryFilter(category);
+
+    const department = searchParams.get("department") || "";
+    setDepartmentFilter(Number(department));
+
+  }, [searchParams]);
+
   return (
     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-[var(--text)] text-sm">
       <div className="relative flex flex-row items-center justify-center gap-2">
         <select
           className="appearance-none outline-none rounded-md ring-2 ring-[var(--border)] py-1.5 px-8 cursor-pointer"
-          defaultValue={data?.category}
+          value={categoryFilter}
           onChange={(e) => {
             setCategoryFilter(e.target.value),
               onChangeFilter("category", e.target.value);
           }}
-          value={categoryFilter}
         >
           {Object.keys(CATEGORY_OPTIONS).map((key: string) => {
             return (
@@ -72,7 +81,7 @@ const TableFilters = ({
       <div className="relative flex flex-row items-center justify-between gap-2">
         <select
           className="appearance-none outline-none rounded-md ring-2 ring-[var(--border)] py-1.5 px-4 cursor-pointer"
-          defaultValue={data?.department}
+          value={departmentFilter}
           onChange={(e) => onChangeFilter("department", e.target.value)}
         >
           <option value="">All Departments</option>
