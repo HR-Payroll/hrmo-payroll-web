@@ -48,7 +48,6 @@ const Reports = async (props: {
       department: Number(department),
     })) as any;
 
-    console.log(allReports);
   }
 
   async function reload() {
