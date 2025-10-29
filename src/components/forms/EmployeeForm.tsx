@@ -100,6 +100,7 @@ const EmployeeForm = ({
         defaultValue={data?.recordNo}
         register={register}
         error={errors?.recordNo}
+        maxLength={9}
       />
       <InputField
         label="Employee Name"
@@ -151,7 +152,7 @@ const EmployeeForm = ({
             departments.map((item: any) => {
               return (
                 <option key={item.id} value={item.id}>
-                  {item.name}
+                  {item.name} - {item.category}
                 </option>
               );
             })}

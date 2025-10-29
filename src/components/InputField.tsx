@@ -10,6 +10,7 @@ type InputFieldProps = {
   defaultValue?: string;
   error?: FieldError;
   inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
+  maxLength?: number;
 };
 
 const InputField = ({
@@ -20,6 +21,7 @@ const InputField = ({
   defaultValue,
   error,
   inputProps,
+  maxLength,
 }: InputFieldProps) => {
   return (
     <div className="flex flex-col text-sm gap-2 text-[var(--text)]">
@@ -32,6 +34,7 @@ const InputField = ({
         {...inputProps}
         defaultValue={defaultValue}
         className="w-full bg-transparent rounded-md ring-2 ring-[var(--border)] focus:outline-2 focus:outline-blue-200 p-2"
+        maxLength={maxLength}
       />
       {error?.message && (
         <p className="text-red text-xs">{error?.message.toString()}</p>

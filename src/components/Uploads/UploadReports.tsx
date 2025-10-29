@@ -166,9 +166,9 @@ const UploadReports = ({ reload }: { reload?: VoidFunction }) => {
       <Backdrop
         sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={isUpload.length > 0}
-        onClick={() => {
-          if (!isUploading) setUpload([]);
-        }}
+        // onClick={() => {
+        //   if (!isUploading) setUpload([]);
+        // }}
       >
         <div className="w-full max-w-[300px] h-max-[200px] bg-white p-4 rounded-md text-[var(--text)] cursor-default ">
           {!isUploading ? (
@@ -192,7 +192,7 @@ const UploadReports = ({ reload }: { reload?: VoidFunction }) => {
               </button>
             </div>
           ) : (
-            <div className="flex flex-row items-center gap-4 my-4 text-sm">
+            <div className="flex flex-row items-center justify-center gap-4 my-4 text-sm">
               <CircularProgress
                 color="inherit"
                 size={32}

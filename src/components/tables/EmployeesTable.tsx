@@ -133,7 +133,14 @@ function EmployeesTable({
       align: "center",
       headerAlign: "center",
       type: "singleSelect",
-      valueOptions: departments.map((item) => item.name) || [],
+      valueOptions: (value) => {
+        const category = value.row.category;
+        return (
+          departments
+            .filter((item) => item.category === category)
+            .map((item) => item.name) || []
+        );
+      },
       editable: true,
       valueSetter: (value, row) => {
         const department = departments.find((dept: any) => dept.name === value);
