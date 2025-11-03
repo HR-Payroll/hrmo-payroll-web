@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { tableStyle } from "@/lib/themes";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
@@ -30,6 +30,10 @@ function SummaryTable({
   const searchParams = useSearchParams();
   const [data, setData] = useState(summary);
   const [pageSize, setPageSize] = useState(limit);
+
+  useEffect(() => {
+    setPageSize(limit);
+  }, [limit, page]);
 
   useEffect(() => {
     setData(summary);

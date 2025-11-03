@@ -110,7 +110,6 @@ export const computeTotalDaysAndLate = ({
       getTheRequiredDaysPerWeek(schedule, filter);
     const requiredDaysPerWeek = groupDatesPerWeek(requiredDates);
 
-
     const weeks: { [week: string]: string[] } = groupDatesPerWeek(dateKeys);
 
     const missingDaysCount = Object.keys(requiredDaysPerWeek).reduce(

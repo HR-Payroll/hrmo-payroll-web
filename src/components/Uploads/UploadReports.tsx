@@ -20,19 +20,29 @@ const UploadReports = ({ reload }: { reload?: VoidFunction }) => {
     const file = event.target.files[0];
     if (!file) return;
 
-    const createdAt = new Date();
-    const reader = new FileReader();
-    reader.onload = (e: any) => {
-      const text = e.target.result;
-      const lines = text
-        .split("\n")
-        .map((line: string) => line.trim())
-        .filter((line: string) => line.length > 0)
-        .map((line: string) => {
-          const data = line.split("\t");
+    try {
+      const createdAt = new Date();
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const text = e.target.result;
+
+        const dataLines = text
+          .split("\n")
+          .map((line: string) => line.trim())
+          .filter((line: string) => line.length > 0);
+
+        const lines = dataLines.map((line: string) => {
+          const cleaned = line.replace(/\s{2,}/g, "\t").replace(/\t+/g, "\t");
+          const data = cleaned.split("\t").map((d) => d.trim());
 
           if (data.length === 5) {
-            const [recordNo, name, timestamp] = data;
+            let [recordNo, name, timestamp] = data;
+
+            if (!timestamp) {
+              const [n, t] = name.split(" ");
+              name = n;
+              timestamp = t;
+            }
 
             const date = new Date(timestamp);
             return {
@@ -77,12 +87,18 @@ const UploadReports = ({ reload }: { reload?: VoidFunction }) => {
           }
         });
 
-      setUpload(lines);
-      //onUploadFile(lines);
-      e.preventDefault();
-    };
-
-    reader.readAsText(file);
+        setUpload(lines);
+        //onUploadFile(lines);
+        e.preventDefault();
+      };
+      reader.readAsText(file);
+    } catch (error: any) {
+      setSnackbar({
+        message: error.message,
+        type: "error",
+        modal: true,
+      });
+    }
   };
 
   const onUploadFile = async (data: any) => {

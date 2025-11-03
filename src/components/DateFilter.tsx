@@ -48,6 +48,8 @@ const DateFilter = () => {
   useEffect(() => {
     setDateFromCache(format(dateFrom, "yyyy-MM-dd"));
     setDateToCache(format(dateTo, "yyyy-MM-dd"));
+
+    onChangeDate({ from: dateFrom, to: dateTo });
   }, [dateFrom, dateTo]);
 
   const onChangeDate = ({ from, to }: { from?: Date; to?: Date }) => {
@@ -92,7 +94,6 @@ const DateFilter = () => {
           className="outline-none rounded-md border-2 border-[var(--border)] text-sm py-1.5 px-4 cursor-pointer"
           onChange={(e) => {
             setDateFrom(new Date(e.target.value));
-            onChangeDate({ from: new Date(e.target.value) });
           }}
         />
       </div>
@@ -105,7 +106,6 @@ const DateFilter = () => {
           min={format(dateFrom, "yyyy-MM-dd")}
           onChange={(e) => {
             setDateTo(new Date(e.target.value));
-            onChangeDate({ to: new Date(e.target.value) });
           }}
         />
       </div>

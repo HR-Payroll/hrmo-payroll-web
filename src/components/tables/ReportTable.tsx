@@ -35,6 +35,10 @@ function ReportTable({
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
+    setPageSize(limit);
+  }, [page, limit]);
+
+  useEffect(() => {
     setData(reports);
     setLoading(false);
   }, [reports]);
