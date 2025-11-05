@@ -13,6 +13,9 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
       flex: 1,
       align: "center",
       headerAlign: "center",
+      valueGetter: (params: any) => {
+        return params ? formatTime(params, "yyyy-MM-DD - ddd") : "";
+      },
     },
     {
       field: "name",

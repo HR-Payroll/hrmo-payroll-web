@@ -84,7 +84,21 @@ export const computeTotalDaysAndLate = ({
       //   employee.rate / 2
       // );
 
-      earnings = employee.rate / 2;
+      // earnings = employee.rate / 2;
+
+      const from = new Date(filter.from);
+      const to = new Date(filter.to);
+      const daysInRange =
+        (to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24) + 1;
+
+      const daysInMonth = new Date(
+        from.getFullYear(),
+        from.getMonth() + 1,
+        0
+      ).getDate();
+      const rate = typeof employee.rate === "number" ? employee.rate : 0;
+
+      earnings = rate * (daysInRange / daysInMonth);
     } else if (employee && typeof employee.rate === "number") {
       earnings = total * employee.rate;
     } else {
@@ -172,7 +186,19 @@ export const computeTotalDaysAndLate = ({
     let net = 0;
 
     if (employee && employee.type === "MONTHLY") {
-      earnings = typeof employee.rate === "number" ? employee.rate / 2 : 0;
+      const from = new Date(filter.from);
+      const to = new Date(filter.to);
+      const daysInRange =
+        (to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24) + 1;
+
+      const daysInMonth = new Date(
+        from.getFullYear(),
+        from.getMonth() + 1,
+        0
+      ).getDate();
+      const rate = typeof employee.rate === "number" ? employee.rate : 0;
+
+      earnings = rate * (daysInRange / daysInMonth);
     } else {
       earnings =
         employee && typeof employee.rate === "number"
@@ -449,6 +475,19 @@ export const computeTotalDaysAndLateSingle = ({
 
       if (employee.type === "MONTHLY") {
         earnings = employee.rate / 2;
+        const from = new Date(dates.from);
+        const to = new Date(dates.to);
+        const daysInRange =
+          (to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24) + 1;
+
+        const daysInMonth = new Date(
+          from.getFullYear(),
+          from.getMonth() + 1,
+          0
+        ).getDate();
+        const rate = typeof employee.rate === "number" ? employee.rate : 0;
+
+        earnings = rate * (daysInRange / daysInMonth);
       } else {
         earnings = employee ? totalDays * employee.rate : 0;
       }

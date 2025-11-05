@@ -33,7 +33,7 @@ export const generatePDFReport = async (
   const tableRows = reports.map((report) => {
     const { date, name, r1, r2, r3, r4, remarks } = report;
     return [
-      date,
+      date ? formatTime(date, "yyyy-MM-DD - ddd") : "",
       name,
       r1 ? formatTime(r1, "hh:mm A") : "",
       r2 ? formatTime(r2, "hh:mm A") : "",
@@ -118,6 +118,14 @@ export const generatePDFReport = async (
       tableHeight = data.cursor!.y;
     },
   });
+
+  // === PAGE OVERFLOW HANDLER ===
+  const pageHeight = doc.internal.pageSize.height;
+  const remainingSpace = pageHeight - tableHeight - 60; // estimate needed for footer
+  if (remainingSpace < 60) {
+    doc.addPage();
+    tableHeight = 40; // new starting Y on next page
+  }
 
   toHighLightText(
     doc,
