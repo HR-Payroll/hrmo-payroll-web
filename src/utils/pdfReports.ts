@@ -121,10 +121,11 @@ export const generatePDFReport = async (
 
   // === PAGE OVERFLOW HANDLER ===
   const pageHeight = doc.internal.pageSize.height;
-  const remainingSpace = pageHeight - tableHeight - 60; // estimate needed for footer
-  if (remainingSpace < 60) {
+  const remainingSpace = pageHeight - tableHeight - 20; // estimate needed for footer
+
+  if (remainingSpace < 20) {
     doc.addPage();
-    tableHeight = 40; // new starting Y on next page
+    tableHeight = 20; // new starting Y on next page
   }
 
   toHighLightText(
