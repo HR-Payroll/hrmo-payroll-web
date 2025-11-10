@@ -123,7 +123,11 @@ export const generatePDFReport = async (
   const pageHeight = doc.internal.pageSize.height;
   const remainingSpace = pageHeight - tableHeight - 20; // estimate needed for footer
 
-  if (remainingSpace < 20) {
+  console.log("Remaining Space:", remainingSpace);
+  console.log("Table Height:", tableHeight);
+  console.log("Page Height:", pageHeight);
+
+  if (remainingSpace < 30) {
     doc.addPage();
     tableHeight = 20; // new starting Y on next page
   }
