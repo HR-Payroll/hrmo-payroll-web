@@ -20,7 +20,7 @@ export const getCasualEmployeeStats = async () => {
   const departmentCounts: Record<string, number> = {};
 
   for (const emp of casualEmployees) {
-    const deptId = emp.department?.toString();
+    const deptId = emp.department?.id.toString();
     if (!deptId) continue;
     departmentCounts[deptId] = (departmentCounts[deptId] || 0) + 1;
   }
