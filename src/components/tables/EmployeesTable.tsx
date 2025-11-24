@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Alert from "../ui/Alert";
 import { tableStyle } from "@/lib/themes";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import SnackbarInfo, { initialSnackbar } from "../ui/SnackbarInfo";
 import { MdDeleteOutline, MdCheck, MdClose } from "react-icons/md";
 import { deleteEmployee, updateEmployee } from "@/actions/employee";
@@ -37,10 +37,14 @@ function EmployeesTable({
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [data, setData] = useState(employees);
   const [isDelete, setDelete] = useState(null);
   const [isEditing, setEditing] = useState<any>();
-  const [pageSize, setPageSize] = useState(limit);
+  const [paginationModel, setPaginationModel] = useState({
+    page: page,
+    pageSize: 10,
+  });
   const [isLoading, setLoading] = useState(loading);
   const [snackbar, setSnackbar] = useState({
     message: "",
@@ -57,19 +61,34 @@ function EmployeesTable({
     setLoading(loading);
   }, [loading]);
 
-  const onPageChange = (model: GridPaginationModel) => {
-    let query = pathname;
+  useEffect(() => {
+    setPaginationModel({ page, pageSize: 10 });
+  }, [page]);
 
-    if (model.page !== 0 && model.pageSize !== 10) {
-      query = `${pathname}?page=${model.page}&limit=${model.pageSize}`;
-    } else if (model.page !== 0) {
-      query = `${pathname}?page=${model.page}`;
-    } else if (model.pageSize !== 10) {
-      query = `${pathname}?limit=${model.pageSize}`;
+  const onPageChange = (model: GridPaginationModel) => {
+    setPaginationModel(model);
+    onChangeFilter([
+      { key: "page", value: model.page.toString() },
+      { key: "limit", value: model.pageSize.toString() },
+    ]);
+    setLoading(true);
+  };
+
+  const onChangeFilter = (keys: { key: string; value: string }[]) => {
+    let path = "";
+    const params = Object.fromEntries(searchParams.entries());
+
+    for (const key of keys) {
+      if (params[key.key]) delete params[key.key];
+      if (key.value) params[key.key] = key.value;
     }
 
-    setLoading(true);
-    router.push(query);
+    Object.keys(params).forEach((key, index) => {
+      if (index === 0) path += `?${key}=${params[key]}`;
+      else path += `&${key}=${params[key]}`;
+    });
+
+    router.push(`${pathname}${path}`);
   };
 
   const columns: GridColDef[] = [
@@ -400,10 +419,8 @@ function EmployeesTable({
         }}
         pageSizeOptions={[5, 10, 20]}
         paginationMode="server"
-        paginationModel={{ page, pageSize }}
+        paginationModel={paginationModel}
         onPaginationModelChange={(model) => {
-          page = model.page;
-          setPageSize(model.pageSize);
           onPageChange(model);
         }}
         disableRowSelectionOnClick

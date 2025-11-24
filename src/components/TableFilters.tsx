@@ -30,12 +30,14 @@ const TableFilters = ({
     "Job Order": "JOB_ORDER",
   };
 
-  const onChangeFilter = (key: string, value: string) => {
+  const onChangeFilter = (keys: { key: string; value: string }[]) => {
     let path = "";
     const params = Object.fromEntries(searchParams.entries());
 
-    if (params[key]) delete params[key];
-    if (value) params[key] = value;
+    for (const key of keys) {
+      if (params[key.key]) delete params[key.key];
+      if (key.value) params[key.key] = key.value;
+    }
 
     Object.keys(params).forEach((key, index) => {
       if (index === 0) path += `?${key}=${params[key]}`;
@@ -51,7 +53,6 @@ const TableFilters = ({
 
     const department = searchParams.get("department") || "";
     setDepartmentFilter(Number(department));
-
   }, [searchParams]);
 
   return (
@@ -62,7 +63,10 @@ const TableFilters = ({
           value={categoryFilter}
           onChange={(e) => {
             setCategoryFilter(e.target.value),
-              onChangeFilter("category", e.target.value);
+              onChangeFilter([
+                { key: "category", value: e.target.value },
+                { key: "page", value: "0" },
+              ]);
           }}
         >
           {Object.keys(CATEGORY_OPTIONS).map((key: string) => {
@@ -82,7 +86,12 @@ const TableFilters = ({
         <select
           className="appearance-none outline-none rounded-md ring-2 ring-[var(--border)] py-1.5 px-4 cursor-pointer"
           value={departmentFilter}
-          onChange={(e) => onChangeFilter("department", e.target.value)}
+          onChange={(e) =>
+            onChangeFilter([
+              { key: "department", value: e.target.value },
+              { key: "page", value: "0" },
+            ])
+          }
         >
           <option value="">All Departments</option>
           {departments &&

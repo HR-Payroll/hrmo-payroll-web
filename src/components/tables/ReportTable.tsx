@@ -31,12 +31,15 @@ function ReportTable({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [data, setData] = useState(reports);
-  const [pageSize, setPageSize] = useState(limit);
+  const [paginationModel, setPaginationModel] = useState({
+    page: page,
+    pageSize: 10,
+  });
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
-    setPageSize(limit);
-  }, [page, limit]);
+    setPaginationModel({ page, pageSize: 10 });
+  }, [page]);
 
   useEffect(() => {
     setData(reports);
@@ -44,18 +47,29 @@ function ReportTable({
   }, [reports]);
 
   const onPageChange = (model: GridPaginationModel) => {
-    let query = pathname;
+    setPaginationModel(model);
+    onChangeFilter([
+      { key: "page", value: model.page.toString() },
+      { key: "limit", value: model.pageSize.toString() },
+    ]);
+    setLoading(true);
+  };
 
-    if (model.page !== 0 && model.pageSize !== 10) {
-      query = `${pathname}?page=${model.page}&limit=${model.pageSize}`;
-    } else if (model.page !== 0) {
-      query = `${pathname}?page=${model.page}`;
-    } else if (model.pageSize !== 10) {
-      query = `${pathname}?limit=${model.pageSize}`;
+  const onChangeFilter = (keys: { key: string; value: string }[]) => {
+    let path = "";
+    const params = Object.fromEntries(searchParams.entries());
+
+    for (const key of keys) {
+      if (params[key.key]) delete params[key.key];
+      if (key.value) params[key.key] = key.value;
     }
 
-    setLoading(true);
-    router.push(query);
+    Object.keys(params).forEach((key, index) => {
+      if (index === 0) path += `?${key}=${params[key]}`;
+      else path += `&${key}=${params[key]}`;
+    });
+
+    router.push(`${pathname}${path}`);
   };
 
   const generateLink = (recordNo: string): string => {
@@ -177,10 +191,8 @@ function ReportTable({
       }}
       pageSizeOptions={[5, 10, 20]}
       paginationMode="server"
-      paginationModel={{ page, pageSize }}
+      paginationModel={paginationModel}
       onPaginationModelChange={(model) => {
-        page = model.page;
-        setPageSize(model.pageSize);
         onPageChange(model);
       }}
       disableRowSelectionOnClick

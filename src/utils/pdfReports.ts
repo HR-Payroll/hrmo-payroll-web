@@ -61,32 +61,38 @@ export const generatePDFReport = async (
   doc.setFont("helvetica", "normal");
   doc.setFontSize(10);
 
-  toHighLightText(doc, "Employee: ", employee ? employee.name : "N/A", 15, 68);
+  toHighLightText(doc, "Employee: ", employee ? employee.name : "N/A", 15, 64);
 
   toHighLightText(
     doc,
     "Record No: ",
     employee ? employee.recordNo : "N/A",
     15,
-    74
+    70
   );
 
-  toHighLightText(doc, "Schedule: ", employee.schedule.name, 15, 80);
-  toHighLightText(doc, "Date: ", date, 15, 86);
-
+  toHighLightText(doc, "Schedule: ", employee.schedule.name, 15, 76);
+  toHighLightText(doc, "Date: ", date, 15, 82);
   const depText = `Department: ${employee?.department?.name || "N/A"}`;
   const catText = `Category: ${employee?.category || "N/A"}`;
   const depWidth = doc.getTextWidth(depText);
   const catWidth = doc.getTextWidth(catText);
   const rightMargin = 15;
-  const xPosition_h = pageWidth - Math.max(depWidth, catWidth) - rightMargin;
+  let xPosition_h = pageWidth - Math.max(depWidth, catWidth) - rightMargin;
+  const tDaysText = `Number of Days: ${numDays || "N/A"}`;
+  const tLateText = `Minutes of Late: ${totalLate || "N/A"}`;
+  const tDaysWidth = doc.getTextWidth(tDaysText);
+  const tLateWidth = doc.getTextWidth(tLateText);
+  const xPosition_h1 =
+    pageWidth - Math.max(tDaysWidth, tLateWidth) - rightMargin;
+  xPosition_h = Math.max(xPosition_h, xPosition_h1) - rightMargin / 2;
 
   toHighLightText(
     doc,
     "Category: ",
     employee ? employee.category : "N/A",
     xPosition_h,
-    68
+    64
   );
 
   toHighLightText(
@@ -94,7 +100,23 @@ export const generatePDFReport = async (
     "Department: ",
     employee?.department?.name || "N/A",
     xPosition_h,
-    74
+    70
+  );
+
+  toHighLightText(
+    doc,
+    "Number of Days: ",
+    `${numDays || "N/A"}`,
+    xPosition_h,
+    76
+  );
+
+  toHighLightText(
+    doc,
+    "Minutes of Late: ",
+    `${totalLate || "N/A"}`,
+    xPosition_h,
+    82
   );
 
   const tableColumn = [
@@ -107,7 +129,7 @@ export const generatePDFReport = async (
     "Remarks",
   ];
 
-  let tableHeight = 96;
+  let tableHeight = 88;
   autoTable(doc, {
     head: [tableColumn],
     body: tableRows,
@@ -120,6 +142,7 @@ export const generatePDFReport = async (
   });
 
   // === PAGE OVERFLOW HANDLER ===
+  const BOTTOM_CONTENT_HEIGHT = 30;
   const pageHeight = doc.internal.pageSize.height;
   const remainingSpace = pageHeight - tableHeight - 20; // estimate needed for footer
 
@@ -127,61 +150,42 @@ export const generatePDFReport = async (
   console.log("Table Height:", tableHeight);
   console.log("Page Height:", pageHeight);
 
-  if (remainingSpace < 30) {
+  if (remainingSpace < BOTTOM_CONTENT_HEIGHT) {
     doc.addPage();
     tableHeight = 20; // new starting Y on next page
   }
-
-  toHighLightText(
-    doc,
-    "Number of Days: ",
-    `${numDays || "N/A"}`,
-    15,
-    tableHeight + 10
-  );
-  toHighLightText(
-    doc,
-    "Minutes of Late: ",
-    `${totalLate || "N/A"}`,
-    15,
-    tableHeight + 16
-  );
 
   const certText =
     "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0 I HEREBY CERTIFY on my honor that the above is true and correct record of the hours of work performed, record of which was made daily at the time of arrival and departure from the office.";
 
   const wrappedText = doc.splitTextToSize(certText, pageWidth - 30);
-  doc.text(wrappedText, 15, tableHeight + 32);
+  doc.text(wrappedText, 15, tableHeight + 10);
 
-  const signatureY = tableHeight + 45;
+  const signatureY = tableHeight + 26;
   const sigLineWidth = 60;
 
-  // Center X position for both lines
   const centerX = 15;
+  const rightX = pageWidth - 15 - sigLineWidth;
 
-  doc.line(centerX, signatureY, centerX + sigLineWidth, signatureY);
+  doc.line(centerX, signatureY + 10, centerX + sigLineWidth, signatureY + 10);
   doc.setFontSize(10);
   const empSigLabel = "Employee's Signature";
   const empSigLabelWidth = doc.getTextWidth(empSigLabel);
   doc.text(
     empSigLabel,
     centerX + sigLineWidth / 2 - empSigLabelWidth / 2,
-    signatureY + 6
+    signatureY + 16
   );
 
-  doc.text(
-    "Verified as to the prescribed office hour.",
-    centerX,
-    signatureY + 18
-  );
+  doc.text("Verified as to the prescribed office hour.", rightX, signatureY);
 
-  const headY = signatureY + 28;
-  doc.line(centerX, headY, centerX + sigLineWidth, headY);
+  const headY = signatureY + 10;
+  doc.line(rightX, headY, rightX + sigLineWidth, headY);
   const headLabel = "Head of Office";
   const headLabelWidth = doc.getTextWidth(headLabel);
   doc.text(
     headLabel,
-    centerX + sigLineWidth / 2 - headLabelWidth / 2,
+    rightX + sigLineWidth / 2 - headLabelWidth / 2,
     headY + 6
   );
 

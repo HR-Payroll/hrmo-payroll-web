@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect } from "react";
 import { MdOutlineFileDownload } from "react-icons/md";
-import { jsPDF } from "jspdf";
+import { jsPDF, jsPDFOptions } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { formatTime } from "@/utils/dateFormatter";
 import { generatePDFReport } from "@/utils/pdfReports";
@@ -20,7 +20,23 @@ const DownloadSingleReport = ({
   filter: { from: Date; to: Date };
 }) => {
   const handleGeneratePDF = async () => {
-    const doc = new jsPDF();
+    const LEGAL_SIZE: jsPDFOptions = {
+      orientation: "p",
+      unit: "mm",
+      format: "legal",
+    };
+    const A4_SIZE: jsPDFOptions = {
+      orientation: "p",
+      unit: "mm",
+      format: "a4",
+    };
+
+    const SIZE: jsPDFOptions =
+      employee.category === "CASUAL" ? LEGAL_SIZE : A4_SIZE;
+
+    console.log(employee.category, "SIZE:", SIZE);
+
+    const doc = new jsPDF(SIZE);
     const pageWidth = doc.internal.pageSize.getWidth();
 
     const imgData = await addImageProcess("/header_logo.png");
