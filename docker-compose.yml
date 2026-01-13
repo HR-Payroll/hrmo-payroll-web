@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  hrmo-payroll-web:
+    build: .
+    ports:
+      - "3000:3000"
+    networks:
+      - dokploy-network
+    command: node server.js
+
+networks:
+  dokploy-network:
+    external: true
