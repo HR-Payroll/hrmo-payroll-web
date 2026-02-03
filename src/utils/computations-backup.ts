@@ -22,7 +22,7 @@ export const computeTotalDaysAndLate = ({
     .reduce((acc: any, dateTime: any) => {
       const date = format(
         moment.tz(dateTime, "Asia/Manila").toDate(),
-        "yyyy-MM-dd HH:mm:ss",
+        "yyyy-MM-dd HH:mm:ss"
       ).split(" ")[0];
       acc[date] = acc[date] || [];
       acc[date].push(new Date(dateTime));
@@ -55,7 +55,7 @@ export const computeTotalDaysAndLate = ({
   if (schedule.option !== "Straight Time") {
     inOut = Object.keys(days).map((date) => {
       const times = days[date].sort(
-        (a: Date, b: Date) => a.getTime() - b.getTime(),
+        (a: Date, b: Date) => a.getTime() - b.getTime()
       );
 
       return regularComputation(date, schedule, times, gracePeriod);
@@ -63,12 +63,12 @@ export const computeTotalDaysAndLate = ({
 
     const total = inOut.reduce(
       (sum: number, num: any) => sum + num.totalDays,
-      0,
+      0
     );
     const late = inOut.reduce((sum: number, num: any) => sum + num.late, 0);
     const lateDeductions = inOut.reduce(
       (sum: number, num: any) => sum + num.deductions,
-      0,
+      0
     );
 
     //temporary calculations
@@ -94,7 +94,7 @@ export const computeTotalDaysAndLate = ({
       const daysInMonth = new Date(
         from.getFullYear(),
         from.getMonth() + 1,
-        0,
+        0
       ).getDate();
       const rate = typeof employee.rate === "number" ? employee.rate : 0;
 
@@ -133,7 +133,7 @@ export const computeTotalDaysAndLate = ({
         const missing = required.filter((day) => !actual.includes(day));
         return acc + missing.length;
       },
-      0,
+      0
     );
 
     const scheduledDays = (schedule.daysIncluded || [])
@@ -194,7 +194,7 @@ export const computeTotalDaysAndLate = ({
       const daysInMonth = new Date(
         from.getFullYear(),
         from.getMonth() + 1,
-        0,
+        0
       ).getDate();
       const rate = typeof employee.rate === "number" ? employee.rate : 0;
 
@@ -292,7 +292,7 @@ export const computeTotalDaysAndLateSingle = ({
       .sort((a: any, b: any) => new Date(b).getTime() - new Date(a).getTime())
       .map((date, index: number) => {
         const times = reports[date].sort(
-          (a: Date, b: Date) => new Date(a).getTime() - new Date(b).getTime(),
+          (a: Date, b: Date) => new Date(a).getTime() - new Date(b).getTime()
         );
 
         let filterTimes = times;
@@ -351,7 +351,7 @@ export const computeTotalDaysAndLateSingle = ({
 
     const total = straightTimeReports.reduce(
       (sum: number, num: any) => sum + num.totalDays,
-      0,
+      0
     );
 
     const totalDays =
@@ -359,7 +359,7 @@ export const computeTotalDaysAndLateSingle = ({
 
     return {
       items: straightTimeReports.sort((a: any, b: any) =>
-        a.date.localeCompare(b.date),
+        a.date.localeCompare(b.date)
       ),
       totalDays:
         totalDays % 1 === 0 ? totalDays.toFixed(0) : totalDays.toFixed(2),
@@ -371,13 +371,13 @@ export const computeTotalDaysAndLateSingle = ({
     .sort((a: any, b: any) => new Date(b).getTime() - new Date(a).getTime())
     .map((date, index: number) => {
       const times = reports[date].sort(
-        (a: Date, b: Date) => new Date(a).getTime() - new Date(b).getTime(),
+        (a: Date, b: Date) => new Date(a).getTime() - new Date(b).getTime()
       );
 
       const dayOfWeek = new Date(date).getDay();
 
       const daySchedule = schedule.daysIncluded.find(
-        (d: any) => d.value === dayOfWeek,
+        (d: any) => d.value === dayOfWeek
       );
 
       let filterTimes = times;
@@ -437,7 +437,7 @@ export const computeTotalDaysAndLateSingle = ({
       let totalDays = Math.min(
         1,
         Math.floor(totalHours / workingHours) +
-          (totalHours % workingHours) / workingHours,
+          (totalHours % workingHours) / workingHours
       );
 
       if (times[0].getTime() >= halfDay || totalHours <= 0.5) {
@@ -483,7 +483,7 @@ export const computeTotalDaysAndLateSingle = ({
         const daysInMonth = new Date(
           from.getFullYear(),
           from.getMonth() + 1,
-          0,
+          0
         ).getDate();
         const rate = typeof employee.rate === "number" ? employee.rate : 0;
 
@@ -516,12 +516,12 @@ export const computeTotalDaysAndLateSingle = ({
 
   const total = sortedReports.reduce(
     (sum: number, num: any) => sum + num.totalDays,
-    0,
+    0
   );
 
   const totalMinsLate = sortedReports.reduce(
     (sum: number, num: any) => sum + num.minsLate,
-    0,
+    0
   );
 
   return {
@@ -579,11 +579,11 @@ const regularComputation = (
   date: string,
   schedule: Schedule,
   times: Date[],
-  gracePeriod: number,
+  gracePeriod: number
 ) => {
   const dayOfWeek = new Date(date).getDay();
   const daySchedule = schedule.daysIncluded.find(
-    (d: any) => d.value === dayOfWeek,
+    (d: any) => d.value === dayOfWeek
   );
 
   if (!daySchedule) return;
@@ -622,7 +622,7 @@ const regularComputation = (
   const totalDays = Math.min(
     1,
     Math.floor(totalHours / workingHours) +
-      (totalHours % workingHours) / workingHours,
+      (totalHours % workingHours) / workingHours
   );
   const totalLate = lateness > 0 ? Math.floor(lateness / (1000 * 60)) : 0;
   let deductions = (totalLate / 480) * 300;
@@ -636,7 +636,7 @@ const regularComputation = (
 
 const getTheRequiredDaysPerWeek = (
   schedule: Schedule,
-  filter: { from: Date; to: Date },
+  filter: { from: Date; to: Date }
 ) => {
   const { from, to } = filter;
   const requiredDates: string[] = [];
@@ -646,7 +646,7 @@ const getTheRequiredDaysPerWeek = (
   for (let d = new Date(from); d <= to; d.setDate(d.getDate() + 1)) {
     const dayOfWeek = d.getDay();
     const daySchedule = schedule.daysIncluded.find(
-      (day: any) => day.value === dayOfWeek,
+      (day: any) => day.value === dayOfWeek
     );
 
     if (daySchedule && daySchedule.included) {
@@ -672,7 +672,7 @@ const groupDatesPerWeek = (dateKeys: string[]) => {
     const weekStart = new Date(jan4);
     weekStart.setDate(jan4.getDate() - jan4Day + 1);
     const diff = Math.floor(
-      (date.getTime() - weekStart.getTime()) / (7 * 24 * 60 * 60 * 1000),
+      (date.getTime() - weekStart.getTime()) / (7 * 24 * 60 * 60 * 1000)
     );
     const weekNum = diff + 1;
     const weekKey = `${year}-W${weekNum.toString().padStart(2, "0")}`;

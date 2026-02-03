@@ -11,6 +11,7 @@ import ReportTable from "@/components/tables/ReportTable";
 import { dateQuery } from "@/utils/dateFormatter";
 import UploadReports from "@/components/Uploads/UploadReports";
 import DownloadMultipleReports from "@/components/Downloads/DownloadMultipleReports";
+import ReportsDaysDisplay from "@/components/ReportsDaysDisplay";
 
 const Reports = async (props: {
   searchParams?: Promise<{
@@ -38,7 +39,7 @@ const Reports = async (props: {
     Number(page || 0),
     Number(limit || 10),
     category,
-    department
+    department,
   )) as any;
 
   let allReports = [];
@@ -47,7 +48,6 @@ const Reports = async (props: {
       category,
       department: Number(department),
     })) as any;
-
   }
 
   async function reload() {
@@ -67,13 +67,17 @@ const Reports = async (props: {
       <main className="space-y-4">
         <section className="flex flex-col gap-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <TableSearch />
+            <div className="flex flex-col md:flex-row items-center gap-4 flex-1">
+              <TableSearch />
+            </div>
             <div className="flex gap-4">
+              <ReportsDaysDisplay from={dateFrom} to={dateTo} compact={true} />
               <UploadReports />
               <DownloadMultipleReports
                 reports={allReports}
                 filter={{ from: dateFrom, to: dateTo }}
                 disable={!allReports || allReports.length === 0}
+                category={category}
               />
             </div>
           </div>

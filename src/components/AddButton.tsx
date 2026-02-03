@@ -26,6 +26,13 @@ const ScheduleForm = dynamic(() => import("./forms/ScheduleForm"), {
   loading: () => <h1 className="text-xs text-[var(--text)]">Loading...</h1>,
 });
 
+const BiometricDeviceForm = dynamic(
+  () => import("./forms/BiometricDeviceForm"),
+  {
+    loading: () => <h1 className="text-xs text-[var(--text)]">Loading...</h1>,
+  },
+);
+
 const AddButton = ({
   title,
   table,
@@ -71,6 +78,14 @@ const AddButton = ({
     event: () => <EventForm onClose={onClose} />,
     schedule: () => (
       <ScheduleForm onClose={onClose} setSnackbar={setSnackbar} />
+    ),
+    "biometric-device": () => (
+      <BiometricDeviceForm
+        onClose={onClose}
+        setSnackbar={(params: any) => {
+          setSnackbar(params);
+        }}
+      />
     ),
   };
 

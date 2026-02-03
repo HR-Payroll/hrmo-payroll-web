@@ -2,6 +2,16 @@ export interface Settings {
   id?: number;
   syncHolidays: string;
   gracePeriod?: number;
+  monthlyDays?: MonthlyDays[];
+}
+
+export interface MonthlyDays {
+  id?: number;
+  month: string; // "January", "February", etc.
+  year: number;
+  days: number;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface ScheduleDay {

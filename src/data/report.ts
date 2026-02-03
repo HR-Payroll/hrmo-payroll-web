@@ -11,7 +11,7 @@ import moment from "moment-business-days";
 export const getAllReport = async (
   from: Date,
   to: Date,
-  filters?: { category?: string; department?: string }
+  filters?: { category?: string; department?: string },
 ) => {
   try {
     const tableFilter: any = {};
@@ -54,10 +54,13 @@ export const getAllReport = async (
       orderBy: { recordNo: "asc" },
     });
 
-    const reportsMap = results.reduce((acc, rep) => {
-      (acc[rep.recordNo] ??= []).push(rep);
-      return acc;
-    }, {} as Record<string, typeof results>);
+    const reportsMap = results.reduce(
+      (acc, rep) => {
+        (acc[rep.recordNo] ??= []).push(rep);
+        return acc;
+      },
+      {} as Record<string, typeof results>,
+    );
 
     const reports = employees.map((emp) => {
       const empReports = reportsMap[emp.recordNo] ?? [];
@@ -214,7 +217,7 @@ export const getPaginatedReport = async (
   page = 0,
   limit = 10,
   category?: string,
-  department?: number
+  department?: number,
 ) => {
   try {
     const searchQuery: any = {};
@@ -275,17 +278,20 @@ export const getPaginatedReport = async (
       orderBy: { recordNo: "asc" },
     });
 
-    const reportsMap = results.reduce((acc, rep) => {
-      (acc[rep.recordNo] ??= []).push(rep);
-      return acc;
-    }, {} as Record<string, typeof results>);
+    const reportsMap = results.reduce(
+      (acc, rep) => {
+        (acc[rep.recordNo] ??= []).push(rep);
+        return acc;
+      },
+      {} as Record<string, typeof results>,
+    );
 
     const reports = employees.map((emp) => {
       const empReports = reportsMap[emp.recordNo] ?? [];
 
       empReports.sort(
         (a, b) =>
-          new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+          new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
       );
       return {
         ...emp,
@@ -354,7 +360,7 @@ export const getReportById = async (id: string, from: Date, to: Date) => {
       .reduce((acc: any, dateTime: any) => {
         const date = format(
           moment.tz(dateTime, "Asia/Manila").toDate(),
-          "yyyy-MM-dd HH:mm:ss"
+          "yyyy-MM-dd HH:mm:ss",
         ).split(" ")[0];
         acc[date] = acc[date] || [];
         acc[date].push(new Date(dateTime));
@@ -430,7 +436,7 @@ export const getReportById = async (id: string, from: Date, to: Date) => {
 export const getReportByDepartment = async (
   from: Date,
   to: Date,
-  filter: { category: string; department: number }
+  filter: { category: string; department: number },
 ) => {
   try {
     const tableFilter: any = {};
@@ -472,17 +478,20 @@ export const getReportByDepartment = async (
       orderBy: { recordNo: "asc" },
     });
 
-    const reportsMap = results.reduce((acc, rep) => {
-      (acc[rep.recordNo] ??= []).push(rep);
-      return acc;
-    }, {} as Record<string, typeof results>);
+    const reportsMap = results.reduce(
+      (acc, rep) => {
+        (acc[rep.recordNo] ??= []).push(rep);
+        return acc;
+      },
+      {} as Record<string, typeof results>,
+    );
 
     const reports = employees.map((emp) => {
       const empReports = reportsMap[emp.recordNo] ?? [];
 
       empReports.sort(
         (a, b) =>
-          new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+          new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
       );
       return {
         ...emp,
@@ -499,7 +508,7 @@ export const getReportByDepartment = async (
         .reduce((acc: any, dateTime: any) => {
           const date = format(
             moment.tz(dateTime, "Asia/Manila").toDate(),
-            "yyyy-MM-dd HH:mm:ss"
+            "yyyy-MM-dd HH:mm:ss",
           ).split(" ")[0];
           acc[date] = acc[date] || [];
           acc[date].push(new Date(dateTime));
@@ -513,7 +522,7 @@ export const getReportByDepartment = async (
           settings,
           ref: report.name,
           dates: { from, to },
-        }
+        },
       );
 
       return {
@@ -523,7 +532,6 @@ export const getReportByDepartment = async (
         totalLate: totalMinsLate,
       };
     });
-
 
     return items;
   } catch (error: any) {

@@ -6,7 +6,7 @@ export const LoginSchema = object({
     .email("Invalid email"),
   password: string({ required_error: "Password is required" }).min(
     1,
-    "Password is required"
+    "Password is required",
   ),
 });
 
@@ -28,6 +28,8 @@ export const EmployeeSchema = object({
   category: string().min(1, "Category is required"),
   departmentId: number().nullable().optional(),
   scheduleId: number().min(1, "Schedule is required"),
+  rate: number().optional(),
+  type: string().optional(),
   createdAt: date().optional(),
   updatedAt: date().optional(),
 });

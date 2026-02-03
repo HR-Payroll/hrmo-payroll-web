@@ -13,7 +13,7 @@ import Alert from "../ui/Alert";
 import { deleteEvent, updateEvent } from "@/actions/events";
 import SnackbarInfo, { initialSnackbar } from "../ui/SnackbarInfo";
 import { styled, Tooltip, tooltipClasses, TooltipProps } from "@mui/material";
-import { formatTime } from "@/utils/dateFormatter";
+import { format } from "date-fns";
 
 function HolidaysEventsTable({
   events,
@@ -72,7 +72,7 @@ function HolidaysEventsTable({
       editable: true,
       type: "date",
       valueFormatter: (params: any) => {
-        return params ? formatTime(params, "MMMM dd, yyyy") : "";
+        return params ? format(params, "MMMM dd, yyyy") : "";
       },
     },
     {
@@ -151,7 +151,7 @@ function HolidaysEventsTable({
                 <div
                   onClick={() => {
                     const row = data?.find(
-                      (row: any) => row.id === Number(params.id)
+                      (row: any) => row.id === Number(params.id),
                     );
 
                     const startDate = new Date(row.startDate);
@@ -161,7 +161,7 @@ function HolidaysEventsTable({
                       startDate.getDate(),
                       23,
                       59,
-                      59
+                      59,
                     );
 
                     onUpdate(Number(params.id), {
@@ -185,8 +185,8 @@ function HolidaysEventsTable({
                     const temp = { ...isEditing };
                     setData((prev: any) =>
                       prev.map((row: any) =>
-                        row.id === params.id ? temp[params.id] : row
-                      )
+                        row.id === params.id ? temp[params.id] : row,
+                      ),
                     );
                     delete temp[params.id];
                     setEditing(temp);
@@ -236,7 +236,7 @@ function HolidaysEventsTable({
       type: string;
       applied: boolean;
       rule: number;
-    }
+    },
   ) => {
     try {
       await updateEvent(id, payload);
@@ -293,7 +293,7 @@ function HolidaysEventsTable({
     }
 
     setData((prev: any) =>
-      prev.map((row: any) => (row.id === Number(params.rowId) ? newRow : row))
+      prev.map((row: any) => (row.id === Number(params.rowId) ? newRow : row)),
     );
 
     return { ...newRow, isNew: false };

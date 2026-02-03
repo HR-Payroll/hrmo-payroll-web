@@ -25,6 +25,7 @@ export const createEmployee = async (data: Employee) => {
 
     return { success: "Employee has been successfully added!" };
   } catch (error) {
+    console.log(error);
     return { error: "Something went wrong, please try again later." };
   }
 };
@@ -37,7 +38,7 @@ export const updateEmployee = async (
     category?: string;
     department?: any;
     schedule?: any;
-  }
+  },
 ) => {
   try {
     await prisma.employee.update({
@@ -67,7 +68,7 @@ export const deleteEmployee = async (id: number) => {
 };
 
 export const uploadEmployee = async (
-  data: z.infer<typeof EmployeeSchema>[]
+  data: z.infer<typeof EmployeeSchema>[],
 ) => {
   for (var i = 0; i < data.length; i++) {
     const validateData = EmployeeSchema.parse(data[i]);

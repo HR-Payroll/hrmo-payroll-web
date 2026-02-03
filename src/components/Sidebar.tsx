@@ -3,7 +3,6 @@ import React, { JSX, useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
-  MdOutlineMenu,
   MdOutlineSpaceDashboard,
   MdWorkOutline,
   MdOutlineGroups,
@@ -13,6 +12,10 @@ import {
   MdOutlineKeyboardArrowDown,
   MdOutlineHorizontalRule,
   MdOutlineSettings,
+  MdFingerprint,
+  MdDevices,
+  MdAccessTime,
+  MdOutlineMenu,
 } from "react-icons/md";
 
 interface SidebarItemProps {
@@ -38,6 +41,7 @@ const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isPayrollExpanded, setIsPayrollExpanded] = useState(false);
   const [isSettingsExpanded, setIsSettingsExpanded] = useState(false);
+  const [isBiometricsExpanded, setIsBiometricsExpanded] = useState(false);
 
   const payrollItems = [
     {
@@ -58,6 +62,14 @@ const Sidebar = () => {
     {
       label: "Summary",
       link: "/summary",
+      icon: "",
+    },
+  ];
+
+  const biometricsItems = [
+    {
+      label: "Device Management",
+      link: "/device-management",
       icon: "",
     },
   ];
@@ -217,6 +229,47 @@ const Sidebar = () => {
                   </Link>
                 );
               })}
+          </div>
+        </div>
+        <div>
+          <button
+            onClick={() => setIsBiometricsExpanded(!isBiometricsExpanded)}
+            className="flex items-center gap-4 px-4 py-3 w-full hover:bg-blue-100 border-l-[10px] border-l-transparent hover:border-blue-500 focus:text-[var(--accent)] cursor-pointer transition-all ease-in-out duration-700"
+          >
+            <MdFingerprint size={20} />
+            {!isCollapsed && (
+              <span className="text-sm font-medium">Biometrics</span>
+            )}
+            {!isCollapsed &&
+              (isBiometricsExpanded ? (
+                <MdOutlineKeyboardArrowUp
+                  size={20}
+                  className="ml-auto cursor-pointer"
+                />
+              ) : (
+                <MdOutlineKeyboardArrowDown
+                  size={20}
+                  className="ml-auto cursor-pointer"
+                />
+              ))}
+          </button>
+          <div className={`${isBiometricsExpanded ? "block" : "hidden"} ml-6`}>
+            {!isCollapsed && (
+              <>
+                <SidebarItem
+                  href="/dashboard/biometrics/device-management"
+                  icon={<MdOutlineHorizontalRule size={20} />}
+                  label="Device Management"
+                  isCollapsed={isCollapsed}
+                />
+                <SidebarItem
+                  href="/dashboard/biometrics/time-logs"
+                  icon={<MdOutlineHorizontalRule size={20} />}
+                  label="Time Logs"
+                  isCollapsed={isCollapsed}
+                />
+              </>
+            )}
           </div>
         </div>
         {/* <SidebarItem

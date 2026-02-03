@@ -101,3 +101,15 @@ model Schedule {
   updatedAt           DateTime   @updatedAt
   employees           Employee[]
 }
+
+model BiometricDevice {
+  id        Int       @id @default(autoincrement())
+  deviceId  String    @unique
+  name      String
+  location  String
+  status    String    @default("OFFLINE")
+  lastSync  DateTime?
+  apiUri    String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}

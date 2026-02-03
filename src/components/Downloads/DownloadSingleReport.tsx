@@ -32,7 +32,7 @@ const DownloadSingleReport = ({
     };
 
     const SIZE: jsPDFOptions =
-      employee.category === "CASUAL" ? LEGAL_SIZE : A4_SIZE;
+      employee.category === "JOB_ORDER" ? A4_SIZE : LEGAL_SIZE;
 
     console.log(employee.category, "SIZE:", SIZE);
 
@@ -61,7 +61,7 @@ const DownloadSingleReport = ({
         numDays,
         totalLate,
         filter,
-      }
+      },
     );
 
     //doc.save("User_Report.pdf");

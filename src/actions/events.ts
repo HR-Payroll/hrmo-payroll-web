@@ -1,5 +1,9 @@
 "use server";
-import { getHolidaysAPI } from "@/utils/holidays";
+import {
+  getBusinessDays,
+  getHolidaysAPI,
+  getTotalHolidays,
+} from "@/utils/holidays";
 import { prisma } from "../../prisma/prisma";
 import { syncHolidaySettings } from "./settings";
 
@@ -7,7 +11,7 @@ export const syncHolidays = async (year: number) => {
   try {
     const holidays = getHolidaysAPI(
       new Date(year, 0, 1),
-      new Date(year, 11, 31)
+      new Date(year, 11, 31),
     );
 
     const holidayEvents = holidays.map((holiday: any) => {
@@ -103,4 +107,14 @@ export const deleteEvent = async (id: number) => {
     console.error("Error deleting event:", error);
     return { success: false, error: "Failed to delete event." };
   }
+};
+
+export const getTotalWorkingDays = async (from: Date, to: Date) => {
+  const bussinessDays = getBusinessDays(from, to);
+  const events = await getEventsByDateRange(from, to);
+
+  const totalBusinessDays =
+    bussinessDays - getTotalHolidays((events && events.items) || []);
+
+  return totalBusinessDays;
 };
