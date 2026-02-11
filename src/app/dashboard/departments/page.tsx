@@ -6,22 +6,25 @@ import TableSearch from "@/components/TableSearch";
 import AddButton from "@/components/AddButton";
 import DepartmentTable from "@/components/tables/DepartmentTable";
 import UploadDepartments from "@/components/Uploads/UploadDepartments";
+import TableFilters from "@/components/TableFilters";
 
 const Departments = async (props: {
   searchParams?: Promise<{
     search?: string;
     page?: string;
     limit?: string;
+    category?: string;
   }>;
 }) => {
   const params = await props.searchParams;
-  const { search, page, limit } = params as any;
+  const { search, page, limit, category } = params as any;
 
   let isLoading = true;
   const departments = (await getPaginatedDepartment(
     search,
     Number(page || 0),
-    Number(limit || 10)
+    Number(limit || 10),
+    category,
   )) as any;
   isLoading = false;
 
@@ -44,6 +47,7 @@ const Departments = async (props: {
         <section className="flex flex-col md:flex-row items-center justify-between gap-4">
           <TableSearch />
           <div className="flex items-center gap-4">
+            <TableFilters category_only />
             <UploadDepartments reload={reload} />
             <AddButton
               table="department"

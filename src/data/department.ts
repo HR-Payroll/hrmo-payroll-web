@@ -30,7 +30,8 @@ export const getAllDepartment = async () => {
 export const getPaginatedDepartment = async (
   search?: string,
   page = 0,
-  limit = 10
+  limit = 10,
+  category?: string,
 ) => {
   try {
     let searchQuery = {};
@@ -49,7 +50,7 @@ export const getPaginatedDepartment = async (
     }
 
     const departments = await prisma.department.findMany({
-      where: { ...searchQuery },
+      where: { ...searchQuery, category },
       include: {
         _count: {
           select: { employees: true },
@@ -61,7 +62,7 @@ export const getPaginatedDepartment = async (
     });
 
     const totalCount = await prisma.department.count({
-      where: { ...searchQuery },
+      where: { ...searchQuery, category },
     });
 
     return paginationUtil(departments, page, limit, totalCount);
