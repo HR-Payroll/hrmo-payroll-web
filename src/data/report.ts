@@ -7,6 +7,7 @@ import { format } from "date-fns";
 import { paginationUtil } from "@/utils/tools";
 import { getSettings } from "@/actions/settings";
 import moment from "moment-business-days";
+import { utcToPH } from "@/utils/dateFormatter";
 
 export const getAllReport = async (
   from: Date,
@@ -358,12 +359,9 @@ export const getReportById = async (id: string, from: Date, to: Date) => {
     let reports = results
       .map((item: any) => item.timestamp)
       .reduce((acc: any, dateTime: any) => {
-        const date = format(
-          moment.tz(dateTime, "Asia/Manila").toDate(),
-          "yyyy-MM-dd HH:mm:ss",
-        ).split(" ")[0];
+        const date = utcToPH(dateTime).toISOString().split("T")[0];
         acc[date] = acc[date] || [];
-        acc[date].push(new Date(dateTime));
+        acc[date].push(dateTime);
         return acc;
       }, {});
 
@@ -514,6 +512,16 @@ export const getReportByDepartment = async (
           acc[date].push(new Date(dateTime));
           return acc;
         }, {});
+
+      // const { items, totalDays, totalMinsLate } = computeTotalDaysAndLateSingle(
+      //   {
+      //     reports,
+      //     employee: report,
+      //     settings,
+      //     ref: report.name,
+      //     dates: { from, to },
+      //   },
+      // );
 
       const { items, totalDays, totalMinsLate } = computeTotalDaysAndLateSingle(
         {

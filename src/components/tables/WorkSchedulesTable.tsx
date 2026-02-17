@@ -68,26 +68,28 @@ function WorkSchedulesTable({
         ...item,
         inTime:
           item.option === "Regular"
-            ? formatTime(new Date(item.daysIncluded[0].inTime), " hh:mm A")
+            ? formatTime(new Date(item.daysIncluded[0].inTime), " hh:mm a")
             : item.option === "Custom"
-            ? item.daysIncluded
-                .map((day: any) => formatTime(new Date(day.inTime), " hh:mm A"))
-                .toString()
-            : item.daysIncluded
-                .filter((day: any) => day.type === "IN")
-                .map((day: any) => ` ${days[day.value]}`),
+              ? item.daysIncluded
+                  .map((day: any) =>
+                    formatTime(new Date(day.inTime), " hh:mm a"),
+                  )
+                  .toString()
+              : item.daysIncluded
+                  .filter((day: any) => day.type === "IN")
+                  .map((day: any) => ` ${days[day.value]}`),
         outTime:
           item.option === "Regular"
-            ? formatTime(new Date(item.daysIncluded[0].outTime), " hh:mm A")
+            ? formatTime(new Date(item.daysIncluded[0].outTime), " hh:mm a")
             : item.option === "Custom"
-            ? item.daysIncluded
-                .map((day: any) =>
-                  formatTime(new Date(day.outTime), " hh:mm A")
-                )
-                .toString()
-            : item.daysIncluded
-                .filter((day: any) => day.type === "OUT")
-                .map((day: any) => ` ${days[day.value]}`),
+              ? item.daysIncluded
+                  .map((day: any) =>
+                    formatTime(new Date(day.outTime), " hh:mm a"),
+                  )
+                  .toString()
+              : item.daysIncluded
+                  .filter((day: any) => day.type === "OUT")
+                  .map((day: any) => ` ${days[day.value]}`),
       };
     });
 

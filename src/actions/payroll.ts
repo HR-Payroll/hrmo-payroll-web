@@ -7,19 +7,19 @@ export const downloadSummary = async (
   from: Date,
   to: Date,
   category?: string,
-  department?: string
+  department?: string,
 ) => {
   try {
     const { dateFrom, dateTo } = dateQuery(
-      formatTime(from, "yyyy-MM-DD"),
-      formatTime(to, "yyyy-MM-DD")
+      formatTime(from, "yyyy-MM-dd"),
+      formatTime(to, "yyyy-MM-dd"),
     );
     const reports = await getAllSummary(dateFrom, dateTo, category, department);
 
     const res = await fetch(
       `${
         process.env.NEXT_PUBLIC_CLIENT_URL || ""
-      }/templates/payroll_template.xlsx`
+      }/templates/payroll_template.xlsx`,
     );
 
     const fileBuffer = await res.arrayBuffer();
@@ -32,14 +32,17 @@ export const downloadSummary = async (
     const templateSheetName = workbook.SheetNames[0];
     const templateSheet = workbook.Sheets[templateSheetName];
 
-    const reportDepartments = reports?.reduce((acc, report) => {
-      const departmentName = report.department?.name || "Unknown";
-      if (!acc[departmentName]) {
-        acc[departmentName] = [];
-      }
-      acc[departmentName].push(report);
-      return acc;
-    }, {} as Record<string, typeof reports>);
+    const reportDepartments = reports?.reduce(
+      (acc, report) => {
+        const departmentName = report.department?.name || "Unknown";
+        if (!acc[departmentName]) {
+          acc[departmentName] = [];
+        }
+        acc[departmentName].push(report);
+        return acc;
+      },
+      {} as Record<string, typeof reports>,
+    );
 
     Object.keys(reportDepartments).forEach((departmentName) => {
       const worksheet = JSON.parse(JSON.stringify(templateSheet));

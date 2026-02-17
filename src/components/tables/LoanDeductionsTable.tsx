@@ -12,7 +12,7 @@ import {
   GridPreProcessEditCellProps,
   GridRenderEditCellParams,
 } from "@mui/x-data-grid";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 function LoanDeductionsTable({
   deductions,
@@ -31,6 +31,7 @@ function LoanDeductionsTable({
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [data, setData] = useState(deductions);
   const [isEditing, setEditing] = useState<any>();
   const [pageSize, setPageSize] = useState(limit);
@@ -45,6 +46,23 @@ function LoanDeductionsTable({
     setData(deductions);
     setLoading(false);
   }, [deductions]);
+
+  const onChangeFilter = (keys: { key: string; value: string }[]) => {
+    let path = "";
+    const params = Object.fromEntries(searchParams.entries());
+
+    for (const key of keys) {
+      if (params[key.key]) delete params[key.key];
+      if (key.value) params[key.key] = key.value;
+    }
+
+    Object.keys(params).forEach((key, index) => {
+      if (index === 0) path += `?${key}=${params[key]}`;
+      else path += `&${key}=${params[key]}`;
+    });
+
+    router.push(`${pathname}${path}`);
+  };
 
   const columns: GridColDef[] = [
     {
@@ -332,7 +350,7 @@ function LoanDeductionsTable({
       ucpb?: number;
       mpllite?: number;
       sb?: number;
-    }
+    },
   ) => {
     try {
       await updateLoan(id, payload);
@@ -374,25 +392,18 @@ function LoanDeductionsTable({
     }
 
     setData((prev: any) =>
-      prev.map((row: any) => (row._id.$oid === params.rowId ? newRow : row))
+      prev.map((row: any) => (row._id.$oid === params.rowId ? newRow : row)),
     );
 
     return { ...newRow, isNew: false };
   };
 
   const onPageChange = (model: GridPaginationModel) => {
-    let query = pathname;
-
-    if (model.page !== 0 && model.pageSize !== 10) {
-      query = `${pathname}?page=${model.page}&limit=${model.pageSize}`;
-    } else if (model.page !== 0) {
-      query = `${pathname}?page=${model.page}`;
-    } else if (model.pageSize !== 10) {
-      query = `${pathname}?limit=${model.pageSize}`;
-    }
-
     setLoading(true);
-    router.push(query);
+    onChangeFilter([
+      { key: "page", value: model.page.toString() },
+      { key: "limit", value: model.pageSize.toString() },
+    ]);
   };
 
   return (

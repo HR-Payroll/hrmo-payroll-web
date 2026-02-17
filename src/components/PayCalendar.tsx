@@ -43,7 +43,7 @@ const PayCalendar = ({
           if (isFilter) {
             const from = formatTime(
               args.activeStartDate || new Date(),
-              "yyyy-MM-DD"
+              "yyyy-MM-dd",
             );
             onChangeFilter("from", from);
           }
@@ -54,7 +54,7 @@ const PayCalendar = ({
           if (
             view === "month" &&
             events?.some(
-              (d) => d.startDate.toDateString() === date.toDateString()
+              (d) => d.startDate.toDateString() === date.toDateString(),
             )
           ) {
             return "text-red-600 !bg-red-100";

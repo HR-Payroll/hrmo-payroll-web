@@ -13,7 +13,7 @@ import {
   GridRenderEditCellParams,
 } from "@mui/x-data-grid";
 import { MdCheck, MdClose, MdOutlineCreate } from "react-icons/md";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import SnackbarInfo, { initialSnackbar } from "../ui/SnackbarInfo";
 
 function CompensationRateTable({
@@ -33,6 +33,7 @@ function CompensationRateTable({
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [data, setData] = useState(rates);
   const [isEditing, setEditing] = useState<any>();
   const [pageSize, setPageSize] = useState(limit);
@@ -48,19 +49,29 @@ function CompensationRateTable({
     setLoading(false);
   }, [rates]);
 
-  const onPageChange = (model: GridPaginationModel) => {
-    let query = pathname;
+  const onChangeFilter = (keys: { key: string; value: string }[]) => {
+    let path = "";
+    const params = Object.fromEntries(searchParams.entries());
 
-    if (model.page !== 0 && model.pageSize !== 10) {
-      query = `${pathname}?page=${model.page}&limit=${model.pageSize}`;
-    } else if (model.page !== 0) {
-      query = `${pathname}?page=${model.page}`;
-    } else if (model.pageSize !== 10) {
-      query = `${pathname}?limit=${model.pageSize}`;
+    for (const key of keys) {
+      if (params[key.key]) delete params[key.key];
+      if (key.value) params[key.key] = key.value;
     }
 
+    Object.keys(params).forEach((key, index) => {
+      if (index === 0) path += `?${key}=${params[key]}`;
+      else path += `&${key}=${params[key]}`;
+    });
+
+    router.push(`${pathname}${path}`);
+  };
+
+  const onPageChange = (model: GridPaginationModel) => {
     setLoading(true);
-    router.push(query);
+    onChangeFilter([
+      { key: "page", value: model.page.toString() },
+      { key: "limit", value: model.pageSize.toString() },
+    ]);
   };
 
   const columns: GridColDef[] = [
@@ -183,7 +194,7 @@ function CompensationRateTable({
                 <div
                   onClick={() => {
                     const row = data?.find(
-                      (row: any) => row.id === Number(params.id)
+                      (row: any) => row.id === Number(params.id),
                     );
 
                     onUpdate(Number(params.id), {
@@ -203,8 +214,8 @@ function CompensationRateTable({
                     const temp = { ...isEditing };
                     setData((prev: any) =>
                       prev.map((row: any) =>
-                        row._id.$oid === params.id ? temp[params.id] : row
-                      )
+                        row._id.$oid === params.id ? temp[params.id] : row,
+                      ),
                     );
                     delete temp[params.id];
                     setEditing(temp);
@@ -245,7 +256,7 @@ function CompensationRateTable({
     payload: {
       rate?: number;
       type?: string;
-    }
+    },
   ) => {
     try {
       await updateRate(id, payload);
@@ -288,7 +299,7 @@ function CompensationRateTable({
     }
 
     setData((prev: any) =>
-      prev.map((row: any) => (row.id === Number(params.rowId) ? newRow : row))
+      prev.map((row: any) => (row.id === Number(params.rowId) ? newRow : row)),
     );
 
     return { ...newRow, isNew: false };

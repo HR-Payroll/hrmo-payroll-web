@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 import moment from "moment-timezone";
 
 export const dateQuery = (from?: string, to?: string) => {
@@ -25,12 +26,11 @@ export const dateQuery = (from?: string, to?: string) => {
 
 export function formatTime(
   date: Date | string,
-  pattern = "YYYY-MM-DD HH:mm:ss"
+  pattern = "yyyy-MM-dd HH:mm:ss",
 ) {
   if (!date) return "";
 
-  const utcMoment = moment(date, "YYYY-MM-DD HH:mm:ss");
-  return utcMoment.format(pattern);
+  return format(new Date(date), pattern);
 }
 
 // export const dateTzUTC = (date: Date): Date => {
@@ -40,3 +40,8 @@ export function formatTime(
 // export const dateTzUTC = (date: Date): Date => {
 //   return utcToZonedTime(utcDate, 'Asia/Manila');
 // }
+
+export function utcToPH(utcDate: Date): Date {
+  const PH_OFFSET = 8 * 60; // 8 hours in minutes
+  return new Date(utcDate.getTime() + PH_OFFSET * 60 * 1000);
+}

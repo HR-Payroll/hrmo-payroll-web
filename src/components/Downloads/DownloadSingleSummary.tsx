@@ -20,10 +20,10 @@ const DownloadSingleSummary = ({
       return [
         date,
         name["ref"] ? name["name"] : `${name["name"]} (no ref)`,
-        r1 ? formatTime(r1, "hh:mm A") : "",
-        r2 ? formatTime(r2, "hh:mm A") : "",
-        r3 ? formatTime(r3, "hh:mm A") : "",
-        r4 ? formatTime(r4, "hh:mm A") : "",
+        r1 ? formatTime(r1, "hh:mm a") : "",
+        r2 ? formatTime(r2, "hh:mm a") : "",
+        r3 ? formatTime(r3, "hh:mm a") : "",
+        r4 ? formatTime(r4, "hh:mm a") : "",
         remarks || "",
       ];
     });

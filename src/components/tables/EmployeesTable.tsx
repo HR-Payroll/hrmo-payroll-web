@@ -238,7 +238,7 @@ function EmployeesTable({
                 <div
                   onClick={() => {
                     const row = data?.find(
-                      (row: any) => row.id === Number(params.id)
+                      (row: any) => row.id === Number(params.id),
                     );
 
                     if (!row) return;
@@ -265,8 +265,8 @@ function EmployeesTable({
                     const temp = { ...isEditing };
                     setData((prev: any) =>
                       prev.map((row: any) =>
-                        row.id === params.id ? temp[params.id] : row
-                      )
+                        row.id === params.id ? temp[params.id] : row,
+                      ),
                     );
                     delete temp[params.id];
                     setEditing(temp);
@@ -315,7 +315,7 @@ function EmployeesTable({
       category?: string;
       departmentId?: number;
       scheduleId?: number;
-    }
+    },
   ) => {
     try {
       await updateEmployee(id, payload);
@@ -372,7 +372,7 @@ function EmployeesTable({
     }
 
     setData((prev: any) =>
-      prev.map((row: any) => (row.id === Number(params.rowId) ? newRow : row))
+      prev.map((row: any) => (row.id === Number(params.rowId) ? newRow : row)),
     );
 
     return { ...newRow, isNew: false };

@@ -24,7 +24,7 @@ interface PDFDocParams {
 
 export const generatePDFReport = async (
   docParams: PDFDocParams,
-  params: PDFReportParams
+  params: PDFReportParams,
 ) => {
   const { reports, employee, numDays, totalLate, filter } = params;
   const { doc, pageWidth, imgData, imgWidth, imgHeight, imgX, imgY } =
@@ -33,12 +33,12 @@ export const generatePDFReport = async (
   const tableRows = reports.map((report) => {
     const { date, name, r1, r2, r3, r4, remarks } = report;
     return [
-      date ? formatTime(date, "yyyy-MM-DD - ddd") : "",
+      date ? formatTime(date, "yyyy-MM-dd - EEE") : "",
       name,
-      r1 ? formatTime(r1, "hh:mm A") : "",
-      r2 ? formatTime(r2, "hh:mm A") : "",
-      r3 ? formatTime(r3, "hh:mm A") : "",
-      r4 ? formatTime(r4, "hh:mm A") : "",
+      r1 ? formatTime(r1, "hh:mm a") : "",
+      r2 ? formatTime(r2, "hh:mm a") : "",
+      r3 ? formatTime(r3, "hh:mm a") : "",
+      r4 ? formatTime(r4, "hh:mm a") : "",
       remarks || "",
     ];
   });
@@ -53,9 +53,9 @@ export const generatePDFReport = async (
   doc.text(title, xPosition, 56);
   doc.setFont("helvetica", "normal");
 
-  const date = `${formatTime(filter.from, "MM/DD/yy")} to ${formatTime(
+  const date = `${formatTime(filter.from, "MM/dd/yy")} to ${formatTime(
     filter.to,
-    "MM/DD/yy"
+    "MM/dd/yy",
   )}`;
 
   doc.setFont("helvetica", "normal");
@@ -68,7 +68,7 @@ export const generatePDFReport = async (
     "Record No: ",
     employee ? employee.recordNo : "N/A",
     15,
-    70
+    70,
   );
 
   toHighLightText(doc, "Schedule: ", employee.schedule.name, 15, 76);
@@ -85,14 +85,14 @@ export const generatePDFReport = async (
   const tLateWidth = doc.getTextWidth(tLateText);
   const xPosition_h1 =
     pageWidth - Math.max(tDaysWidth, tLateWidth) - rightMargin;
-  xPosition_h = Math.max(xPosition_h, xPosition_h1) - rightMargin / 2;
+  xPosition_h = Math.max(xPosition_h, xPosition_h1) - rightMargin;
 
   toHighLightText(
     doc,
     "Category: ",
     employee ? employee.category : "N/A",
     xPosition_h,
-    64
+    64,
   );
 
   toHighLightText(
@@ -100,7 +100,7 @@ export const generatePDFReport = async (
     "Department: ",
     employee?.department?.name || "N/A",
     xPosition_h,
-    70
+    70,
   );
 
   toHighLightText(
@@ -108,7 +108,7 @@ export const generatePDFReport = async (
     "Number of Days: ",
     `${numDays || "N/A"}`,
     xPosition_h,
-    76
+    76,
   );
 
   toHighLightText(
@@ -116,7 +116,7 @@ export const generatePDFReport = async (
     "Minutes of Late: ",
     `${totalLate || "N/A"}`,
     xPosition_h,
-    82
+    82,
   );
 
   const tableColumn = [
@@ -174,7 +174,7 @@ export const generatePDFReport = async (
   doc.text(
     empSigLabel,
     centerX + sigLineWidth / 2 - empSigLabelWidth / 2,
-    signatureY + 16
+    signatureY + 16,
   );
 
   doc.text("Verified as to the prescribed office hour.", rightX, signatureY);
@@ -186,7 +186,7 @@ export const generatePDFReport = async (
   doc.text(
     headLabel,
     rightX + sigLineWidth / 2 - headLabelWidth / 2,
-    headY + 6
+    headY + 6,
   );
 
   function toHighLightText(
@@ -194,7 +194,7 @@ export const generatePDFReport = async (
     label: string,
     text: string,
     xPosition: number,
-    yPosition: number
+    yPosition: number,
   ) {
     doc.text(label, xPosition, yPosition);
     doc.setFont("helvetica", "bold");

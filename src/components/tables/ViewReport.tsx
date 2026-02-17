@@ -14,7 +14,7 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
       align: "center",
       headerAlign: "center",
       valueGetter: (params: any) => {
-        return params ? formatTime(params, "yyyy-MM-DD - ddd") : "";
+        return params ? formatTime(params, "yyyy-MM-dd - EEE") : "";
       },
     },
     {
@@ -33,7 +33,7 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
       align: "center",
       headerAlign: "center",
       valueGetter: (params: any) => {
-        return params ? formatTime(params, "hh:mm A") : "";
+        return params ? formatTime(params, "hh:mm a") : "";
       },
     },
     {
@@ -44,7 +44,7 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
       align: "center",
       headerAlign: "center",
       valueGetter: (params: any) => {
-        return params ? formatTime(params, "hh:mm A") : "";
+        return params ? formatTime(params, "hh:mm a") : "";
       },
     },
     {
@@ -55,7 +55,7 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
       align: "center",
       headerAlign: "center",
       valueGetter: (params: any) => {
-        return params ? formatTime(params, "hh:mm A") : "";
+        return params ? formatTime(params, "hh:mm a") : "";
       },
     },
     {
@@ -66,7 +66,7 @@ function ViewReport({ reports, name }: { reports?: any[]; name: string }) {
       align: "center",
       headerAlign: "center",
       valueGetter: (params: any) => {
-        return params ? formatTime(params, "hh:mm A") : "";
+        return params ? formatTime(params, "hh:mm a") : "";
       },
     },
     {

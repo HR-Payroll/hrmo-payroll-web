@@ -30,7 +30,7 @@ function ScheduleForm({
   const [serverError, setServerError] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [option, setOption] = useState<"Regular" | "Custom" | "Straight Time">(
-    "Regular"
+    "Regular",
   );
   const [selectTime, setSelectTime] = useState<string | null>(null);
   const [regularIn, setRegularIn] = useState<Date>(new Date());
@@ -92,7 +92,7 @@ function ScheduleForm({
         included: true,
         type: undefined as "IN" | "OUT" | undefined,
       },
-    }
+    },
   );
 
   const {
@@ -166,30 +166,35 @@ function ScheduleForm({
         setRegularTime("outTime", regOut);
       } else {
         setSchedule(
-          Object.keys(schedule).reduce((acc, key) => {
-            const isIncluded =
-              Array.isArray(days) &&
-              days.some((d: any) => d.value === schedule[key as DaysKey].value);
+          Object.keys(schedule).reduce(
+            (acc, key) => {
+              const isIncluded =
+                Array.isArray(days) &&
+                days.some(
+                  (d: any) => d.value === schedule[key as DaysKey].value,
+                );
 
-            console.log(isIncluded, days, schedule[key as DaysKey].value);
-            const matchedDay = isIncluded
-              ? days.find(
-                  (d: any) => d.value === schedule[key as DaysKey].value
-                )
-              : null;
-            acc[key as DaysKey] = {
-              ...schedule[key as DaysKey],
-              inTime: matchedDay
-                ? new Date(matchedDay.inTime)
-                : onChangeTime(new Date(), 8),
-              outTime: matchedDay
-                ? new Date(matchedDay.outTime)
-                : onChangeTime(new Date(), 17),
-              included: isIncluded,
-              type: opt === "Straight Time" ? matchedDay?.type : undefined,
-            };
-            return acc;
-          }, {} as typeof schedule)
+              console.log(isIncluded, days, schedule[key as DaysKey].value);
+              const matchedDay = isIncluded
+                ? days.find(
+                    (d: any) => d.value === schedule[key as DaysKey].value,
+                  )
+                : null;
+              acc[key as DaysKey] = {
+                ...schedule[key as DaysKey],
+                inTime: matchedDay
+                  ? new Date(matchedDay.inTime)
+                  : onChangeTime(new Date(), 8),
+                outTime: matchedDay
+                  ? new Date(matchedDay.outTime)
+                  : onChangeTime(new Date(), 17),
+                included: isIncluded,
+                type: opt === "Straight Time" ? matchedDay?.type : undefined,
+              };
+              return acc;
+            },
+            {} as typeof schedule,
+          ),
         );
       }
 
@@ -200,14 +205,17 @@ function ScheduleForm({
     setRegularOut(onChangeTime(new Date(), 17));
 
     setSchedule(
-      Object.keys(schedule).reduce((acc, key) => {
-        acc[key as DaysKey] = {
-          ...schedule[key as DaysKey],
-          inTime: onChangeTime(new Date(), 8),
-          outTime: onChangeTime(new Date(), 17),
-        };
-        return acc;
-      }, {} as typeof schedule)
+      Object.keys(schedule).reduce(
+        (acc, key) => {
+          acc[key as DaysKey] = {
+            ...schedule[key as DaysKey],
+            inTime: onChangeTime(new Date(), 8),
+            outTime: onChangeTime(new Date(), 17),
+          };
+          return acc;
+        },
+        {} as typeof schedule,
+      ),
     );
   }, [data]);
 
@@ -217,8 +225,11 @@ function ScheduleForm({
         const sched = schedule[key as DaysKey];
         return {
           ...sched,
-          inTime: moment.tz(sched.inTime, "Asia/Manila").toDate(),
-          outTime: moment.tz(sched.outTime, "Asia/Manila").toDate(),
+          inTime: moment.tz(sched.inTime, "Asia/Manila").toDate().toISOString(),
+          outTime: moment
+            .tz(sched.outTime, "Asia/Manila")
+            .toDate()
+            .toISOString(),
         };
       })
       .filter((item) => item.included) as any;
@@ -236,7 +247,7 @@ function ScheduleForm({
         currentDate.getDate(),
         dt || 0,
         0,
-        0
+        0,
       );
 
     return new Date(
@@ -245,7 +256,7 @@ function ScheduleForm({
       time.getDate(),
       dt || time.getHours(),
       dt ? 0 : time.getMinutes(),
-      0
+      0,
     );
   };
 
@@ -267,14 +278,17 @@ function ScheduleForm({
 
   const setRegularTime = (field: "inTime" | "outTime", time: Date) => {
     setSchedule(
-      Object.keys(schedule).reduce((acc, key) => {
-        acc[key as DaysKey] = {
-          ...schedule[key as DaysKey],
-          included: true,
-          [field]: onChangeTime(time),
-        };
-        return acc;
-      }, {} as typeof schedule)
+      Object.keys(schedule).reduce(
+        (acc, key) => {
+          acc[key as DaysKey] = {
+            ...schedule[key as DaysKey],
+            included: true,
+            [field]: onChangeTime(time),
+          };
+          return acc;
+        },
+        {} as typeof schedule,
+      ),
     );
   };
 
@@ -455,15 +469,18 @@ function ScheduleForm({
               onClick={() => {
                 setOption(opt as "Regular" | "Custom" | "Straight Time");
                 setSchedule(
-                  Object.keys(schedule).reduce((acc, key) => {
-                    acc[key as DaysKey] = {
-                      ...schedule[key as DaysKey],
-                      included: opt === "Regular",
-                      inTime: onChangeTime(regularIn),
-                      outTime: onChangeTime(regularOut),
-                    };
-                    return acc;
-                  }, {} as typeof schedule)
+                  Object.keys(schedule).reduce(
+                    (acc, key) => {
+                      acc[key as DaysKey] = {
+                        ...schedule[key as DaysKey],
+                        included: opt === "Regular",
+                        inTime: onChangeTime(regularIn),
+                        outTime: onChangeTime(regularOut),
+                      };
+                      return acc;
+                    },
+                    {} as typeof schedule,
+                  ),
                 );
               }}
               variant={option === opt ? "filled" : "outlined"}
@@ -526,7 +543,7 @@ function ScheduleForm({
                   (() => {
                     const includedIndices = Object.keys(schedule)
                       .map((d, idx) =>
-                        schedule[d as DaysKey].included ? idx : -1
+                        schedule[d as DaysKey].included ? idx : -1,
                       )
                       .filter((idx) => idx !== -1)
                       .sort((a, b) => a - b);
@@ -552,11 +569,11 @@ function ScheduleForm({
                   <div className="flex flex-col text-xs items-start">
                     <p>
                       In:{" "}
-                      {formatTime(schedule[day as DaysKey].inTime, "hh:mm A")}
+                      {formatTime(schedule[day as DaysKey].inTime, "hh:mm a")}
                     </p>
                     <p>
                       Out:{" "}
-                      {formatTime(schedule[day as DaysKey].outTime, "hh:mm A")}
+                      {formatTime(schedule[day as DaysKey].outTime, "hh:mm a")}
                     </p>
                   </div>
                 </>

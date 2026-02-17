@@ -3,6 +3,32 @@ import { getBusinessDays, getTotalHolidays } from "./holidays";
 import { REGULAR_SCHEDULE } from "@/data/constants";
 import moment from "moment-business-days";
 import { Schedule } from "@/types";
+import { utcToPH } from "./dateFormatter";
+
+type DateRange = { from: Date; to: Date };
+
+const enumerateDateKeys = (range: DateRange): string[] => {
+  const from = new Date(range.from);
+  const to = new Date(range.to);
+  const keys: string[] = [];
+
+  for (let d = new Date(from); d <= to; d.setDate(d.getDate() + 1)) {
+    keys.push(format(new Date(d), "yyyy-MM-dd"));
+  }
+
+  return keys;
+};
+
+const prefillDateKeys = (
+  existing: Record<string, Date[]>,
+  range: DateRange,
+): Record<string, Date[]> => {
+  const filled: Record<string, Date[]> = { ...existing };
+  for (const key of enumerateDateKeys(range)) {
+    if (!filled[key]) filled[key] = [];
+  }
+  return filled;
+};
 
 export const computeTotalDaysAndLate = ({
   dates,
@@ -31,6 +57,7 @@ export const computeTotalDaysAndLate = ({
 
   const gracePeriod = settings.gracePeriod || 10;
   let schedule: Schedule = employee?.schedule || REGULAR_SCHEDULE;
+
   if (typeof schedule.daysIncluded === "string") {
     try {
       schedule = {
@@ -44,7 +71,6 @@ export const computeTotalDaysAndLate = ({
 
   Object.keys(days).forEach((date) => {
     const dayOfWeek = new Date(date).getDay();
-
     if (!schedule.daysIncluded.map((d) => d.value).includes(dayOfWeek)) {
       delete days[date];
     }
@@ -256,7 +282,7 @@ export const computeTotalDaysAndLateSingle = ({
 
   if (filter && schedule.option !== "Straight Time") {
     Object.keys(reports).forEach((date) => {
-      const dayOfWeek = new Date(date).getDay();
+      const dayOfWeek = utcToPH(new Date(date)).getDay();
 
       if (!schedule.daysIncluded.map((d) => d.value).includes(dayOfWeek)) {
         delete reports[date];
@@ -308,7 +334,7 @@ export const computeTotalDaysAndLateSingle = ({
           }, {});
 
         let totalDays = perDayEquivalent;
-        const dayOfWeek = new Date(date).getDay();
+        const dayOfWeek = utcToPH(new Date(date)).getDay();
 
         let nearestScheduledDay = 0;
 
@@ -374,7 +400,7 @@ export const computeTotalDaysAndLateSingle = ({
         (a: Date, b: Date) => new Date(a).getTime() - new Date(b).getTime(),
       );
 
-      const dayOfWeek = new Date(date).getDay();
+      const dayOfWeek = utcToPH(new Date(date)).getDay();
 
       const daySchedule = schedule.daysIncluded.find(
         (d: any) => d.value === dayOfWeek,
@@ -411,11 +437,16 @@ export const computeTotalDaysAndLateSingle = ({
         };
       }
 
-      const inTimeStr = daySchedule?.inTime;
-      const outTimeStr = daySchedule?.outTime;
+      const inTimeStr = utcToPH(new Date(daySchedule.inTime));
+      const outTimeStr = utcToPH(new Date(daySchedule.outTime));
 
-      const inTime = new Date(date + "T" + inTimeStr?.split("T")[1]);
-      const outTime = new Date(date + "T" + outTimeStr?.split("T")[1]);
+      const inTime = new Date(
+        date + "T" + inTimeStr.toISOString().split("T")[1],
+      );
+      const outTime = new Date(
+        date + "T" + outTimeStr.toISOString().split("T")[1],
+      );
+
       const halfDay =
         inTime.getTime() +
         (outTime.getTime() - inTime.getTime()) / 2 -
@@ -428,11 +459,12 @@ export const computeTotalDaysAndLateSingle = ({
         (times[times.length - 1].getTime() - times[0].getTime()) /
         (1000 * 60 * 60);
 
-      const cutoff = inTime ? new Date(inTime) : undefined;
+      const cutoff = inTime ? inTime : undefined;
+
       if (cutoff) cutoff.setMinutes(cutoff.getMinutes() + gracePeriod);
 
       let lateness =
-        cutoff && times[0] ? times[0].getTime() - cutoff.getTime() : 0;
+        cutoff && times[0] ? utcToPH(times[0]).getTime() - cutoff.getTime() : 0;
 
       let totalDays = Math.min(
         1,
@@ -440,7 +472,7 @@ export const computeTotalDaysAndLateSingle = ({
           (totalHours % workingHours) / workingHours,
       );
 
-      if (times[0].getTime() >= halfDay || totalHours <= 0.5) {
+      if (utcToPH(times[0]).getTime() >= halfDay || totalHours <= 0.5) {
         remarks = "HALF DAY";
         lateness = 0;
         totalDays = 0.5;
@@ -588,11 +620,12 @@ const regularComputation = (
 
   if (!daySchedule) return;
 
-  const inTimeStr = daySchedule.inTime;
-  const outTimeStr = daySchedule.outTime;
+  const inTimeStr = utcToPH(new Date(daySchedule.inTime)).toISOString();
+  const outTimeStr = utcToPH(new Date(daySchedule.outTime)).toISOString();
 
   const inTime = new Date(date + "T" + inTimeStr.split("T")[1]);
   const outTime = new Date(date + "T" + outTimeStr.split("T")[1]);
+
   const halfDay =
     inTime.getTime() +
     (outTime.getTime() - inTime.getTime()) / 2 -
@@ -615,9 +648,9 @@ const regularComputation = (
   const cutoff = inTime;
   cutoff.setMinutes(cutoff.getMinutes() + gracePeriod);
 
-  let lateness = times[0].getTime() - cutoff.getTime();
+  let lateness = utcToPH(times[0]).getTime() - cutoff.getTime();
 
-  if (times[0].getTime() >= halfDay) lateness = 0;
+  if (utcToPH(times[0]).getTime() >= halfDay) lateness = 0;
 
   const totalDays = Math.min(
     1,

@@ -20,16 +20,16 @@ const TableSearch = () => {
     if (dateFilter.from && dateFilter.to && value) {
       path = `?from=${formatTime(
         dateFilter.from.toISOString(),
-        "yyyy-MM-DD"
+        "yyyy-MM-dd",
       )}&to=${formatTime(
         dateFilter.to.toISOString(),
-        "yyyy-MM-DD"
+        "yyyy-MM-dd",
       )}&search=${value}`;
     } else if (dateFilter.from && dateFilter.to) {
       path = `?from=${formatTime(
         dateFilter.from.toISOString(),
-        "yyyy-MM-DD"
-      )}&to=${formatTime(dateFilter.to.toISOString(), "yyyy-MM-DD")}`;
+        "yyyy-MM-dd",
+      )}&to=${formatTime(dateFilter.to.toISOString(), "yyyy-MM-dd")}`;
     } else if (value) {
       path = `?search=${value}`;
     }
@@ -61,7 +61,8 @@ const TableSearch = () => {
         placeholder="Search"
         className="w-[180px] outline-none pl-4"
         onChange={(e) => (
-          setSearchFilter(e.target.value), debounceSearch(e.target.value)
+          setSearchFilter(e.target.value),
+          debounceSearch(e.target.value)
         )}
       />
       <button className="text-gray-300 hover:text-gray-400 active:text-gray-500 cursor-pointer pr-2">

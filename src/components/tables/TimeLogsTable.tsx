@@ -4,7 +4,7 @@ import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
 import { tableStyle } from "@/lib/themes";
 import Alert from "@/components/ui/Alert";
 import SnackbarInfo, { initialSnackbar } from "@/components/ui/SnackbarInfo";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
 interface TimeLogRecord {
   punch: number;
@@ -41,6 +41,7 @@ const TimeLogsTable: React.FC<TimeLogsTableProps> = ({
 }) => {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [timeLogs, setTimeLogs] = useState<TimeLogRecord[]>([]);
   const [filteredLogs, setFilteredLogs] = useState<TimeLogRecord[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -199,19 +200,31 @@ const TimeLogsTable: React.FC<TimeLogsTableProps> = ({
     }
   };
 
-  // Handle pagination
-  const onPageChange = (model: GridPaginationModel) => {
-    let query = pathname;
+  const onChangeFilter = (keys: { key: string; value: string }[]) => {
+    let path = "";
+    const params = Object.fromEntries(searchParams.entries());
 
-    if (model.page !== 0 && model.pageSize !== 10) {
-      query = `${pathname}?page=${model.page}&limit=${model.pageSize}`;
-    } else if (model.page !== 0) {
-      query = `${pathname}?page=${model.page}`;
-    } else if (model.pageSize !== 10) {
-      query = `${pathname}?limit=${model.pageSize}`;
+    for (const key of keys) {
+      if (params[key.key]) delete params[key.key];
+      if (key.value) params[key.key] = key.value;
     }
 
-    router.push(query);
+    Object.keys(params).forEach((key, index) => {
+      if (index === 0) path += `?${key}=${params[key]}`;
+      else path += `&${key}=${params[key]}`;
+    });
+
+    router.push(`${pathname}${path}`);
+  };
+
+  // Handle pagination
+  const onPageChange = (model: GridPaginationModel) => {
+    setCurrentPage(model.page);
+    setPageSize(model.pageSize);
+    onChangeFilter([
+      { key: "page", value: model.page.toString() },
+      { key: "limit", value: model.pageSize.toString() },
+    ]);
   };
 
   // Format timestamp for display
