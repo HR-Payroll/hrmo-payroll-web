@@ -7,6 +7,18 @@ import { utcToPH } from "./dateFormatter";
 
 type DateRange = { from: Date; to: Date };
 
+const computeRenderedHours = (times: Date[]): number => {
+  const sorted = [...times].sort((a, b) => a.getTime() - b.getTime());
+  let hours = 0;
+  for (let i = 0; i + 1 < sorted.length; i += 2) {
+    const inTime = sorted[i];
+    const outTime = sorted[i + 1];
+    const diffMs = outTime.getTime() - inTime.getTime();
+    if (diffMs > 0) hours += diffMs / (1000 * 60 * 60);
+  }
+  return hours;
+};
+
 const enumerateDateKeys = (range: DateRange): string[] => {
   const from = new Date(range.from);
   const to = new Date(range.to);
@@ -75,6 +87,60 @@ export const computeTotalDaysAndLate = ({
       delete days[date];
     }
   });
+
+  if (schedule.option === "Straight Time OT") {
+    const rangeFrom = new Date(filter.from);
+    const rangeTo = new Date(filter.to);
+
+    const totalHoursRendered = Object.keys(days).reduce(
+      (sum: number, date: string) => {
+        const times: Date[] = (days[date] || []).map((t: any) => new Date(t));
+        return sum + computeRenderedHours(times);
+      },
+      0,
+    );
+
+    const totalDays = totalHoursRendered / 8;
+
+    let earnings = 0;
+
+    if (
+      employee &&
+      employee.type === "MONTHLY" &&
+      typeof employee.rate === "number"
+    ) {
+      const from = new Date(filter.from);
+      const to = new Date(filter.to);
+      const daysInRange =
+        (to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24) + 1;
+
+      const daysInMonth = new Date(
+        from.getFullYear(),
+        from.getMonth() + 1,
+        0,
+      ).getDate();
+      const rate = typeof employee.rate === "number" ? employee.rate : 0;
+
+      earnings = rate * (daysInRange / daysInMonth);
+    } else if (employee && typeof employee.rate === "number") {
+      earnings = totalDays * employee.rate;
+    } else {
+      earnings = 0;
+    }
+
+    const deductions = employee ? getTotalDeduction(employee) : 0;
+    const net = earnings - deductions;
+
+    return {
+      totalDays:
+        totalDays % 1 === 0 ? totalDays.toFixed(0) : totalDays.toFixed(2),
+      late: "0",
+      earnings: earnings % 1 === 0 ? earnings.toFixed(0) : earnings.toFixed(2),
+      deductions:
+        deductions % 1 === 0 ? deductions.toFixed(0) : deductions.toFixed(2),
+      net: net % 1 === 0 ? net.toFixed(0) : net.toFixed(2),
+    };
+  }
 
   let inOut: any[] = [];
 
@@ -278,6 +344,71 @@ export const computeTotalDaysAndLateSingle = ({
     } catch (e) {
       schedule = { ...schedule, daysIncluded: [] };
     }
+  }
+
+  if (schedule.option === "Straight Time OT") {
+    const from = new Date(dates.from);
+    const to = new Date(dates.to);
+
+    const items = Object.keys(reports)
+      .filter((date: string) => {
+        const d = new Date(date);
+        return d >= from && d <= to;
+      })
+      .sort((a, b) => a.localeCompare(b))
+      .map((date) => {
+        const times: Date[] = (reports[date] || [])
+          .map((t: any) => new Date(t))
+          .sort((a: Date, b: Date) => a.getTime() - b.getTime());
+
+        const totalHoursRendered = computeRenderedHours(times);
+        const totalDays = totalHoursRendered / 8;
+
+        const earnings = employee ? totalDays * employee.rate : 0;
+        const deductions = 0;
+        let net = earnings - deductions;
+        net = net < 0 ? 0 : net;
+
+        let filterTimes = times;
+        if (times.length > 4) {
+          filterTimes = [times[0], times[1], times[2], times[times.length - 1]];
+        }
+
+        const rendered = filterTimes
+          .slice(0, 4)
+          .reduce((acc: any, time: any, index: number) => {
+            acc[`r${index + 1}`] = time;
+            return acc;
+          }, {});
+
+        return {
+          date,
+          ...rendered,
+          name: ref,
+          remarks: "-",
+          totalDays,
+          minsLate: 0,
+          totalHours: totalHoursRendered,
+          earnings:
+            earnings % 1 === 0 ? earnings.toFixed(0) : earnings.toFixed(2),
+          deductions:
+            deductions % 1 === 0
+              ? deductions.toFixed(0)
+              : deductions.toFixed(2),
+          net: net % 1 === 0 ? net.toFixed(0) : net.toFixed(2),
+        };
+      });
+
+    const total = items.reduce(
+      (sum: number, num: any) => sum + num.totalDays,
+      0,
+    );
+
+    return {
+      items,
+      totalDays: total % 1 === 0 ? total.toFixed(0) : total.toFixed(2),
+      totalMinsLate: "0",
+    };
   }
 
   if (filter && schedule.option !== "Straight Time") {

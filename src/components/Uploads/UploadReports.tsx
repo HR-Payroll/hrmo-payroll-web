@@ -6,6 +6,7 @@ import { uploadReport } from "@/actions/report";
 import { Backdrop, CircularProgress } from "@mui/material";
 import pLimit from "p-limit";
 import { parse } from "date-fns";
+import { parseMinimalAccessWorkbook } from "@/utils/excel-timelogs-parser";
 
 const UploadReports = ({ reload }: { reload?: VoidFunction }) => {
   const [isUploading, setUploading] = useState(false);
@@ -16,9 +17,49 @@ const UploadReports = ({ reload }: { reload?: VoidFunction }) => {
     modal: false,
   });
 
+  const handleExcelFile = (file: any) => {
+    if (!file) return;
+
+    try {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const data = new Uint8Array(e.target.result);
+        const result = parseMinimalAccessWorkbook(data);
+        console.log(result);
+
+        const createdAt = new Date();
+        const lines = result.map((item) => {
+          const date = new Date(item.timestamp);
+          return {
+            recordNo: item.recordNo.padStart(9, "0"),
+            name: item.name,
+            timestamp: date,
+            index: `${item.recordNo.padStart(9, "0")}-${date.toISOString()}`,
+            createdAt,
+          };
+        });
+
+        setUpload(lines);
+        e.preventDefault();
+      };
+
+      reader.readAsArrayBuffer(file);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleFileUpload = (event: any) => {
     const file = event.target.files[0];
     if (!file) return;
+
+    if (
+      file.type ===
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    ) {
+      handleExcelFile(file);
+      return;
+    }
 
     try {
       const createdAt = new Date();

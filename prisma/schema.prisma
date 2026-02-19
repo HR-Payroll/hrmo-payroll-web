@@ -95,6 +95,7 @@ model Schedule {
   name                String     @unique
   option              String
   straightTimeRegular Boolean?
+  straightTimeOT      Boolean?   @default(false)
   daysIncluded        String
   readOnly            Boolean    @default(false)
   createdAt           DateTime   @default(now())

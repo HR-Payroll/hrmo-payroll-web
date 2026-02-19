@@ -29,9 +29,9 @@ function ScheduleForm({
 }) {
   const [serverError, setServerError] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState<boolean>(false);
-  const [option, setOption] = useState<"Regular" | "Custom" | "Straight Time">(
-    "Regular",
-  );
+  const [option, setOption] = useState<
+    "Regular" | "Custom" | "Straight Time" | "Straight Time OT"
+  >("Regular");
   const [selectTime, setSelectTime] = useState<string | null>(null);
   const [regularIn, setRegularIn] = useState<Date>(new Date());
   const [regularOut, setRegularOut] = useState<Date>(new Date());
@@ -462,31 +462,53 @@ function ScheduleForm({
       <div className="flex flex-col text-sm gap-2 text-[var(--text)]">
         <label className="text-left">Schedule Option</label>
         <div className="flex flex-wrap gap-2 items-center">
-          {["Regular", "Custom", "Straight Time"].map((opt) => (
-            <Chip
-              key={opt}
-              label={opt}
-              onClick={() => {
-                setOption(opt as "Regular" | "Custom" | "Straight Time");
-                setSchedule(
-                  Object.keys(schedule).reduce(
-                    (acc, key) => {
-                      acc[key as DaysKey] = {
-                        ...schedule[key as DaysKey],
-                        included: opt === "Regular",
-                        inTime: onChangeTime(regularIn),
-                        outTime: onChangeTime(regularOut),
-                      };
-                      return acc;
-                    },
-                    {} as typeof schedule,
-                  ),
-                );
-              }}
-              variant={option === opt ? "filled" : "outlined"}
-              color="primary"
-            />
-          ))}
+          {["Regular", "Custom", "Straight Time", "Straight Time OT"].map(
+            (opt) => (
+              <Chip
+                key={opt}
+                label={opt}
+                onClick={() => {
+                  setOption(
+                    opt as
+                      | "Regular"
+                      | "Custom"
+                      | "Straight Time"
+                      | "Straight Time OT",
+                  );
+
+                  setSchedule(
+                    Object.keys(schedule).reduce(
+                      (acc, key) => {
+                        acc[key as DaysKey] = {
+                          ...schedule[key as DaysKey],
+                          included:
+                            opt === "Straight Time OT"
+                              ? true
+                              : opt === "Regular",
+                          type:
+                            opt === "Straight Time OT"
+                              ? "IN"
+                              : schedule[key as DaysKey].type,
+                          inTime: onChangeTime(regularIn),
+                          outTime: onChangeTime(regularOut),
+                        };
+                        return acc;
+                      },
+                      {} as typeof schedule,
+                    ),
+                  );
+
+                  if (opt === "Straight Time OT") {
+                    setValue("straightTimeRegular", false);
+                    setStraightTimeRegular(false);
+                  }
+                }}
+                variant={option === opt ? "filled" : "outlined"}
+                color="primary"
+              />
+            ),
+          )}
+
           {option === "Straight Time" && (
             <div className="flex flex-row items-center">
               <Checkbox
@@ -539,6 +561,7 @@ function ScheduleForm({
               type="button"
               disabled={
                 option === "Regular" ||
+                option === "Straight Time OT" ||
                 (option === "Straight Time" &&
                   (() => {
                     const includedIndices = Object.keys(schedule)
@@ -563,7 +586,7 @@ function ScheduleForm({
                   : " border-gray-200  enabled:hover:bg-gray-100"
               } p-2 disabled:opacity-50 enabled:cursor-pointer border flex flex-col items-start gap-1 rounded-md select-none  active:bg-gray-100`}
             >
-              {option !== "Straight Time" ? (
+              {option !== "Straight Time" && option !== "Straight Time OT" ? (
                 <>
                   <h1 className="text-sm font-medium">{day}</h1>
                   <div className="flex flex-col text-xs items-start">
